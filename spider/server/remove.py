@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+
 import redis
 import pymongo
 
 r = redis.Redis()
-
 connection = pymongo.Connection()
 db = connection.admin
 db.authenticate('root', 'root')
