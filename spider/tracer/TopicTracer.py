@@ -258,7 +258,6 @@ def main():
     client = WeiboClient()
     if not os.path.exists('./topics'):
         os.mkdir('./topics')
-    #job_list = ['ykBUBdjEm', 'ylevSn77h', 'yknH47aWs']
     job_list = MidQueue()
     while True:
         if not job_list.empty():
