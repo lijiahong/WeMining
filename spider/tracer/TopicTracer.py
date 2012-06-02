@@ -18,13 +18,69 @@ import cookielib
 
 import codecs
 
-#from queues import MidQueue
+from queues import MidQueue
 from BeautifulSoup import BeautifulSoup, SoupStrainer
 
 
 COOKIES_FILE = 'cookies.txt'
 WEIBO_USER = 'linhao1992@gmail.com' 
 WEIBO_PWD = 'weibomap'
+
+
+def unix2localtime(ts):
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))
+
+
+def smc2unix(date_str):
+    time_pattern_1 = r'(\d+)'+u'分钟前' #5分钟前
+    time_pattern_2 = u'今天'+r' (\d\d):(\d\d)' #今天 17:51
+    time_pattern_3 = r'(\d\d)'+u'月'+r'(\d\d)'+u'日 '+r'(\d\d):(\d\d)' #02月22日 08:32 
+    time_pattern_4 =  r'(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)' #2011-12-31 23:34:19
+    date_str.strip()
+    try:
+        minute = int(re.search(time_pattern_1, date_str).group(1))
+        now_ts = time.time()
+        ts = now_ts - minute*60
+        #print time.localtime(ts)
+        return ts
+    except:
+        pass
+    try:
+        hour = re.search(time_pattern_2, date_str).group(1)
+        minute = re.search(time_pattern_2, date_str).group(2)
+        now = time.localtime()
+        date = str(now.tm_year)+'-'+str(now.tm_mon)+'-'+str(now.tm_mday)+' '+hour+':'+minute
+        ts = time.mktime(time.strptime(date, '%Y-%m-%d %H:%M'))
+        #print time.localtime(ts)
+        return ts
+    except:
+        pass
+    try:
+        month = re.search(time_pattern_3, date_str).group(1)
+        day = re.search(time_pattern_3, date_str).group(2)
+        hour = re.search(time_pattern_3, date_str).group(3)
+        minute = re.search(time_pattern_3, date_str).group(4)
+        now = time.localtime()
+        date = str(now.tm_year)+'-'+month+'-'+day+' '+hour+':'+minute
+        ts = time.mktime(time.strptime(date, '%Y-%m-%d %H:%M'))
+        #print time.localtime(ts)
+        return ts
+    except:
+        pass
+    try:
+        year = re.search(time_pattern_4, date_str).group(1)
+        month = re.search(time_pattern_4, date_str).group(2)
+        day = re.search(time_pattern_4, date_str).group(3)
+        hour = re.search(time_pattern_4, date_str).group(4)
+        minute = re.search(time_pattern_4, date_str).group(5)
+        second = re.search(time_pattern_4, date_str).group(6)
+        date = year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second
+        ts = time.mktime(time.strptime(date, '%Y-%m-%d %H:%M:%S'))
+        #print time.localtime(ts)
+        return ts
+    except:
+        pass
+    return None
 
 
 def load_cookies():
@@ -107,7 +163,7 @@ class WeiboClient(object):
 
 class RepostTimeline(object):
 
-    def __init__(self, client, mid=None, info=None):
+    def __init__(self, client, mid, info):
         self.client = client
         self.url = 'http://weibo.cn/repost/'+mid
         self.page_count = 0
@@ -119,6 +175,7 @@ class RepostTimeline(object):
             return None
         f = codecs.open(r'./topics/%s.txt' % self.mid, 'w', encoding='utf-8')
         first_line = '%s %s\n' % (self.mid, self.info)
+        print 'new job start', first_line
         f.write(first_line)
         nextPage = 1
         reposts_soup = BeautifulSoup(self.client.urlopen(self.url+'?page='+str(nextPage)))
@@ -141,7 +198,11 @@ class RepostTimeline(object):
                     user = repost.find('a')
                     name = user.string
                     url = user['href']
-                    format_str = '%s %s %s %s %s %s %s\n' % self.getUserCount(url)
+                    tokens = repost.find('span', {'class': 'ct'}).string.split('&nbsp;')#split source & datetime
+                    datetime = tokens[0]
+                    ts = int(smc2unix(datetime))
+                    format_str = '%s %s %s %s %s %s %s ' % self.getUserCount(url)
+                    format_str += '%s\n' % ts
                     print format_str
                     f.write(format_str) 
                 self.page_count += 1+deltaPage
@@ -195,8 +256,17 @@ class RepostTimeline(object):
                           
 def main():
     client = WeiboClient()
-    job_list = ['ykBUBdjEm', 'ylevSn77h', 'yknH47aWs']
-    for job in job_list:
-        RepostTimeline(client, mid=job, info=u'娱乐').spider()
+    if not os.path.exists('./topics'):
+        os.mkdir('./topics')
+    #job_list = ['ykBUBdjEm', 'ylevSn77h', 'yknH47aWs']
+    job_list = MidQueue()
+    while True:
+        if not job_list.empty():
+            mid, info = job_list.pop()
+            if not mid or not info:
+                continue
+            RepostTimeline(client, mid, info).spider()
+        else:
+            time.sleep(5)
         
 if __name__ == '__main__': main()
