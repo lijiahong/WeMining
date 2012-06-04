@@ -234,8 +234,8 @@ class RepostTimeline(object):
         name, gender, location = info_string.split('/')
         tip2 = user_home_soup.find('div', {'class':'tip2'})
         weibo_count = 0                        
-        friend_count = 0
-        follow_count = 0
+        followee_count = 0
+        follower_count = 0
         for br_tag in tip2.contents:
             info_string = br_tag.string
             if info_string:
@@ -243,15 +243,15 @@ class RepostTimeline(object):
                 if rweibo:
                     weibo_count = rweibo.group(1)
                     continue
-                rfollow = re.search(u'关注\[(\d+)\]', info_string)
-                if rfollow:
-                    follow_count = rfollow.group(1)
+                rfollower = re.search(u'关注\[(\d+)\]', info_string)
+                if rfollower:
+                    follower_count = rfollower.group(1)
                     continue  
-                rfriend = re.search(u'粉丝\[(\d+)\]', info_string)
-                if rfriend:
-                    friend_count = rfriend.group(1)
+                rfollowee= re.search(u'粉丝\[(\d+)\]', info_string)
+                if rfollowee:
+                    followee_count = rfollowee.group(1)
                     continue
-        return uid, name, gender, location, weibo_count, follow_count, friend_count
+        return uid, name, gender, location, weibo_count, follower_count, followee_count
 
                           
 def main():
