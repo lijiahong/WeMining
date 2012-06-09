@@ -1,50 +1,314 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>WeiMining</title>
-    <script type="text/javascript" src="/static/js/weibovisualization.js"></script>
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/weibovisualization.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/syntax.css" />
+    <script type="text/javascript" src="./static/js/weibovisualization.js"></script>
+    <link rel="shortcut icon" href="./static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" media="screen" href="./static/css/weibovisualization.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./static/css/syntax.css" />
+	<style type="text/css">
+		.nav-header{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 58px;
+			background-color: white;
+			padding-bottom: 100px;
+			background: url(../static/images/re/background.jpg) repeat-x;
+		}
+		#nav-container{
+			margin-left:151px;
+			width:960px;
+			height:100%;
+		}
+		.topnav{
+			height:100%;
+			background-color: white;
+		}
+		.sidebar{
+			height:auto;
+			margin::0;
+		}
+		.nav-collapse{
+			height:100%;
+		}
+		.nav{
+			margin-left: 480px;
+			margin-top: 0px;
+			margin-bottom: 0px;
+			height: 100%;
+		}
+		.nav-nav{
+			width: 100px;
+			float: left;
+			height: auto;
+			margin: 2px;
+			padding-top: 25px;
+			padding-bottom: 4px;
+			display: block;
+			text-align: center;
+			border-bottom-style: solid;
+			border-bottom-width: 6px;
+			display: block;
+			padding-left: ;
+			text-align: center;
+			border-bottom-style: solid;
+			
+			border-bottom-width: thick;
+
+		}
+
+		.nav a{
+			font-size: 19px;
+			font-family: sans-serif;
+			color: gray;
+		}
+		#home{
+			border-bottom-color: #61CCAA;
+		}
+		#contact{
+			border-bottom-color: #DDDCDC;
+		}
+		#h-introduction{
+			margin-bottom: 30px;
+		}
+		#intro-ques{
+			left: 0px;
+			width: 192px;
+		}
+		#intro-ques img{
+		
+		}
+		#intro{
+		
+		}
+		#intro p{
+			font-size: 13px;
+			color: grey;
+			line-height: 1.7;
+		}
+		#splash-screen {
+		position: absolute;
+		z-index: 999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url(../static/images/bg-splash-screen.png) repeat;
+		}
+
+		#splash-screen img {
+			position: absolute;
+			z-index: 1000;
+			
+		}
+		h1#MapWeibo{
+			position: absolute;
+			margin-left: 300px;
+		}
+		.myCanvasContainer{
+			//border-color: #F7EFEF;
+			background-color: white;
+			width: 460px;
+			height: 310px;
+			font-size: 18px;
+			float: left;
+			margin-top: 23px;
+			//border: solid;
+			//border-width: 2px;
+
+		}
+		#panel{
+			position: absolute;
+			top: 0px;
+			left: 490px;
+			width: 460px;
+			height: 310px;
+		}
+		.pic img{
+			overflow:hidden
+			display:block;
+			border: solid 2px #ccc;
+			margin-right: 10px;
+			margin-bottom: 5px;
+		}
+		#user_image img{
+			width:30px;
+			height:30px;
+		}
+		.pic a:hover img {
+			border-color: steelblue;
+		}
+		#logo{
+			width: 200px;
+			float: left;
+			margin: 2px;
+			height:100%;
+		}
+		#logo img{
+			width: auto;
+			height: auto;
+			border: none;
+			margin-top: 8px;
+		}
+		#login img{
+			width: auto;
+			height: auto;
+			border: none;
+		}
+	    #intro img{
+			width: 120px;
+			height: 40px;
+		}
+		#main{
+			background-color:#FFF;
+			margin:30px 0 0 0;
+			float:right;
+		}
+		#intro_content{
+
+			margin:0px 0 0 20px;
+		}
+		#nav {
+			position: relative;
+			font-size: 30px;
+		}
+		#nav a {
+			position: absolute;
+			color: #8D7E7E;;
+			background:#FCFAFA;
+			display: block;
+			padding: 0px 0;
+			height: 24px;
+			width: 210px;
+			box-shadow: 0px 2px 2px #DDD;
+			-webkit-box-shadow: 0px 2px 2px #DDD;
+			font-size: 14px;
+			font-weight: normal;
+			text-align: center;
+			padding-top:6px;
+		}
+		
+		#panel-nav{
+			position: absolute;
+			left: 30px;
+			color: #433;
+			background: #FCFAFA;
+			display: block;
+			padding: 0px 0;
+			height: 24px;
+			width: 150px;
+			box-shadow: 0px 2px 2px #DDD;
+			-webkit-box-shadow: 0px 2px 2px #DDD;
+			font-size: 14px;
+			font-weight: bold;
+			text-align: center;
+			padding-top: 6px;
+		}
+		#nav #nav-act {
+			font-weight: bold;
+			color:white;
+			font-size: 15px;
+			height: 28px;
+			background: #2380CC
+		}
+		#nav a:hover {
+			background: #bbb;
+		}
+		#topic{
+			position: absolute;
+			left: 30px;
+			top: 30px;
+		}
+		h2{
+			font-weight: normal;
+			font-size: 13px;
+			margin-bottom: 4px;
+			margin-top: 20px;
+		}
+		#intro1{
+			position: absolute;
+			left: 250px;
+			top: 0px;
+		}
+		#intro2{
+			position: absolute;
+			left: 250px;
+			top: 200px;
+		}
+		#intro3{
+			position: absolute;
+			left: 250px;
+			top: 400px;
+		}
+
+	</style>
   </head>
   <body>
-    <div class="body">
+    <div class="nav-header">
+      <div class="topnav">
+	<div id="nav-container">
+	    <div id='logo' class='pic'>
+					<a href='/weiming/mapweibo'><img src="/static/images/re/logo.jpg"  alt="MapWeibo" /></a>
+				</div>
+          
+	     <!--<h1 id='examples'>WeiMining</h1>-->
+	    <!--<a href='/weiming/mapweibo'><img src="./static/images/re/logo.jpg"  alt="MapWeibo" /></a>-->
+	  
+          
+          <div class='nav-collapse'>
+	    <ul class='nav'>
+	      <a href="/weiming" id="nav-home">
+		<li class='nav-nav' id='home'>主页
+		</li>
+	      </a>
+	      <a href="/weiming/about" id="nav-about">
+		<li class='nav-nav' id='contact'>联系
+		</li>
+	      </a>
+	    </ul>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="content-body" id="content-body">                                                                                 
       <div class="content">
-          <div class="topbar">
-            <b><a href="/weiming">Home</a></b>
-            <a href="/weiming/about">About us</a>
+        
+        <div class='gallery'>
+            <div>
+            <a href='/weiming/mapweibo'>
+              <img src='./static/images/mapweibo.jpg' />
+            </a>
+            </div>
+            <div id="intro1">
+	    <h4><a href='/weiming/mapweibo'>MapWeibo</a></h4>
+            <p>This application called <strong>MapWeibo</strong> are placing the roadmap of sina weibo spreading on the China Map,and we're trying to obtain the hostest topic of weibo.</p>
+            </div>
+	  
+          <div>
+            <a href='http://gana.nlsde.buaa.edu.cn/hourly_happy/moodlens.html'>
+              <img src='./static/images/moodlens.jpg' />
+            </a>
+	  </div>
+            <div id="intro2">
+            <h4><a href='http://gana.nlsde.buaa.edu.cn/hourly_happy/moodlens.html'>Moodlens</a></h4>
+            <p>To our best knowledge, MoodLens is the first system for sentiment analysis of Chinese tweets in Weibo. In MoodLens, 95 emoticons are mapped into four categories of sentiments, i.e. angry, disgusting, joyful, and sad, which serve as the class labels of tweets. MoodLens collects over 3.5 million labeled tweets as the corpus and train a fast Naive Bayes classifier. 
+	      MoodLens also implements an incremental learning method to tackle the problem of the sentiment shift and the generation of new words.</p>
           </div>
-          <div class="sidebar">
-            <h1>Demo</h1>
+	  <div>
+            <a href='/weiming/spidermonitor'>
+              <img src='./static/images/spider.jpg' />
+            </a>
+	  </div>
+            <div id="intro3">
+            <h4><a href='/weiming/spidermonitor'>SpiderMonitor</a></h4>
+            <p>This application can dynamiclly monitor the sina crwaler's dataflow and running status online</p>
           </div>
-          <h1 id='examples'>WeiMining</h1>
-          <div class='gallery'>
-              <div class='list'>
-                <a href='/weiming/mapweibo'>
-                  <img src='/static/images/hot_topic.jpg' />
-                </a>
-                <h4><a href='/weiming/mapweibo'>MapWeibo</a></h4>
-                <p>This application called <strong>MapWeibo</strong> are placing the roadmap of sina weibo spreading on the China Map,and we're trying to obtain the hostest topic of weibo.</p>
-              </div>
-               <div class='list'>
-                <a href='http://gana.nlsde.buaa.edu.cn/hourly_happy/moodlens.html'>
-                  <img src='/static/images/moodlens.jpg' />
-                </a>
-                <h4><a href='http://gana.nlsde.buaa.edu.cn/hourly_happy/moodlens.html'>Moodlens</a></h4>
-                <p>To our best knowledge, MoodLens is the first system for sentiment analysis of Chinese tweets in Weibo. In MoodLens, 95 emoticons are mapped into four categories of sentiments, i.e. angry, disgusting, joyful, and sad, which serve as the class labels of tweets. MoodLens collects over 3.5 million labeled tweets as the corpus and train a fast Naive Bayes classifier. 
-MoodLens also implements an incremental learning method to tackle the problem of the sentiment shift and the generation of new words.</p>
-              </div>
-		<div class='list'>
-                <a href='/weiming/spidermonitor'>
-                  <img src='/static/images/spider.jpg' />
-                </a>
-                <h4><a href='/spider.html'>SpiderMonitor</a></h4>
-                <p>This application can dynamiclly monitor the sina crwaler's dataflow and running status online</p>
-              </div>
-          </div>
-           <div class="foot">Copyright &copy; 2012 <a href="http://www.buaa.edu.cn/">Buaa</a></div>
-       </div>
-     </div>
+        </div>
+        <div class="foot">Copyright &copy; 2012 <a href="http://www.buaa.edu.cn/">Buaa</a></div>
+      </div>
+    </div>
   </body>
 </html>
