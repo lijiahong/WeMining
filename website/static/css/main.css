@@ -1,0 +1,489 @@
+/* ---------------------------------------------------------------------------------------------------------------------------- CSS RESET */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, font, img, ins, kbd, q, s, samp,
+small, strike, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+}
+
+:focus {
+    outline: none;
+}
+
+ul {
+    list-style: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+caption, th, td {
+    text-align: left;
+    font-weight: normal;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: "";
+}
+
+blockquote, q {
+    quotes: "" "";
+}
+
+a {
+    color: #565757;
+    text-decoration: underline;
+}
+
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------------- HTML, Body */
+
+body {
+    font-family: Calibri, Tahoma, Verdana, sans-serif;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #565757;
+    background: white;
+}
+
+html,
+body {
+	height:100%;
+    min-width: 960px;
+    min-height: 600px;
+}
+
+
+#panel {
+	background-color: white;
+	position:absolute;
+}
+
+
+ul#line_legend {
+	background-color: white;
+	width:100%;
+	height:3%;
+	float:left;
+	border:1px solid gray;
+	margin-left:auto;
+	margin-right:auto;
+}
+ul#line_legend li {
+    float: left;
+    width: 33.33%;
+    height: 100%;
+    text-align: center;
+}
+ul#line_legend .innerText{
+	font-color:#fff;
+}
+
+ul#line_legend li#line_blue{
+	background-color:#99cc99;
+	font-color:#fff;
+}
+ul#line_legend li#line_yellow{
+	background-color:rgb(255,191,0);
+	font-color:#fff;
+}
+ul#line_legend li#line_red{
+	background-color:rgb(255,0,0);
+	font-color:#fff;
+}
+
+#present_topic{
+	font-color:black;
+        font-size:19px;
+	text-align: center;
+	width:100px;
+	hight:50px;
+	overflow:hidden;
+}
+
+#map_canvas {
+	background-color: white;
+	width:100%;
+	height:98%;
+	border:1px solid gray;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+body {
+    position: relative;
+}
+
+#info {
+    display: none;
+}
+
+
+
+.hidden {
+    display: none;
+}
+
+h2 {
+    padding: 15px 0 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: black;
+}
+
+h3 {
+    padding: 15px 0 0 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ED1C24;
+}
+
+p#js-required {
+    padding: 30px 0 0 0;
+    font-size: 70px;
+    text-align: center;
+    color: #FF0000;
+}
+
+#splash-screen {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(../images/bg-splash-screen.png) repeat;
+}
+
+#splash-screen img {
+    position: absolute;
+    z-index: 1000;
+    
+}
+
+p#back-to-nation-view {
+    position: absolute;
+    right: 120px;
+    top: 58px;
+    width: 120px;
+    border: 1px solid #000;
+	z-index: 4;
+}
+
+p#back-to-nation-view span {
+    display: block;
+    width: 118px;
+    padding: 1px 0;
+    border: 1px solid #707070;
+    border-right-color: #D0D0D0;
+    border-bottom-color: #D0D0D0;
+    text-align: center;
+    font-family: Arial,sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #EB1E23;
+    background: #FFF;
+    cursor: pointer;
+	z-index: 5;
+}
+
+#preloader {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+#tooltip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 9999;
+    padding: 0 0 24px 0;
+    background: url(../images/bg-tooltip.png) no-repeat bottom center;
+}
+
+#tooltip.hidden {
+    display: none;
+}
+
+#tooltip .inner {
+    padding: 5px 10px;
+    color: #FFF;    
+    background: #0B0E21;
+}
+
+#console {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 960px;
+    background: white;    
+}
+
+#console #logo {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 266px;
+    height: 75px;
+    padding: 0;
+}
+#console #logo img{
+	width:266px;
+	height:30px;
+	position:absolute;
+	left:0;
+	text-align:left;   
+    margin-left:0px;
+	margin-top:25px;
+	z-index:18;
+}
+
+#panel h2 {
+	margin-top: 1em;
+	border: solid #ccc 1px;
+	border-top: none;
+	border-right: none;
+	border-left-width: 5px;
+	padding: .3em .7em;
+	font-size: 116%;
+}
+
+
+#slider{
+	width:75%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#play_pause{
+	margin-left:auto;
+	margin-right:auto;
+	float:left;
+}
+
+#date_div{
+	font-size:20px;
+	margin-left:auto;
+	margin-right:auto;
+	width:180px;
+	height:30px;
+	overflow:auto;
+}
+
+#play_pause1{
+	margin-left:auto;
+	margin-right:auto;
+	float:left
+}
+
+#play_pause2{
+	margin-left:auto;
+    margin-right:auto;
+    float:left
+}
+
+#play_pause3 {
+margin-left: auto;
+margin-right: auto;
+float: left;
+}
+
+#console ul#helpers {
+    float: right;
+    margin: 0 10px 0 0;
+}
+
+#console ul#helpers li {
+    float: left;
+    width: 60px;
+    height: 22px;
+    padding: 53px 10px 0 10px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#helpers li.active {
+    color: #3E2C26;
+}
+
+#console ul#helpers li#all {
+    background: url(../images/bg-categories-all.png) no-repeat center -99px;
+}
+
+#console ul#helpers li#all.active {
+    background-position: center 12px;
+}
+
+#console ul#categories {
+    float: right;
+    margin: 0 10px 0 0;
+}
+
+#console ul#categories li {
+    float: left;
+    width: 90px;
+    height: 22px;
+    padding: 53px 10px 0 10px;
+    text-align: center;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#categories li.active {
+    color: #3E2C26;
+}
+
+#console ul#categories li#fipost {
+    background: url(../images/bg-categories-fipost.png) no-repeat center -99px;
+}
+#console ul#categories li#fipost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#equalpost {
+    background: url(../images/bg-categories-equalpost.png) no-repeat center -99px;
+}
+#console ul#categories li#equalpost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#repost {
+    background: url(../images/bg-categories-repost.png) no-repeat center -99px;
+}
+#console ul#categories li#repost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#science {
+    background: url(../images/bg-categories-science.png) no-repeat center -99px;
+}
+#console ul#categories li#science.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#sport {
+    background: url(../images/bg-categories-sport.png) no-repeat center -99px;
+}
+#console ul#categories li#sport.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#travel {
+    background: url(../images/bg-categories-travel.png) no-repeat center -99px;
+}
+#console ul#categories li#travel.active {
+    background-position: center 12px;
+}
+
+#info-window {
+	background:url(../images/info_window.png);
+    position: absolute;
+    z-index: 1000;
+    left: -9999px;
+    top: -9999px;    
+    width: 70px;
+	height: 45px;
+}
+
+#info-window .inner {
+	margin: 4px auto auto 10px;
+    //background: #E9EAEB;
+}
+
+#info-window .inner h2 {
+    padding: 0 0 0 0;
+    font-size: 8px;
+    font-weight: 700;
+    color: black;
+}
+
+#info-window .inner p {
+    margin-top: 10px;
+}
+
+#info-window .inner p#report-misplaced {
+    position: absolute;
+    bottom: 13px;
+    left: 15px;
+    color: green;
+}
+
+#info-window .inner p#report-misplaced.active {
+    text-decoration: underline;
+    color: #ED1C24;
+    cursor: pointer;
+}
+
+#info-window.video .inner p#report-misplaced {
+    display: none;
+}
+
+#info-window .inner p a.read-more {
+    color: #ED1C24;
+    font-weight: 700;
+}
+
+#info-window .inner .thumb {
+	position: relative;
+    float: right;
+    width: 120px;
+    height: 90px;
+    margin: 10px 0 0 10px;
+    cursor: pointer;
+}
+
+#info-window .inner .thumb .label {
+	position: absolute;
+	left: 42px;
+	top: 27px;
+	z-index: 100;
+}
+
+
+/* ---------------------------------------------------------------------------------------------------------------------------- CLEARFIX */
+
+.clearfix:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+    }
+
+.clearfix {
+    display: inline-block;
+    }
+
+/* Hides from IE-mac \*/
+* html .clearfix {
+    height: 1%;
+    }
+
+.clearfix {
+    display: block;
+}
+/* End hide from IE-mac */

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>SentimentView</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ditu.google.cn/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="/static/js/heatmap.js"></script>
+	<script type="text/javascript" src="/static/js/heatmap-gmaps.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-ui-1.8.16.custom.min.js"></script>
+	<link type="text/css" href="/static/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="/static/js/sentidata.js"></script>
+    <script type="text/javascript" src="/static/js/sentiprovincedata.js"></script>
+     <script type="text/javascript" src="/static/js/wui.min.js"></script>
+     <script type="text/javascript" src="/static/js/wundermap.min.js"></script>
+     <script src="http://code.highcharts.com/highcharts.js"></script>
+	 <script src="http://code.highcharts.com/modules/exporting.js"></script>
+     <script>
+	 	$$(document).ready(function() {
+
+	/* =Shadow Nav
+	-------------------------------------------------------------------------- */
+	
+		// Append shadow image to each LI
+		
+		$$("#nav-shadow li").append('<img class="shadow" src="/static/images/icons-shadow.jpg" width="81" height="27" alt="" />');
+	
+		// Animate buttons, shrink and fade shadow
+		
+		$$("#nav-shadow li").hover(function() {
+			var e = this;
+		    $$(e).find("a").stop().animate({ marginTop: "-14px" }, 250, function() {
+		    	$$(e).find("a").animate({ marginTop: "-10px" }, 250);
+		    });
+		    $$(e).find("img.shadow").stop().animate({ width: "80%", height: "20px", marginLeft: "8px", opacity: 0.25 }, 250);
+		},function(){
+			var e = this;
+		    $$(e).find("a").stop().animate({ marginTop: "4px" }, 250, function() {
+		    	$$(e).find("a").animate({ marginTop: "0px" }, 250);
+		    });
+		    $$(e).find("img.shadow").stop().animate({ width: "100%", height: "27px", marginLeft: "0", opacity: 1 }, 250);
+		});
+		
+		$$('#configArea #nav-shadow li#button-color-2').addClass('active').animate({ marginTop: "-10px" }, 250);
+		
+		$$('#configArea #nav-shadow li').bind('click', function () {
+			var e = this;
+           
+			$$(e).siblings('li').each(function () {
+				if($$(this).hasClass('active')){
+					$$(this).removeClass('active');
+					$$(this).animate({ marginTop: "0px" }, 250);
+					//console.log($$(this).attr('id'));
+					switch($$(this).attr('id')){
+						//case 'button-color-1':heatmap1.toggle();heatmap2.toggle();heatmap3.toggle();break;
+						
+						case 'button-color-2':heatmap1.toggle();break;//console.log('right11');
+						case 'button-color-3':heatmap2.toggle();break;//console.log('right12');
+						case 'button-color-4':heatmap3.toggle();break;//console.log('right13');
+						default: ;//console.log('wrong1');
+					}
+				}
+			});
+			if(!$$(e).hasClass('active')){
+				//console.log('inactive');
+				switch($$(e).attr('id')){
+					//case 'button-color-1':heatmap1.toggle();heatmap2.toggle();heatmap3.toggle();break;
+					case 'button-color-2':heatmap1.toggle();break;//console.log('right21');
+					case 'button-color-3':heatmap2.toggle();break;//console.log('right22');
+					case 'button-color-4':heatmap3.toggle();break;//console.log('right23');
+					default: ;//console.log('wrong2');
+				}
+			}
+			$$(e).addClass('active').animate({ marginTop: "-10px" }, 250);
+			
+		});
+	// End jQuery
+	
+	});
+	 </script>
+	<style>
+            body, html {
+				margin:0;
+				padding:0;
+				width:1349px;
+				font-family:Arial;
+			}
+			h1 {
+				margin-bottom:10px;
+			}
+			#main {
+				position:relative;
+				width:1020px;
+				padding:20px;
+				margin:auto;
+			}
+			#heatmapArea {
+				position:relative;
+				<!--float:left;-->
+				width:800px;
+				height:650px;
+				border:1px dashed black;
+			}
+			#configArea {
+				position:absolute;
+				<!--float:left;-->
+				width:200px;
+				padding-right:0;
+				left:320px;
+				top: 110px;
+				z-index:1000;
+			}
+			textarea{
+				width:260px;
+				padding:10px;
+				height:200px;
+			}
+			h2{
+				margin-top:0;
+			}
+			#optionLinks { font-size: 11px; border: 1px solid #000; margin-bottom: 10px; position: absolute; top: 380px; left: 100px; width: 252px; overflow: hidden; white-space: nowrap; background: #FFF; }
+			#optionLinks #setMyPrefs { background: #FFF url(http://icons.wxug.com/i/wxmap/prefs.png) right no-repeat; color: #000; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; border-top: 1px solid #FFF; border-right: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-left: 1px solid #FFF; }
+			#optionLinks #linkButton { background: #FFF url(http://icons.wxug.com/i/wxmap/link.png) right no-repeat; color: #000; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; border-top: 1px solid #FFF; border-right: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-left: 1px solid #FFF; }
+			#optionLinks #moreButton { color: #000; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; border-top: 1px solid #FFF; border-right: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-left: 1px solid #FFF; }
+			#optionLinks .loading A { background: #FFF url(http://icons.wxug.com/i/wxmap/loading.gif) right no-repeat; }
+			
+			#mapOptions { width: 387px; overflow: hidden; font-size: 11px; border: 1px solid #000; margin-bottom: 10px; position: absolute; top: 380px; left: 375px; white-space: nowrap; }
+			#mapOptions .noRadar { white-space: nowrap; }
+			#mapOptions .noRadar A { color: #DDD; font-weight: normal; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; background-color: #F5F5F5; border-top: 1px solid #FFF; border-right: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-left: 1px solid #FFF; }
+			#mapOptions .active { white-space: nowrap; }
+			#mapOptions .active A { color: #000; font-weight: bold; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; background-color: #FFF; border-top: 1px solid #356D98; border-right: 1px solid #70B1E7; border-bottom: 1px solid #70B1E7; border-left: 1px solid #356D98; }
+			#mapOptions .inactive { white-space: nowrap; }
+			#mapOptions .inactive A { color: #000; text-decoration: none; display: block; width: 80px; padding: 1px; text-align: center; float: left; background-color: #FFF; border-top: 1px solid #FFF; border-right: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-left: 1px solid #FFF; }
+			#mapOptions .full { text-align: right; padding: 0 3px; }
+			#mapOptions .loading A { background: #FFF url(http://icons.wxug.com/i/wxmap/loading.gif) right no-repeat; }
+			#container {position: absolute; top: 585px;width:1020px;}
+			#console {position: absolute;width:1016px; top: 765px;left:21px;z-index:1000;background-color:white;border:1px solid #969696;}
+			#show{position: absolute; left:600px;top: 80px;z-index:1000;}
+			
+			#instruction{position: absolute;top: 1000px;z-index:1000;}
+			
+			#situation{
+				margin: 0 auto 30px auto;
+				padding: 0px auto auto 0px;
+				width: 497px;
+				text-align: center;
+				list-style: none;
+			}
+			
+			#situation li{
+				margin-right: 0px;
+				width: 80px;
+				float: left;
+			}
+			
+			/* =Navigation
+============================================================================== */
+
+	/* =Reflection Nav
+	-------------------------------------------------------------------------- */
+		
+		#nav-reflection {
+			margin: 0 auto 50px auto;
+			padding: 50px 0 0 172px;
+			width: 452px;
+			min-height: 130px;
+			
+			list-style: none;
+			}
+			
+		#nav-reflection li {
+			margin-right: 15px;
+			width: 59px;
+			float: left;
+			}
+			
+		#nav-reflection a, #nav-reflection a:visited, #nav-reflection a:hover {
+			width: 59px;
+			height: 59px;
+			text-indent: -9999px;
+			overflow: hidden;
+			border: 0;
+			background: url(/static/images/icons.png) no-repeat;
+			display: block;
+			}
+			
+		#nav-reflection span {
+			margin-top: 1px;
+			width: 59px;
+			height: 34px;
+			text-align: center;
+			background: url(/static/images/icons-reflections.jpg) no-repeat;
+			display: block;
+			}
+			
+		/* Button Colors */
+		
+		#nav-reflection li#button-color-1 a {
+			background-position: -3px -3px;
+			}
+			
+		#nav-reflection li#button-color-2 a {
+			background-position: -92px -3px;
+			}
+			
+		#nav-reflection li#button-color-3 a {
+			background-position: -181px -3px;
+			}
+			
+		#nav-reflection li#button-color-4 a {
+			background-position: -270px -3px;
+			}
+			
+		/* Button Reflection Color */
+		
+		#nav-reflection li#button-color-1 span {
+			background-position: 0 0;
+			}
+			
+		#nav-reflection li#button-color-2 span {
+			background-position: -89px 0;
+			}
+			
+		#nav-reflection li#button-color-3 span {
+			background-position: -178px 0;
+			}
+			
+		#nav-reflection li#button-color-4 span {
+			background-position: -267px 0;
+			}
+			
+			
+	/* =Shadow Nav
+	-------------------------------------------------------------------------- */
+		
+		#nav-shadow {
+			margin: 0 auto 30px auto;
+			padding: 0px auto auto 0px;
+			width: 497px;
+			min-height: 130px;
+			text-align: center;
+			list-style: none;
+			}
+			
+		#nav-shadow li {
+			margin-right: 15px;
+			margin-top:0px;
+			margin-left:0px;
+			width: 81px;
+			height: 72px;
+			position: relative;
+			float: left;
+			}
+			
+		#nav-shadow a, #nav-shadow a:visited, #nav-shadow a, #nav-shadow a:hover {
+			margin: 0 auto;
+			width: 59px;
+			height: 59px;
+			text-indent: -9999px;
+			overflow: hidden;
+			border: 0;
+			background: url(/static/images/icons.png) no-repeat;
+			display: block;
+			position: relative;
+			z-index: 2;
+			}
+			
+		/* Button Colors */
+		
+		#nav-shadow li#button-color-1 a {
+			background-position: -3px -3px;
+			}
+			
+		#nav-shadow li#button-color-2 a {
+			background-position: -92px -3px;
+			}
+			
+		#nav-shadow li#button-color-3 a {
+			background-position: -181px -3px;
+			}
+			
+		#nav-shadow li#button-color-4 a {
+			background-position: -270px -3px;
+			}
+			
+		/* Button Shadow */
+		
+		#nav-shadow li img.shadow {
+			margin: 0 auto;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			z-index: 1;
+			}
+		</style>
+		
+<body>
+<div id="main">
+			<a href="/weiming/mapweibo" title="heatmap.js">Back to the homepage</a><br>
+			<h1>Sentiment Map View</h1>
+      
+            <div id=console>
+               <div id="slider" style="margin-left:10px;margin-top:10px;"></div>
+               
+          	   <div id="play_pause" style="width:570px;margin:0px 500px 0 445px;">
+                 <div id="play_pause1"><button>play</button></div>
+                 <div id="play_pause2"><button>pause</button></div>
+                 <div id="play_pause3"><button>reset</button></div>
+               </div>
+            </div>
+            <div id="show">
+              <ul id="situation">
+              		<li><strong>当前话题</strong></li>
+                    <li id="topic_div" style="width:80px">雷锋</li>
+                    <li><strong>当前时间</strong></li>
+                    <li id="date_div" style="width:150px"></li>
+                    
+	           </ul>
+			</div>
+			<div id="heatmapArea">
+			</div>
+            <div id="container"></div>​
+            <!--<div id="mapOptions">
+            	<span id="LayerAll_parent" class="inactive"><a href="javascript:void(0);" id="LayerWeatherStations_radio">All</a></span>
+            	<span id="LayerHappy_parent" class="active"><a href="javascript:void(0);" id="LayerWeatherStations_radio">Happy</a></span>
+				<span id="LayerAngry_parent" class="inactive"><a href="javascript:void(0);" id="LayerRadarAnimGif_radio">Angry</a></span>
+				<span id="LayerSad_parent" class="inactive"><a href="javascript:void(0);" id="LayerSatellite_radio">Sad</a></span>
+            </div>
+            <div id="optionLinks">
+            	<span><a href="javascript:wui.toggleVisibility('configure');" id="setMyPrefs">设置</a></span>
+				<span><a href="javascript:wui.toggleVisibility('linkPanel', {skipSelf:true});" id="linkButton">Link To</a></span>
+				<span id="moreButton_parent"><a href="javascript:wui.toggleVisibility('morePanel');" id="moreButton">(5) More...</a></span>
+            </div>-->
+            <!--
+            <div id="instruction">
+             <h2 style:"z-index:1001">Sentiment Analysis</h2>
+				融合html5 canvas和google地图，构建地图热图模式，展示地区微博情绪分布与变化<br /><br />
+				<strong></strong>
+            </div>
+            -->
+           
+			<div id="configArea">
+            
+				<!--<button id="tog1" class="btn">高兴</button>
+                <button id="tog2" class="btn">生气</button>
+                <button id="tog3" class="btn">悲伤</button>-->
+        		<ul id="nav-shadow">
+                    <li id="button-color-1">综合<a title="all">综合</a></li>
+                    <li id="button-color-2">高兴<a title="happy">高兴</a></li>
+                    <li id="button-color-3">生气<a title="angry">生气</a></li>
+                    <li id="button-color-4">悲伤<a title="sad">悲伤</a></li>
+	           </ul>
+			</div>
+
+</div>
+
+  	<script type="text/javascript">
+	
+		var map;
+		var heatmap1; 
+		var heatmap2;
+		var heatmap3;
+		var stoped = true;
+		var inter_slider = null;
+		var interval_time = 3000;
+		var step_sum = sentitotal.length;
+		var now_step = 0;
+		function getMaxCount(){
+			var maxcount=0;
+			for(var x=0;x < senti1.length;x = x + 1){
+				if(maxcount < senti1[x].count){
+					maxcount = senti1[x].count;
+				}
+			}
+			return maxcount;
+		}
+		
+		var testData={
+				max: 10,//getMaxCount(),
+				data: [],
+		};
+		function play_interval(){
+			if (stoped) {
+			  if (inter_slider!=null) {
+			      clearInterval(inter_slider);
+			  }
+		  } 
+		  else {
+			  if (now_step <= step_sum-2) {	
+				  $$("#slider" ).slider( "option", "value",(now_step+2));
+			  }
+			  if(now_step == step_sum - 1){	
+				  $$("#slider" ).slider( "option", "value",(now_step+1));
+			  }
+		  }
+		}
+		function change_date_display(){
+			var d = new Date(sentitotal[now_step]['time']*1000);
+			console.log(sentitotal[now_step]['time']);
+			date_div.innerText=d.getUTCFullYear()+"/"+(d.getUTCMonth()+1)+"/"+d.getUTCDate()+" - "+ (d.getUTCHours()+1) +":" + (d.getUTCMinutes()+1) + ":" +(d.getUTCSeconds()+1);
+			//console.log(date_div.innerText);
+		}
+		function change_chart_display(){
+		}
+		function change_map_display(){
+			var d = new Date(sentitotal[now_step]['time']*1000);
+			date = d.getUTCFullYear()+"/"+(d.getUTCMonth()+1)+"/"+d.getUTCDate()+" - "+ (d.getUTCHours()+1) +":" + (d.getUTCMinutes()+1) + ":" +(d.getUTCSeconds()+1);
+			var chart = new Highcharts.Chart({
+		chart: {
+			renderTo: 'container',
+			//type: 'column'
+			borderWidth: 1,
+			//borderColor: black,
+			height: 180
+		},
+		title: {
+			text: '情绪地区分布图'
+		},
+		subtitle: {
+			text: '当前话题：雷锋' + ' 当前时间：' + date
+		},
+		xAxis: {
+			categories: ['北京', '上海', '广东', '安徽', '江苏','天津','福建','重庆','甘肃','广西','贵州','海南','河北','河南','黑龙江','湖北','湖南','吉林','江西','辽宁','内蒙古','宁夏','青海','山东','山西','陕西','四川','西藏','新疆','云南','浙江','香港','澳门','台湾']
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: '情绪值'
+			},
+			stackLabels: {
+				enabled: true,
+				style: {
+					fontWeight: 'bold',
+					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+				}
+			}
+		},
+		legend: {
+			align: 'right',
+			x: -100,
+			verticalAlign: 'top',
+			y: 20,
+			floating: true,
+			backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+			borderColor: '#CCC',
+			borderWidth: 1,
+			shadow: false
+		},
+		tooltip: {
+			formatter: function() {
+				if (this.point.name) { // the pie chart
+
+                        s = ''+ this.series.name +': '+ this.y ;
+						return s;
+                    } else {
+						  return '<b>'+ this.x +'</b><br/>'+
+							  this.series.name +': '+ this.y +'<br/>'+
+							  'Total: '+ this.point.stackTotal;
+					}
+			}
+		},
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+				}
+			}
+		},
+		labels: {
+                items: [{
+                    /*html: '分类情绪汇总',
+                    style: {
+                        left: '40px',
+                        top: '8px',
+                        color: 'black'
+                    }
+					*/
+                }]
+            },
+		series: [{
+			type: 'column',
+			name: '高兴',
+			data: senti_happy[now_step]
+		}, {
+			type: 'column',
+			name: '生气',
+			data: senti_angry[now_step]
+		}, {
+			type: 'column',
+			name: '悲伤',
+			data: senti_sad[now_step]
+		}, //{
+            //type: 'pie',
+            //name: '分类情绪汇总',
+            //data: senti_all[0]
+		//}
+		],
+		center: [0, 0],
+
+        size: 200,
+
+        showInLegend: true,
+
+        dataLabels: {
+                    enabled: true         }
+	});
+	
+			var start = now_step;
+			var end = now_step + 1;
+			//console.log('start:' + start);
+			//console.log('end:' + end);
+			var arr;
+			var lat;
+			var lng;
+			var count;
+			heatmap1.clearAll();
+			heatmap2.clearAll();
+			heatmap3.clearAll();
+			for(var x = 0;x < end;x = x + 1){
+				arr = senti1[x].latlng.split(" ");
+				lat = arr[0];
+				lng = arr[1];
+				count = senti1[x].count;
+				if(count != 0){
+					heatmap1.addDataPoint(lat,lng,count);
+					//testData.data.push({lat:lat,lng:lng,count:count});
+					//heatmap1.setDataSet(testData);
+				}
+				
+			}
+			for(var x = 0;x < end;x = x + 1){
+				arr = senti2[x].latlng.split(" ");
+				lat = arr[0];
+				lng = arr[1];
+				count = senti2[x].count;
+				if(count != 0){
+					heatmap2.addDataPoint(lat,lng,count);
+					//testData.data.push({lat:lat,lng:lng,count:count});
+				}
+				
+			}
+			for(var x = 0;x < end;x = x + 1){
+				arr = senti3[x].latlng.split(" ");
+				lat = arr[0];
+				lng = arr[1];
+				count = senti3[x].count;
+				if(count != 0){
+					heatmap3.addDataPoint(lat,lng,count);
+					//testData.data.push({lat:lat,lng:lng,count:count});
+				}
+				
+			}
+			
+		}
+		window.onload = function(){
+			//console.log(senti1.length);
+			$$('#play_pause1').button({icons: {primary: "ui-icon-play"},text: false});
+			$$('#play_pause2').button({icons: {primary: "ui-icon-pause"},text: false});
+			$$('#play_pause3').button({icons: {primary: "ui-icon-bullet"},text: false});
+		  
+		  	$$('#play_pause1').click(function() {
+				if (stoped==true) {	  
+					stoped=false;
+					inter_slider=setInterval(play_interval,interval_time);
+				}
+			});
+  
+			$$('#play_pause2').click(function() {
+				  stoped=true;
+			});
+			$$('#play_pause3').click(function() {
+				  stoped=true;
+				  date_div.innerText='';
+				  $$('#slider').slider( "option", "value",0);	
+			});
+			
+			$$('#slider').slider({
+									   min: 0,
+									   //max: mapWeibo.step_sum + 8,
+									   step: 1,
+									 });
+			$$( "#slider" ).slider( "option", "max", step_sum);
+			
+			$$( '#slider' ).bind( 'slidechange', function(event, ui) {
+             	now_step= parseInt($$('#slider').slider( "option", "value" ));
+				if(now_step == 0){
+				 	date_div.innerText='';
+				}
+			   if(now_step >= 1 && now_step < step_sum){
+					 now_step = now_step - 1;
+					 change_date_display();
+					 change_map_display();
+			   }
+			   if(now_step == step_sum){
+					 date_div.innerText='';
+					 //$$('#slider').slider( "option", "value",0);	
+			   }
+			});
+		
+			var myLatlng = new google.maps.LatLng(31.563611,103.36388611);
+			// sorry - this demo is a beta
+			// there is lots of work todo
+			// but I don't have enough time for eg redrawing on dragrelease right now
+			var myOptions = {
+			  zoom : 4,
+			  minZoom : 3,
+			  center: myLatlng,
+			  mapTypeId: google.maps.MapTypeId.ROADMAP,
+			  disableDefaultUI: false,
+			  scrollwheel: true,
+			  draggable: true,
+			  navigationControl: true,
+			  mapTypeControl: false,
+			  scaleControl: true,
+			  disableDoubleClickZoom: false
+			};
+			map = new google.maps.Map(document.getElementById("heatmapArea"), myOptions);
+			
+			heatmap1 = new HeatmapOverlay(map, {"radius":15, "visible":true, "opacity":60});
+			heatmap2 = new HeatmapOverlay(map, {"radius":15, "visible":false, "opacity":60});
+			heatmap3 = new HeatmapOverlay(map, {"radius":15, "visible":false, "opacity":60});
+			heatmap1.toggle();
+			
+			//heatmap1.setDataSet(testData);
+			/*
+			document.getElementById("tog1").onclick = function(){
+				heatmap1.toggle();
+			};
+			
+			document.getElementById("tog2").onclick = function(){
+				heatmap2.toggle();
+			};
+			
+			document.getElementById("tog3").onclick = function(){
+				heatmap3.toggle();
+			};
+			*/
+			// this is important, because if you set the data set too early, the latlng/pixel projection doesn't work
+			google.maps.event.addListenerOnce(map, "idle", function(){
+				
+			});
+		};
+		
+		
+		
+		var chart = new Highcharts.Chart({
+		chart: {
+			renderTo: 'container',
+			//type: 'column'
+			borderWidth: 1,
+			height: 180
+		},
+		title: {
+			text: '情绪地区分布图'
+		},
+		subtitle: {
+			text: '当前话题：雷锋' + ' 当前时间：'
+		},
+		xAxis: {
+			categories: ['北京', '上海', '广东', '安徽', '江苏','天津','福建','重庆','甘肃','广西','贵州','海南','河北','河南','黑龙江','湖北','湖南','吉林','江西','辽宁','内蒙古','宁夏','青海','山东','山西','陕西','四川','西藏','新疆','云南','浙江','香港','澳门','台湾']
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: '情绪值'
+			},
+			stackLabels: {
+				enabled: true,
+				style: {
+					fontWeight: 'bold',
+					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+				}
+			}
+		},
+		legend: {
+			align: 'right',
+			x: -100,
+			verticalAlign: 'top',
+			y: 20,
+			floating: true,
+			backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+			borderColor: '#CCC',
+			borderWidth: 1,
+			shadow: false
+		},
+		tooltip: {
+			formatter: function() {
+				if (this.point.name) { // the pie chart
+
+                        s = ''+ this.series.name +': '+ this.y ;
+						return s;
+                    } else {
+						  return '<b>'+ this.x +'</b><br/>'+
+							  this.series.name +': '+ this.y +'<br/>'+
+							  'Total: '+ this.point.stackTotal;
+					}
+			}
+		},
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+				}
+			}
+		},
+		labels: {
+                items: [{
+                    /*html: '分类情绪汇总',
+                    style: {
+                        left: '40px',
+                        top: '8px',
+                        color: 'black'
+                    }*/
+                }]
+            },
+		series: [{
+			type: 'column',
+			name: '高兴',
+			data: senti_happy[0]
+		}, {
+			type: 'column',
+			name: '生气',
+			data: senti_angry[0]
+		}, {
+			type: 'column',
+			name: '悲伤',
+			data: senti_sad[0]
+		}, //{
+            //type: 'pie',
+            //name: '分类情绪汇总',
+            //data: senti_all[0]
+		//}
+		],
+		center: [10, 80],
+
+        size: 100,
+
+        showInLegend: true,
+
+        dataLabels: {
+                    enabled: true         }
+	});
+	</script>
+ 
+  
+  </body>
+</html>

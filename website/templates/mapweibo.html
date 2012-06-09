@@ -1,0 +1,233 @@
+﻿$def with (uid,user_screen_name,user_profile_image_url,user_weibo_url)
+<!DOCTYPE html xmlns:wb="http://open.weibo.com/wb">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>MapWeibo</title>
+    
+    
+    <script type="text/javascript" src="/static/js/weibovisualization.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.tagcanvas.min.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script type="text/javascript" src="/static/js/jQselectable.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.jdpicker.js"></script>
+    <script src="http://sjs.sinajs.cn/open/api/js/wb.js?appkey=2908680284" type="text/javascript" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="http://jqselectable.googlecode.com/svn/trunk/skin/selectable/style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/jdpicker.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/weibovisualization.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/syntax.css" />
+    <style type="text/css">
+		#splash-screen {
+		position: absolute;
+		z-index: 999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url(../static/images/bg-splash-screen.png) repeat;
+		}
+
+		#splash-screen img {
+			position: absolute;
+			z-index: 1000;
+			
+		}
+		h1#MapWeibo{
+			position: absolute;
+			margin-left: 300px;
+		}
+		#myCanvasContainer{
+			background-color:#FFF;
+			width:600px;
+			height:450px;
+			margin:0 0 0 0;
+			font-size:18px;
+			float:left;
+		}
+		.pic img{
+			overflow:hidden
+			display:block;
+			border: solid 2px #ccc;
+			margin-right: 10px;
+			margin-bottom: 8px;
+		}
+		#user_image img{
+			width:30px;
+			height:30px;
+		}
+		.pic a:hover img {
+			border-color: steelblue;
+		}
+		#logo{
+			width: 270px;
+			float:left;
+		}
+		#logo img{
+			width: 266px;
+			height: 30px;
+		}
+		#login img{
+			width: 160px;
+			height: 32px;
+		}
+	    #intro img{
+			width: 120px;
+			height: 40px;
+		}
+		#main{
+			background-color:#FFF;
+			margin:30px 0 0 0;
+			float:right;
+		}
+		#intro_content{
+
+			margin:0px 0 0 20px;
+		}
+		#nav {
+			position: relative;
+			font-size: 30px;
+		}
+		#nav a {
+			position: absolute;
+			color:#fff;
+			background: #888;
+			display: block;
+			padding: 8px 0;
+			height: 36px;
+			box-shadow: 0px 2px 2px #ddd;
+			-webkit-box-shadow: 0px 2px 2px #ddd;
+		}
+		#nav #nav-act {
+			font-size: 22px;
+			height: 24px;
+		}
+		#nav a:hover {
+			background: #bbb;
+		}
+		#topic{position: absolute; left:10px;top: 460px;}
+		#time{position: absolute; left:150px;top: 460px;}
+		#time_size{position: absolute; left:350px;top: 460px;}
+		#model{position: absolute; left:600px;top: 460px;}
+		#container{position: absolute; left:0px;top: 620px;}
+		#loged{position: absolute; right:0px;top: 30px;}
+	</style>
+	<script type="text/javascript" src="/static/js/mapweibo.js"></script>
+</head>
+  <body>
+  	
+	<div class="body" id="body">
+      
+      <div class="content">
+              
+          <div class="topbar">
+            <b><a href="/weiming">Home</a></b>
+            <a href="/weiming/about">About us</a>
+          </div>
+          <!--<h1 id='logo' class='pic'><a href='/weiming/mapweibo'><img src="/static/images/logo.png"  alt="MapWeibo" /></a></h1>-->
+          <div class="sidebar">
+          	<h1 id='logo' class='pic'><a href='/weiming/mapweibo'><img src="/static/images/logo.png"  alt="MapWeibo" /></a></h1>
+            
+          </div>
+          <h1>1</h1>
+          <div id="loged">
+          $if uid and user_screen_name and user_profile_image_url and user_weibo_url:
+          		<div id='logout' style="float:right;margin-top:6px;"><a href="/logout"><p>登出</p></a></div>
+            	
+                <div id='user_image' style="float:right;margin-top:10px;"><a href='$user_weibo_url'><img src="$user_profile_image_url" alt="MapWeibo" /></a></div>
+                <h2 id='welcome' style="float:right;">欢迎你！$uid$user_screen_name</h2>
+                
+         </div>
+         
+          <div class="gallery">
+            <div class='list'>
+         <div id="nav">
+                    <!--<a href="javascript:void(0);" style="width: 400px; background: #5bb4e5; left: 0px;">新浪微博全网话题推荐</a>
+                    <a href="javascript:change_nav()" style="width: 200px; left: 400px;" id="nav-act">个人话题推荐</a>
+                    <div class="clear"></div>-->
+          </div>
+
+		<div id="myCanvasContainer">
+		<canvas width="600px" height="450px" id="myCanvas">
+
+			<p>Anything in here will be replaced on browsers that support the canvas element.Hot topic will be displayed here with html5 canvas cloud tag.</p>
+
+		</canvas>
+		<div id="tags_div">
+			<ul id="tags_ul"><li><a style="font-size:1ex">热议话题</a></li></ul>
+		</div>
+
+ 		</div>
+		            <p id='intro' class='pic'><img src="/static/images/intro.png" alt="应用介绍"></p>  
+                    <p id="intro_content">
+                    <strong>MapWeibo</strong> 贯彻可视化报告的理念，革新性地将新浪微博平台话题传播路径付诸路线图地图上展示，将新浪微博平台的用户情绪报告付诸热图模式，方便用户直观了解区域化微博舆情态势，调用google地图，支持缩放、拖拽，地理层级最小可至区/县级，能够精确呈现微博发布者地理位置。
+直观的数量报告、明晰的区域划分、准确的地理位置。传统列表式报告难以兼得，mapweibo则将它们完美结合。<!--are placing the roadmap of sina weibo spreading on the China Map,we're trying to obtain the hostest topic of weibo.-->
+                    </p>
+                    <h2>Step1</h2>
+                    <p>登录并授权微博账户</p>
+                    <h2>Step2</h2>
+                    <p>选择话题、起止时间、时间粒度</strong>. </p>
+                    <h2>Step3</h2>
+                    <p>选择并进入图谱模式</p>
+                    	
+                    <p id="login" class='pic'>
+                    	$if user_screen_name:
+                  	    <wb:share-button type="button" size="big" appkey="2908680284" relateduid="1822787811" ></wb:share-button>
+                        $else:
+                            <a href="/login"><img class="button" src="/static/images/login.png" border="0" alt="用微博账号登录" /></a>
+                    </p>
+
+                     <br clear="left">
+                     
+            </div>
+            <div id="panel" style="border:1px solid blue;width:970px;height:173px;">
+            		<form action="/weiming/mapweibo/mapview" method="get">
+                    <div id="topic">
+                        <h2>选择话题</h2>
+                        <select name="topic" id="select_topic">
+                        </select>
+                    </div>
+                    <div id="time">
+                        <h2>选择起止时间</h2>
+                        
+                        <label for="starttime">Start Date:</label>
+                            <input type="text" id="starttime" name="starttime" value='2012/01/01'></input>
+                
+                        <label for="endtime">End  Date:</label>
+                            <input type="text" id="endtime" name="endtime" value='2012/05/01'></input>
+                    </div>
+                    <div id="time_size">
+                        <h2>选择查看的时间粒度</h2>
+                        <select name="timeInterval" id="select_timeInterval">
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="400">400</option>
+                        </select>
+                    </div>
+                    <div id="model">
+                        <h2>选择图谱模式</h2>
+                        <!--<input type="submit" value="spread map view"/></input>-->
+                      
+                        <button>spread map view</button>
+                        <br>
+                        <br>
+                        </form>
+                        <a href='/weiming/mapweibo/sentiment'>sentiment view</a>
+                        <br>
+                        <br>
+                        <a href='http://idec.buaa.edu.cn/graph.html?赵普'>network graph view</a>
+                    </div>
+               </div>
+                    
+                    <div id="container" style="background-color:white;width:970px;height: 500px;border;border:1px solid blue;z-index=1000;">
+                    	<ul id><li><a style="font-size:1ex">微博数量随时间分布曲线</a></li></ul>
+                    </div>​
+          </div>
+         <!--<div class="foot">Copyright &copy; 2012 <a href="http://www.buaa.edu.cn/">Buaa</a></div>-->
+      </div>
+     </div>
+   </body>
+</html>
+

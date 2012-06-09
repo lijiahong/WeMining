@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="description" content="Weibo Spread on China Map">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<link rel="shortcut icon" href="favicon.ico"/>
+<title>WeiboMapSpread</title>
+
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/main.css" />
+<link type="text/css" rel="stylesheet" href="http://jqselectable.googlecode.com/svn/trunk/skin/selectable/style.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.custom.min.js"></script>
+<!--<link type="text/css" href="css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />-->
+<link type="text/css" href="/static/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="/static/js/jquery.layout.min-1.2.0.js"></script>
+<script type="text/javascript" src="/static/js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="http://ditu.google.cn/maps/api/js?libraries=geometry&sensor=false"></script> <!--引用Maps JavaScript API 的 google.maps.geometry 库-->
+<script type="text/javascript" src="/static/js/jQselectable.js"></script>
+<script type="text/javascript" src="/static/js/clustermarker.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/js/Line.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/js/infowindow.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
+</head>
+<body>
+  <div class="ui-layout-center">
+      <div id="map_canvas"></div>
+      <ul id="line_legend">
+         <li id="line_blue"></li>
+         <li id="line_yellow"></li>
+         <li id="line_red"></li>
+      </ul>
+  </div>
+  
+  <p id="js-required" class="hidden">You need JavaScript!</p>
+  <script type="text/javascript">
+    document.getElementById('js-required').className = 'hidden';
+  </script> 
+  
+  <div class="ui-layout-west">
+      <div id="panel">
+      	  <h2>当前话题</h2>
+             <div id='present_topic'></div>
+          <h2>播放台</h2>
+          <br>
+          <div id="play_pause">
+                 <div id="play_pause1"><button>play</button></div>
+                 <div id="play_pause2"><button>pause</button></div>
+                 <div id="play_pause3"><button>reset</button></div>
+          </div>
+          <br><br><br>
+          
+          <h2>当前时间</h2>
+          <br>
+          <div id="date_div"></div>
+                 	
+        	
+            
+          
+      </div>
+  </div>
+  
+  <div class="ui-layout-north">
+      <div id="slider"></div>
+  </div>
+  
+  <div class="ui-layout-south">
+     <div id="console" class="clearfix">
+          <div id='logo'><a href='/weiming/mapweibo'><img src="/static/images/logo.png" border="0"></a></div>
+          <ul id="categories">
+          <li id="fipost">原创</li>
+              <li id="equalpost">原创等于转发</li>
+              <li id="repost">转发</li>
+          </ul>
+          <ul id="helpers">
+              <li id="all">所有</li>
+          </ul>
+     
+      </div>  
+  </div>
+
+
+
+
+</body>
+
+
+</html>
+
