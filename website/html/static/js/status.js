@@ -33,7 +33,7 @@ function drawGraph(){
 	type: "GET",
 	success: function(data){
 	    //console.log(data-count)
-	    data = String(data)
+	    data = ''+data
             total_count = data.split(';')[0];
             target_count = data.split(';')[1]; 
 	    $("#total_count").html('抓取总数:'+total_count);
@@ -59,7 +59,7 @@ $.ajax({
     url: "/count/",
     type: "GET",
     success: function(data){
-        data = String(data)
+        data = ''+data
 	total_count = data.split(';')[0];
 	target_count = data.split(';')[1];
 	count = total_count;
