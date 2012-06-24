@@ -7,7 +7,7 @@ import time
 import web
 
 
-OOPS_PAGE = 'oops.html'
+OOPS_PAGE = '/oops.html'
 
 def import_modules(modules):
     urls = []
@@ -79,8 +79,6 @@ modules = [(x[:-3], os.path.join('.', x)) for x in os.listdir('.') if x.endswith
 
 urls = import_modules(modules)
 app = web.application(urls, globals(), False)
-
-print urls
 
 #access log middleware
 func = app.wsgifunc(access_log, )

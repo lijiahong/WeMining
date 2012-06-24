@@ -2,7 +2,7 @@
 
 import web
 
-render = web.template.render('./templates/', )
+render = web.template.render('./templates/')
 
 urls = ('/spider/', )
 

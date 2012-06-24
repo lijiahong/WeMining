@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding=utf-8 -*-
+#-*- coding:utf-8 -*-
 
 '''分布式爬虫中央控制器
 '''
@@ -129,7 +129,7 @@ def handle(fd, address):
             fd.flush()
         elif action == 'getuid':
             if not uid_queue.empty():
-                uid = uid_queue.get()
+                uid = uid_queue.pop()
                 pages = 0
                 user = db.users.find_one({'_id': uid})   
                 try:

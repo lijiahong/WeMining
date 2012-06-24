@@ -1,4 +1,4 @@
-#-*- coding=utf-8 -*-
+#-*- coding:utf-8 -*-
 
 '''Sina Weibo hot topics tweets id queues
 '''

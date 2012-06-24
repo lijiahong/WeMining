@@ -1,5 +1,5 @@
+#-*- coding:utf-8 -*-
 #!/usr/bin/env python
-# -*- coding=utf-8 -*-
 
 '''根据用户关系网获得新用户放入队列
 '''

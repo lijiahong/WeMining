@@ -4,20 +4,20 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>爬虫</title>
-    <script src="/static/libraries/RGraph.common.core.js" ></script>
-    <script src="/static/libraries/RGraph.common.effects.js" ></script>
-    <script src="/static/libraries/RGraph.common.context.js" ></script>
-    <script src="/static/libraries/RGraph.line.js" ></script>
-    <script src="/static/libraries/jquery.min.js" ></script>
+    <script src="/static/libraries/RGraph.common.core.js"></script>
+    <script src="/static/libraries/RGraph.common.effects.js"></script>
+    <script src="/static/libraries/RGraph.common.context.js"></script>
+    <script src="/static/libraries/RGraph.line.js"></script>
+    <script src="/static/libraries/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="/static/libraries/excanvas.original.js"></script><![endif]-->
     <script src="/static/js/status.js"></script>
-    <!--[if lt IE 9]><script src="../excanvas/excanvas.original.js"></script><![endif]-->
   </head>
   <body style='margin:0 auto; text-align:center;'>
     <h1></h1>
     <p id='total_count'>抓取总数:</p>
     <p id='target_count'>目标用户抓取总数:</p>
     <script>
-      if (RGraph.isOld()) {
+      if(RGraph.isOld()){
       document.write('<div style="background-color: #fee; border: 2px dashed red; padding: 5px"><b>Important</b><br /><br /> Internet Explorer does not natively support the HTML5 canvas tag, so if you want to see the charts, you can either:<ul><li>Install <a href="http://code.google.com/chrome/chromeframe/">Google Chrome Frame</a></li><li>Use ExCanvas. This is provided in the RGraph Archive.</li><li>Use another browser entirely. Your choices are Firefox 3.5+, Chrome 2+, Safari 4+ or Opera 10.5+. </li></ul> <b>Note:</b> Internet Explorer 9 fully supports the canvas tag.</div>');
       }
     </script>
