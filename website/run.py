@@ -6,7 +6,7 @@ import sys
 import time
 import web
 
-
+FILE_NAME = 'run.py'
 OOPS_PAGE = '/oops.html'
 
 def import_modules(modules):
@@ -73,9 +73,8 @@ class access_log(object):
             _access_log(environ, self.status)
 
 #integrate py file in (url, class) map
-current_file = os.path.basename(sys.argv[0])
 port = sys.argv[1]
-modules = [(x[:-3], os.path.join('.', x)) for x in os.listdir('.') if x.endswith('.py') and x != current_file]
+modules = [(x[:-3], os.path.join('.', x)) for x in os.listdir('.') if x.endswith('.py') and x != FILE_NAME]
 
 urls = import_modules(modules)
 app = web.application(urls, globals(), False)
