@@ -1,8 +1,0 @@
-# Netscape HTTP Cookie File
-# http://www.netscape.com/newsref/std/cookie_spec.html
-# This is a generated file!  Do not edit.
-
-.sina.cn	TRUE	/	FALSE	1341196618	gsid_CTandWM	3_5bc09423734b4aad953f2dabf15e80933e9ef5
-.sina.com.cn	TRUE	/	FALSE	1341196617	gsid_CTandWM	3_5bc09423734b4aad953f2dabf15e80933e9ef5
-.weibo.cn	TRUE	/	FALSE	1341196620	_WEIBO_UID	2696330413
-.weibo.cn	TRUE	/	FALSE	1341196620	gsid_CTandWM	3_5bc09423734b4aad953f2dabf15e80933e9ef5
