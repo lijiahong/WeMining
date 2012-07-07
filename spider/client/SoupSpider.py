@@ -35,30 +35,46 @@ config = ConfigParser()
 config.read(CONFIG_FILE)
 try:
     HOST = config.get('server', 'host')
-    PORT =config.getint('server', 'port')
+    PORT = config.getint('server', 'port')
     THREAD_NUM = config.getint('number', 'thread')
-    black_str = config.get('user', 'blacklist')
-    if black_str:
-        BLACK_UIDS = black_str.split(',')
-    else:
-        BLACK_UIDS = []
 except:
     LOGGER.error('Config File Error!')
     exit()
 
 
+def recv_line(socket):
+    line = sokcet.recv(1024)
+    done = False;
+    while not done:
+        if re.search('\r\n', buffer):
+            done = True
+        else:
+            more = socket.recv(1024)
+            if not more:
+                done = True
+            else:
+                line += more
+    return line
+
+
 class WeiboURL(object):
     '''根据地址获得微博中的网页 线程安全
     '''
-    def __init__(self):
+    def __init__(self, passport, proxy):
         user_agent = '''Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us)
                 AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4
                 Mobile/7B334b Safari/531.21.10'''
-
-        cookie_str = load_cookies()
+        if not passport:
+            print 'no passport available, check server have more account.'
+            LOGGER.error('no passport available')
+        cookie_str = load_cookies(passport)
         self.headers = {'User-Agent': user_agent,
                   'Cookie': cookie_str}
-        self.http_pool = urllib3.connection_from_url("http://weibo.cn", timeout=5, maxsize=THREAD_NUM*2, headers=self.headers)
+        if proxy:
+            print 'use proxy %s' % proxy
+            self.http_pool = urllib3.proxy_from_url('http://%s/' % proxy, timeout=5, maxsize=THREAD_NUM*2, headers=self.headers)
+        else:
+            self.http_pool = urllib3.connection_from_url("http://weibo.cn", timeout=5, maxsize=THREAD_NUM*2, headers=self.headers)
 
     def urlopen(self, url):
         res = self.http_pool.urlopen('GET', url, headers=self.headers)
@@ -71,11 +87,40 @@ class Spider(object):
     def __init__(self, task):
         self.task = task
         self.spiders = []
-        self.client = WeiboURL()
+        self.socket = socket.socket()
+        self.socket.connect((HOST ,PORT))
+        #get proxy host and port
+        self.socket.sendall(json.dumps({'action': 'getproxy'})+'\r\n')
+        res = recv_line(self.socket)
+        r = json.loads(res, object_hook=_obj_hook)
+        proxy = None
+        if hasattr(r, 'error'):
+            LOGGER.error(r.error)
+        else:
+            proxy = r.proxy
+        #get weibo account name and password
+        self.socket.sendall(json.dumps({'action': 'getpassport'})+'\r\n')
+        res = recv_line(self.socket)
+        r = json.loads(res, object_hook=_obj_hook)
+        passport = None
+        if hasattr(r, 'error'):
+            LOGGER.error(r.error)
+        else:
+           passprot = r.passport
+        #get black user id list
+        self.socket.sendall(json.dumps({'action': 'getblacklist'})+'\r\n')
+        res = recv_line(self.socket)
+        r = json.loads(res, object_hook=_obj_hook)
+        self.balck_list = []
+        if hasattr(r, 'error'):
+            LOGGER.error(r.error)
+        else:
+            black_list = r.black_list
+            if black_list:
+                self.black_list = black_list
+        self.socket.close()
+        self.client = WeiboURL(passport, proxy)
         self.seg = smallseg.SEG()
-        self.black_list = BLACK_UIDS
-        self.follow_page = 10
-        self.status_page = 10
         self.stoped = False
 
 
@@ -110,7 +155,7 @@ class SpiderThread(threading.Thread):
 
     def getuid(self):
         self.socket.sendall(json.dumps({'action': 'getuid'})+ '\r\n')
-        res = self.socket.recv(1024)
+        res = recv_line(self.socket)
         r = json.loads(res, object_hook=_obj_hook)
         if hasattr(r, 'error'):
             LOGGER.error(r.error)
@@ -120,7 +165,7 @@ class SpiderThread(threading.Thread):
 
     def gettargetuid(self):
         self.socket.sendall(json.dumps({'action': 'gettargetuid'})+'\r\n')
-        res = self.socket.recv(1024)
+        res = recv_line(self.socket)
         r = json.loads(res, object_hook=_obj_hook)
         if hasattr(r, 'error'):
             LOGGER.error(r.error)
@@ -134,7 +179,8 @@ class SpiderThread(threading.Thread):
         except:
             return None
         self.socket.sendall(json.dumps({'action': 'getuserinfo', 'data': name})+ '\r\n')
-        res = self.socket.recv(1024)
+        done = false
+        res = recv_line(self.socket)
         r = json.loads(res, object_hook=_obj_hook)
         if hasattr(r, 'error'):
             return None
@@ -147,7 +193,7 @@ class SpiderThread(threading.Thread):
         except:
             return None
         self.socket.sendall(json.dumps({'action': 'postdata', 'data': data})+ '\r\n')
-        res = self.socket.recv(1024)
+        res = recv_line(self.socket)
         r = json.loads(res, object_hook=_obj_hook)
         if hasattr(r, 'error'):
             LOGGER.error(r.error)
@@ -495,4 +541,5 @@ def main():
 if __name__ == '__main__':
     #profile.run('main()')
     main()
+
 

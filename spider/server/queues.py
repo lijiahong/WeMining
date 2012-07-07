@@ -1,6 +1,8 @@
 import redis
 
 class UidQueue(object):
+    '''Uid Queue, each uid spidering a person's all tweets
+    '''
     def __init__(self, queue_name='uid_queue'):
         self.r = redis.Redis()
         self.queue_name = queue_name
@@ -20,7 +22,85 @@ class UidQueue(object):
         else:
             return False
 
+class UidBlackList(object):
+    '''Uid that spider don't touch
+    '''
+    def __init__(self, list_name='uid_black_list'):
+        self.r = redis.Redis()
+        self.list_name = list_name
+
+    def add(self, value):
+        self.r.sadd(self.list_name, value)
+
+    def remove(self, value):
+        self.r.srem(self.list_name, value)
+        
+    def get(self):
+        return self.r.smembers(self.list_name)
+
+    def empty(self):
+        if not self.r.scard(self.queue_name):
+            return True
+        else:
+            return False 
+
+class ProxyHash(object):
+    '''Proxy host:port client ip or 0 if not using
+    '''
+    def __init__(self, hash_name='proxy_hash'):
+        self.r = redis.Redis()
+        self.hash_name = hash_name
+
+    def get(self, client):
+        proxys = self.r.hkeys(self.hash_name)
+        for proxy in proxys:
+            if self.r.hget(self.hash_name, proxy) == client:
+                return proxy
+        for proxy in proxys:
+            if not self.r.hget(self.hash_name, proxy):
+                self.set(proxy, client)
+                return proxy
+        return None
+
+    def free(self, proxy):
+        self.r.hset(self.hash_name, proxy, '0')
+    
+    def set(self, proxy, client=None):
+        if not client:
+            self.r.hset(self.hash_name, proxy, '0')
+        else:
+            self.r.hset(self.hash_name, proxy, client)
+
+def PassportHash(object):
+    '''User name:password client ip or 0 if not using
+    '''
+    def __init__(self, hash_name='passport_hash'):
+        self.r = redis.Redis()
+        self.hash_name = hash_name
+
+    def get(self, client):
+        passports = self.r.hkeys(self.hash_name)
+        for passport in passports:
+            if self.r.hget(self.hash_name, passport) == client:
+                return passport
+        for passport in passports:
+            if not self.r.hget(self.hash_name, passport):
+                self.set(passport, client)
+                return passport
+        return None
+
+    def free(self, passport):
+        self.r.hset(self.hash_name, passport, '0')
+    
+    def set(self, passport, client=None):
+        if not client:
+            self.r.hset(self.hash_name, passport, '0')
+        else:
+            self.r.hset(self.hash_name, passport, client)
+
 class TargetUidList(object):
+    '''Famous and Daren's Uids, a circle list
+    '''
     def __init__(self, list_name='uid_list_realtime', hash_name='uid_hash_realtime', index_info='index_info_hash'):
         pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
         self.r = redis.Redis(connection_pool=pool)

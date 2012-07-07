@@ -20,12 +20,16 @@ import json
 
 
 from config import LOGGER, HOST, PORT, DB_HOST, DB_PORT, DB_USER, DB_PWD
-from queues import UidQueue, TargetUidList
+from clean import removeModifiedUser, addNewUser
+from queues import UidQueue, TargetUidList, UidBlackList, ProxyHash, PassportHash
         
         
 #任务队列
 uid_queue = UidQueue()
 target_uid_queue = TargetUidList()
+black_list = UidBlackList()
+proxy_hash = ProxyHash()
+passport_hash = PassportHash()
 data_queue = Queue.Queue()
 
 
@@ -108,6 +112,9 @@ def handle(fd, address):
     global data_queue
     global uid_queue
     global target_uid_queue
+    global black_list
+    global proxy_hash
+    global passport_hash
     db = getDB()
     LOGGER.info('connection accepted from %s:%s' % address)
     while True:
@@ -119,6 +126,8 @@ def handle(fd, address):
         if hasattr(r, 'action'):
             action = r.action
         else:
+            fd.write(json.dumps({'error': 'wrong instructions'})+'\r\n')
+            fd.flush()
             break
         if action == 'postdata':
             try:
@@ -159,7 +168,31 @@ def handle(fd, address):
             else:
                 fd.write(json.dumps({'error': 'target uid queue empty'})+'\r\n')
             fd.flush()
+        elif action == 'getpassport':
+            passport = passport_hash.get(address.split(':')[0])
+            if passport:
+                username = passport.split(':')[0]
+                passport = passport.split(':')[1]
+                fd.write(json.dumps({'passport': {'username': username, 'passport': passport}})+'\r\n')
+            else:
+                fd.write(json.dumps({'error': 'no free passport'})+'\r\n')
+            fd.flush()
+        elif action == 'getproxy':
+            proxy = proxy_hash.get(address.split(':')[0])
+            if proxy:
+                fd.write(json.dumps({'proxy': proxy})+'\r\n')
+            else:
+                fd.write(json.dumps({'error': 'no free proxy'})+'\r\n')
+            fd.flush()
+        elif action == 'getblacklist':
+            if black_list.empty():
+                fd.write(json.dumps({'error': 'empty uid black list'})+'\r\n')
+            else:
+                fd.write(json.dumps({'black_list': black_list.get()})+'\r\n')
+            fd.flush() 
         else:
+            fd.write(json.dumps({'error': 'wrong instructions'})+'\r\n')
+            fd.flush()
             break
     LOGGER.info('end connection %s:%s' % address)
 
@@ -171,15 +204,13 @@ def main():
     dct = DataConsumerThread(db=db, data_queue=data_queue, uid_queue=uid_queue)
     dct.setDaemon(True)
     dct.start()
-    users = db.users.find({'last_modify': 0})
-    user_num = users.count()
-    print '%s users will push to uid queue...' % user_num
-    for user in users:
-        uid = int(user['_id'])
-        uid_queue.add(uid)
-    print 'push ok.'
+
+    removeModifiedUser()
+    addNewUser()
+
     server = eventlet.listen((HOST, PORT))
     pool = eventlet.GreenPool()
+
     while True:
         try:
             new_sock, address = server.accept()
@@ -188,7 +219,7 @@ def main():
             break
         except Exception, e:
             LOGGER.error('Server Error: %s' % e)
+
     dct.stoped = True
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__': main()
