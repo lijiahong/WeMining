@@ -15,10 +15,11 @@ def removeModifiedUser():
     '''
     users = db.users.find({'last_modify': {'$gt':0}})
     user_num = users.count()
-    print user_num
+    print '%s users will be removed from uid queue' % user_num
     for user in users:
         uid = int(user['_id'])
         r.srem('uid_queue', uid)
+    print 'removed completed'
         
 def addNewUser():
     '''添加redis队列中Mongodb数据库中新添加的uid

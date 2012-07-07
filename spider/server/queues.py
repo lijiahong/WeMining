@@ -71,7 +71,7 @@ class ProxyHash(object):
         else:
             self.r.hset(self.hash_name, proxy, client)
 
-def PassportHash(object):
+class PassportHash(object):
     '''User name:password client ip or 0 if not using
     '''
     def __init__(self, hash_name='passport_hash'):
