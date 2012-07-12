@@ -37,13 +37,12 @@ try:
     HOST = config.get('server', 'host')
     PORT = config.getint('server', 'port')
     THREAD_NUM = config.getint('number', 'thread')
-except:
-    LOGGER.error('Config File Error!')
-    exit()
+except Exception, e:
+    LOGGER.error('%s Config File Error!' % e)
 
 
 def recv_line(socket):
-    line = sokcet.recv(1024)
+    line = socket.recv(1024)
     done = False;
     while not done:
         if re.search('\r\n', buffer):

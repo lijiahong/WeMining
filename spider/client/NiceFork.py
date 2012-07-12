@@ -11,17 +11,7 @@ import urllib2
 import cookielib
 
 from BeautifulSoup import BeautifulSoup
-from ConfigParser import ConfigParser
-from config import LOGGER, CONFIG_FILE
-
-config = ConfigParser()
-config.read(CONFIG_FILE)
-try:
-    WEIBO_USER = config.get('user', 'name')
-    WEIBO_PWD = config.get('user', 'password')
-except:
-    LOGGER.error('Config File Error!')
-    exit()
+from config import LOGGER
 
 #设置cookies文件，
 COOKIES_FILE = 'cookies.txt'
