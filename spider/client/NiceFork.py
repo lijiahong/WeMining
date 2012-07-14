@@ -20,7 +20,7 @@ def load_cookies(passport):
     '''模拟浏览器登录微博,获取cookies字符串
     '''
     mobile = passport['username']
-    password = passport['password']
+    password = passport['passport']
     cookie_str = '' 
     user_agent = '''Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us)
             AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4
