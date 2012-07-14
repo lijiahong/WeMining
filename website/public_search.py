@@ -27,7 +27,8 @@ class Search(object):
             query_dict['_keywords'] =  {'$all': keywords}
         else:
             query_dict['_keywords'] =  {'$in': keywords}
-        return self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])    
+        results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
+        return list(results)
 
                  
 def main():
