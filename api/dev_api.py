@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding=utf-8 -*-
+#-*- coding:utf-8 -*-
 
 '''新浪微博API SDK(Liao Xuefeng,askxuefeng@gmail.com)改进
    基于BasicAuth验证,仅限于应用开发者使用
