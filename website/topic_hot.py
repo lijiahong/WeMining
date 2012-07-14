@@ -12,8 +12,29 @@ urls = ('/api/topic/hot.json', )
 
 class handler():
     def GET(self):
-        form = web.input(type=None)
+        form = web.input(type=None, start=None, end=None)
         query_dict = {}
-        if type:
+        if form.type:
             query_dict['type'] = form.type
-        return json.dumps(list(db['topics'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])))
+        start = form.start
+        end = form.end
+        if not start:
+            start = 0
+        else:
+            start = int(start)
+        if not end:
+            end = int(time.time())
+        else:
+            end = int(end)
+        query_dict['ts'] = {'$gte': start, '$lte': end}
+        results = []
+        try:
+            r = db['topics'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
+        except:
+            return json.dumps({'error': 'something wrong.'})
+        for r in :
+            results.append({'topic': r['topic'],
+                            'count': r['count'],
+                            'ts': r['ts'],
+                            'type': r['type']})
+        return json.dumps(results)
