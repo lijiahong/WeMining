@@ -12,11 +12,7 @@ urls = ('/api/topic/hot.json', )
 
 class handler():
     def GET(self):
-        form = web.input(type=None,start=None, end=None)
-        if not form.start:
-            form.start = 0
-        if not form.end:
-            form.end = time.time()
+        form = web.input(type=None)
         query_dict = {}
         if type:
             query_dict['type'] = form.type
