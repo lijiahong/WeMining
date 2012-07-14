@@ -45,7 +45,7 @@ def recv_line(socket):
     line = socket.recv(1024)
     done = False;
     while not done:
-        if re.search('\r\n', buffer):
+        if re.search('\r\n', line):
             done = True
         else:
             more = socket.recv(1024)
