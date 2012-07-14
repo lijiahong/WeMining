@@ -105,7 +105,7 @@ class Spider(object):
         if hasattr(r, 'error'):
             LOGGER.error(r.error)
         else:
-           passprot = r.passport
+           passport = r.passport
         #get black user id list
         self.socket.sendall(json.dumps({'action': 'getblacklist'})+'\r\n')
         res = recv_line(self.socket)
