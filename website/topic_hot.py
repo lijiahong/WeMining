@@ -29,10 +29,10 @@ class handler():
         query_dict['ts'] = {'$gte': start, '$lte': end}
         results = []
         try:
-            r = db['topics'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
+            res = db['topics'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
         except:
             return json.dumps({'error': 'something wrong.'})
-        for r in :
+        for r in res:
             results.append({'topic': r['topic'],
                             'count': r['count'],
                             'ts': r['ts'],
