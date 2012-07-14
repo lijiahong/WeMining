@@ -18,7 +18,7 @@ class handler():
         if not form.end:
             form.end = time.time()
         query_dict = {}
-        query_dict['ts'] = {'$gte': start, '$lte': end}
+        query_dict['ts'] = {'$gte': form.start, '$lte': form.end}
         if type:
             query_dict['type'] = type
         return json.dumps(list(db['topics'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])))
