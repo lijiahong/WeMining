@@ -42,7 +42,7 @@ class UidBlackList(object):
         self.r.srem(self.list_name, value)
         
     def get(self):
-        return self.r.smembers(self.list_name)
+        return list(self.r.smembers(self.list_name))
 
     def empty(self):
         if not self.r.scard(self.list_name):
