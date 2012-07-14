@@ -16,7 +16,6 @@ from spider.config import getDB
 from tokenizer.fenci import cut
 
 ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-socket.settimeout(10)
 api = APIClient('hope_thebest@qq.com', 'hanyang', '4136789956')
 source_a_pattern = r'<a(.+?)>(.+?)</a>'
 
