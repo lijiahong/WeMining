@@ -265,7 +265,7 @@ class SpiderThread(threading.Thread):
                 print post['text'].encode(sys.stdout.encoding, 'ingore')
             if len(posts):
                 self.request(action='postdata', data={'target_statuses': posts})
-            time.sleep(0.5)
+            time.sleep(1)
             current_page += 1
         
     def travel(self, uid=None, pages=0):
@@ -449,7 +449,7 @@ class SpiderThread(threading.Thread):
                 else:
                     LOGGER.error('Repost User Missed')
                     return None
-                time.sleep(0.1)
+                time.sleep(0.5)
                 source_user_name, source_user_verified, source_user_gender, source_user_location, \
                                   source_user_desc, source_user_tags = self._travel_info(source_user_uid)
                 if not source_user_name or not source_user_gender or not source_user_location:
@@ -540,5 +540,3 @@ def main():
 if __name__ == '__main__':
     #profile.run('main()')
     main()
-
-

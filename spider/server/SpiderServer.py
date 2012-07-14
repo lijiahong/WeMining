@@ -201,12 +201,17 @@ def main():
     global uid_queue
     global data_queue
     db = getDB()
+
     dct = DataConsumerThread(db=db, data_queue=data_queue, uid_queue=uid_queue)
     dct.setDaemon(True)
     dct.start()
 
-    removeModifiedUser()
-    addNewUser()
+    try:
+        if sys.argv[1] == 'update uid queue':
+            removeModifiedUser()
+            addNewUser()
+    except IndexError:
+        pass
 
     server = eventlet.listen((HOST, PORT))
     pool = eventlet.GreenPool()
