@@ -21,7 +21,7 @@ def getDB():
 
 
 #分词模块
-def cut(text,f=['n', 'nr', 'ns', 'nt'])
+def cut(text,f=['n', 'nr', 'ns', 'nt']):
     s = scws.Scws()
     s.set_charset('utf-8')
     s.set_dict('/usr/local/scws/etc/dict.utf8.xdb',scws.XDICT_MEM)

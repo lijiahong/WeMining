@@ -2,10 +2,11 @@
 
 import json
 import web
+import pymongo
 
 from config import getDB, cut
 
-urls = ('/api/search/search.json', )
+urls = ('/api/public/search.json', )
 
 class handler():
     def GET(self):
