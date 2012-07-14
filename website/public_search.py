@@ -3,6 +3,7 @@
 import json
 import web
 import pymongo
+import math
 
 import sys
 sys.path.append('..')
@@ -35,7 +36,7 @@ class Search(object):
             query_dict['_keywords'] =  {'$in': keywords}
         try:
             results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
-            pages = results.count()
+            pages = int(math.ceil(results.count()/200.0))
             results = results.skip((page-1)*200).limit(200)
         except:
             return {'error': 'something wrong'}
