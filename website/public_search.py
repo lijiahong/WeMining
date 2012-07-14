@@ -34,10 +34,12 @@ class Search(object):
         else:
             query_dict['_keywords'] =  {'$in': keywords}
         try:
-            results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)]).skip((page-1)*20).limit(20)
+            results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
+            pages = results.count()
+            results = results.skip((page-1)*200).limit(200)
         except:
             return {'error': 'something wrong'}
-        return list(results)
+        return {'results': list(results), 'page': page, 'total_pages': pages}
 
                  
 def main():
