@@ -4,7 +4,11 @@ import json
 import web
 import pymongo
 
-from config import getDB, cut
+import sys
+sys.path.append('..')
+
+from config import getDB
+from tokenizer.fenci import cut
 
 urls = ('/api/public/search.json', )
 
@@ -12,7 +16,7 @@ class handler():
     def GET(self):
         form = web.input(q=None,t=None, page=None)
         search = Search()
-        keywords = cut(form.q)
+        keywords = cut(form.q, f=['n', 'nr', 'ns', 'nt'])
         if not form.page:
             form.page = 1
         return json.dumps(search.query(keywords, all=True if not form.t else False, page=int(form.page)))
