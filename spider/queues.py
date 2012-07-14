@@ -45,7 +45,7 @@ class UidBlackList(object):
         return self.r.smembers(self.list_name)
 
     def empty(self):
-        if not self.r.scard(self.queue_name):
+        if not self.r.scard(self.list_name):
             return True
         else:
             return False 
