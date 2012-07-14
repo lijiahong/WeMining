@@ -1,13 +1,23 @@
 #-*- coding:utf-8 -*-
 
-import pymongo
-from config import db
+import json
+import web
+
+from config import getDB, cut
+
+urls = ('/api/search/search.json', )
+
+class handler():
+    def GET(self):
+        form = web.input(q=None,t=None)
+        search = Search()
+        keywords = cut(form.q)
+        return json.dumps(search.query(keywords, all=True if form.t else False))
 
 
 class Search(object):
-    
     def __init__(self):
-        pass
+        self.db = getDB()
     
     def query(self, keywords, all=True, **kw):
         query_dict = {}
@@ -16,7 +26,7 @@ class Search(object):
             query_dict['_keywords'] =  {'$all': keywords}
         else:
             query_dict['_keywords'] =  {'$in': keywords}
-        return db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])    
+        return self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])    
 
                  
 def main():

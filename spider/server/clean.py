@@ -3,12 +3,13 @@
 import redis
 import pymongo
 
-r = redis.Redis()
-connection = pymongo.Connection()
-db = connection.admin
-db.authenticate('root', 'root')
-db = connection.weibo
+import sys
+sys.path.append("..")
 
+from config import getDB
+
+db = getDB()
+r = redis.Redis()
 
 def removeModifiedUser():
     '''删除redis队列中已经被访问的用户uid

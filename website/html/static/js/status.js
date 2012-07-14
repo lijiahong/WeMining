@@ -29,7 +29,7 @@ function drawGraph(){
     graph.Draw();
     // Add some data to the data arrays
     jQuery.ajax({
-	url: "/count/",
+	url: "/api/spider/count.json",
 	type: "GET",
 	success: function(data){
 	    //console.log(data-count)
@@ -56,7 +56,7 @@ function drawGraph(){
 
 var count;
 $.ajax({
-    url: "/count/",
+    url: "/api/spider/count.json",
     type: "GET",
     success: function(data){
         data = ''+data

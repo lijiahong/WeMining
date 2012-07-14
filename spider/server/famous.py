@@ -1,5 +1,8 @@
 #-*- coding:utf-8 -*-
 
+import sys
+sys.path.append("..")
+
 from splinter.browser import Browser
 import redis
 import time

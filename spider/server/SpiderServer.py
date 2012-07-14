@@ -5,7 +5,7 @@
 '''
 
 import pymongo
-import redis
+#import redis
 import eventlet
 
 import threading
@@ -13,13 +13,15 @@ import Queue
 
 import os
 import sys
+sys.path.append("..")
+
 import time
 import random
 import re
 import json
 
 
-from config import LOGGER, HOST, PORT, DB_HOST, DB_PORT, DB_USER, DB_PWD
+from config import LOGGER, HOST, PORT, getDB
 from clean import removeModifiedUser, addNewUser
 from queues import UidQueue, TargetUidList, UidBlackList, ProxyHash, PassportHash
         
@@ -52,15 +54,6 @@ def _obj_hook(pairs):
     for k, v in pairs.iteritems():
         o[str(k)] = v
     return o
-
-
-def getDB():
-    '''获取数据库对象
-    '''
-    connection = pymongo.Connection(DB_HOST, DB_PORT)
-    db = connection.admin
-    db.authenticate(DB_USER, DB_PWD)
-    return connection.weibo
 
 
 class DataConsumerThread(threading.Thread):

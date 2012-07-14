@@ -1,8 +1,10 @@
 #-*- coding:utf-8 -*-
 
-from config import db
+from config import getDB
 
-urls = ('/count/.*', )
+urls = ('/api/spider/count.json', )
+
+db = getDB()
 
 class handler():
     def GET(self):
