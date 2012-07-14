@@ -20,6 +20,7 @@ from dev_api import APIClient
 ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 api = APIClient('hope_thebest@qq.com', 'hanyang', '4136789956')
 source_a_pattern = r'<a(.+?)>(.+?)</a>'
+db = getDB()
 
 
 def clean_status(status_text):

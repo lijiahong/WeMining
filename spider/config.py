@@ -27,7 +27,7 @@ WEIBO_PWD = 'weibomap'
 COOKIES_FILE = 'cookies.txt'
 
 #设置日志记录对象
-LOG_FILE = 'log.txt'
+LOG_FILE = '/opt/WeMining/log.txt'
 LOG_FORMAT = '%(levelname)s %(asctime)-15s %(message)s'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 LOGGER = logging.getLogger()
