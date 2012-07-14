@@ -5,6 +5,7 @@
 
 import logging
 import sys
+import pymongo
 
 #中央控制器地址和端口
 HOST = '0.0.0.0'
