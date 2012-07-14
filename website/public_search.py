@@ -10,17 +10,12 @@ urls = ('/api/public/search.json', )
 
 class handler():
     def GET(self):
-        form = web.input(q=None,t=None, start=None, end=None, page=None)
+        form = web.input(q=None,t=None, page=None)
         search = Search()
         keywords = cut(form.q)
-        args = {}
-        if form.start:
-            args['ts'] = {'$gte': form.start}
-        if form.end:
-            args['ts'] = {'$lte': form.end}
         if not form.page:
             form.page = 1
-        return json.dumps(search.query(keywords, all=True if not form.t else False, page=form.page, **args))
+        return json.dumps(search.query(keywords, all=True if not form.t else False, page=int(form.page)))
 
 
 class Search(object):

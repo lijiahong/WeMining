@@ -30,5 +30,5 @@ def cut(text,f=['n', 'nr', 'ns', 'nt']):
     s.set_rules('/usr/local/scws/etc/rules.utf8.ini')
     s.set_ignore(1)
     stopwords = set([line.strip('\r\n') for line in file('ext_stopword.dic')])
-    return [token[0].decode('utf-8') for token in s.participle(text.encode('utf-8')) if token[0] not in stopwords and token[1] not in f]
+    return [token[0].decode('utf-8') for token in s.participle(text.encode('utf-8')) if token[0] not in stopwords and token[1] in f]
     
