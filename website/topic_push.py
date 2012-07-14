@@ -2,6 +2,7 @@
 
 import json
 import web
+import re
 
 import sys
 sys.path.append('..')
@@ -19,7 +20,9 @@ class handler():
         mid = form.mid
         info = form.info
         if not mid or not info:
-            return json.dumps({'error': 'wrong argmuents.'})
+            return json.dumps({'error': 'wrong argmuents need both mid and its info.'})
+        if not re.search(r'([a-z]|[A-Z]|[0-9])+', mid):
+            return json.dumps({'error': 'wrong mid format,need some like "ykBUBdjEm"'})
         try:
             job_list.push(mid, info)
             return json.dumps({'status': 'ok'})
