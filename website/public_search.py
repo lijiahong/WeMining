@@ -29,7 +29,10 @@ class Search(object):
             query_dict['_keywords'] =  {'$all': keywords}
         else:
             query_dict['_keywords'] =  {'$in': keywords}
-        results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)]).skip((page-1)*20).limit(20)
+        try:
+            results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)]).skip((page-1)*20).limit(20)
+        except:
+            return {'error': 'something wrong'}
         return list(results)
 
                  

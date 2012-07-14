@@ -3,6 +3,7 @@
 
 import os
 import sys
+import platform
 import time
 import web
 
@@ -83,6 +84,14 @@ app = web.application(urls, globals(), False)
 func = app.wsgifunc(access_log, )
 web.config.debug = False
 
-#fork is better than epoll or select?
-from flup.server.fcgi_fork import WSGIServer
-WSGIServer(func, bindAddress=('127.0.0.1', int(port))).run()
+whoami = platform.system()
+
+if whoami == 'Windows':
+    app.run()
+elif whoami =='Linux':
+    #is fork better than epoll or select?
+    from flup.server.fcgi_fork import WSGIServer
+    WSGIServer(func, bindAddress=('127.0.0.1', int(port))).run()
+else:
+    print 'which system do you use?'
+
