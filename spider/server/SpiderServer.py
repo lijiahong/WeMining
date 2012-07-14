@@ -162,7 +162,7 @@ def handle(fd, address):
                 fd.write(json.dumps({'error': 'target uid queue empty'})+'\r\n')
             fd.flush()
         elif action == 'getpassport':
-            passport = passport_hash.get(address.split(':')[0])
+            passport = passport_hash.get(addresss[0])
             if passport:
                 username = passport.split(':')[0]
                 passport = passport.split(':')[1]
@@ -171,7 +171,7 @@ def handle(fd, address):
                 fd.write(json.dumps({'error': 'no free passport'})+'\r\n')
             fd.flush()
         elif action == 'getproxy':
-            proxy = proxy_hash.get(address.split(':')[0])
+            proxy = proxy_hash.get(address[0])
             if proxy:
                 fd.write(json.dumps({'proxy': proxy})+'\r\n')
             else:
