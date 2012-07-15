@@ -4,6 +4,8 @@
 import sys
 sys.path.append('..')
 
+import time
+
 from api.dev_api import APIClient
 from spider.config import getDB
 
@@ -27,7 +29,7 @@ def main():
     try:
         action = sys.argv[1]
         api = APIClient('linhao1992@gmail.com', 'weibomap', '2298231745')
-        present_time = time.time()
+        present_time = int(time.time())
         data = topic(api, type=action)
         db = getDB()
         if data:
