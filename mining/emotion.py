@@ -49,7 +49,7 @@ class EmotionClassifier(object):
                 results[tnum] = 1
                 tfidfFile.write('%s\n' % tc)
         tfidfFile.close()
-        cmd = 'liblinear/predict %s %s %s' % ('/tmp/WeMining/input/%s.tmp' % new_id, self.model_name, '/tmp/WeMining/output/%s.tmp'new_id)
+        cmd = 'liblinear/predict %s %s %s' % ('/tmp/WeMining/input/%s.tmp' % new_id, self.model_name, '/tmp/WeMining/output/%s.tmp' % new_id)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
         while not out:
