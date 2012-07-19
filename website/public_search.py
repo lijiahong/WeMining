@@ -8,10 +8,9 @@ import math
 import sys
 sys.path.append('..')
 
-from config import getDB
 from mining.emotion import EmotionClassifier
+from config import getDB
 from tokenizer.fenci import cut
-
 
 urls = ('/api/public/search.json', )
 
