@@ -16,28 +16,29 @@ from gensim import corpora, models
 class EmotionClassifier(object):
 
     def __init__(self, dict_name='tweets.dict', model_name='emotion_model'):
-        self.dict_name = dict_name
-        self.model_name = model_name
-        f = open(dict_name, 'rb')
+        mining_path = '/opt/WeMining/mining/'
+        self.dict_name = '%s%s' % (mining_path, dict_name)
+        self.model_name = '%s%s' % (mining_path, model_name)
+        f = open(self.dict_name, 'rb')
         self.dictionary = cPickle.load(f)
         f.close()
 
     def cmd_predict(self, texts):
-        if not os.path.exists('./tmp/input/'):
-            os.makedirs('./tmp/input/')
-        if not os.path.exists('./tmp/output/'):
-            os.makedirs('./tmp/output/')
+        if not os.path.exists('/tmp/WeMining/input/'):
+            os.makedirs('/tmp/WeMining/input/')
+        if not os.path.exists('/tmp/WeMining/output/'):
+            os.makedirs('/tmp/WeMining/input/')
         dictionary = self.dictionary
         corpus = [dictionary.doc2bow(text) for text in texts]
         tfidf = models.TfidfModel(corpus)
         corpus_tfidf = tfidf[corpus]
         corpus_tfidf = list(corpus_tfidf)
         rows = len(texts)
-        current_tmp_ids = [x[:-4] for x in os.listdir('./tmp') if x.endswith('.tmp')]
+        current_tmp_ids = [x[:-4] for x in os.listdir('/tmp/WeMining/input') if x.endswith('.tmp')] + [x[:-4] for x in os.listdir('/tmp/WeMining/output') if x.endswith('.tmp')]
         new_id = random.randint(0, 65536)
         while str(new_id) in current_tmp_ids :
             new_id = random.randint(0, 65536)
-        tfidfFile = open('./tmp/input/%s.tmp' % new_id, 'w')
+        tfidfFile = open('/tmp/WeMining/input/%s.tmp' % new_id, 'w')
         results = [0] * rows
         for tnum in range(len(texts)):
             header = '0 '
@@ -48,13 +49,13 @@ class EmotionClassifier(object):
                 results[tnum] = 1
                 tfidfFile.write('%s\n' % tc)
         tfidfFile.close()
-        cmd = 'liblinear/predict %s %s %s' % ('./tmp/input/%s.tmp' % new_id, self.model_name, './tmp/output/%s.tmp' % new_id)
+        cmd = 'liblinear/predict %s %s %s' % ('/tmp/WeMining/input/%s.tmp' % new_id, self.model_name, '/tmp/WeMining/output/%s.tmp'new_id)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out = None
         while not out:
             out = p.stdout.read()
             time.sleep(1)
-        labels_file = open('./tmp/output/%s.tmp' % new_id, 'r')
+        labels_file = open('/tmp/WeMining/output/%s.tmp' % new_id, 'r')
         lines = labels_file.readlines()
         lines.reverse()
         labels = map(int, lines)
@@ -62,8 +63,8 @@ class EmotionClassifier(object):
         for index, label in enumerate(results):
             if label:
                 results[index] = labels.pop()
-        os.remove('./tmp/input/%s.tmp' % new_id)
-        os.remove('./tmp/output/%s.tmp' % new_id)
+        os.remove('/tmp/WeMining/input/%s.tmp' % new_id)
+        os.remove('/tmp/WeMining/output/%s.tmp' % new_id)
         assert len(labels) == 0
         return results
 
