@@ -41,14 +41,16 @@ class Search(object):
             results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
             pages = int(math.ceil(results.count()/200.0))
             results = results.skip((page-1)*200).limit(200)
+            texts = []
+            statuses = []
+            for status in results:
+                texts.append(status['_keywords'])
+                statuses.append(status)
             if emotion:
-                texts = []
-                for status in results:
-                    texts.append(status['_keywords'])
                 ec = EmotionClassifier()
                 emotions = ec.predict(texts)
-                return {'results': list(results), 'page': page, 'total_pages': pages, 'emotions': emotions}
-            return {'results': list(results), 'page': page, 'total_pages': pages}
+                return {'results': statuses, 'page': page, 'total_pages': pages, 'emotions': emotions}
+            return {'results': statuses, 'page': page, 'total_pages': pages}
         except:
             return {'error': 'something wrong'}
 
