@@ -16,7 +16,6 @@ from gensim import corpora, models
 class EmotionClassifier(object):
 
     def __init__(self, dict_name='tweets.dict', model_name='emotion_model'):
-        os.chdir('/opt/WeMining/mining/')
         self.dict_name = dict_name
         self.model_name = model_name
         f = open(dict_name, 'rb')
