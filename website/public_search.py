@@ -9,27 +9,29 @@ import sys
 sys.path.append('..')
 
 from config import getDB
+from mining.emotion import EmotionClassifier
 from tokenizer.fenci import cut
+
 
 urls = ('/api/public/search.json', )
 
 class handler():
     def GET(self):
-        form = web.input(q=None,t=None, page=None)
+        form = web.input(q=None,t=None, e=None, page=None)
         search = Search()
         if not form.q:
             return json.dumps({'error': 'need keywords for search'})
         keywords = cut(form.q, f=['n', 'nr', 'ns', 'nt'])
         if not form.page:
             form.page = 1
-        return json.dumps(search.query(keywords, all=True if not form.t else False, page=int(form.page)))
+        return json.dumps(search.query(keywords, all=True if not form.t else False, emotion=True if form.e else False, page=int(form.page)))
 
 
 class Search(object):
     def __init__(self):
         self.db = getDB()
     
-    def query(self, keywords, all=True, page=1, **kw):
+    def query(self, keywords, all=True, emotion=False, page=1, **kw):
         query_dict = {}
         query_dict.update(kw)
         if all:
@@ -40,9 +42,16 @@ class Search(object):
             results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
             pages = int(math.ceil(results.count()/200.0))
             results = results.skip((page-1)*200).limit(200)
+            if emotion:
+                texts = []
+                for status in results:
+                    texts.append(status['_keywords'])
+                ec = EmotionClassifier()
+                emotions = ec.predict(texts)
+                return {'results': list(results), 'page': page, 'total_pages': pages, 'emotions': emotions}
+            return {'results': list(results), 'page': page, 'total_pages': pages}
         except:
             return {'error': 'something wrong'}
-        return {'results': list(results), 'page': page, 'total_pages': pages}
 
                  
 def main():
