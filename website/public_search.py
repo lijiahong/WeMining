@@ -17,6 +17,8 @@ class handler():
     def GET(self):
         form = web.input(q=None,t=None, page=None)
         search = Search()
+        if not form.q:
+            return json.dumps({'error': 'need keywords for search'})
         keywords = cut(form.q, f=['n', 'nr', 'ns', 'nt'])
         if not form.page:
             form.page = 1
