@@ -30,7 +30,7 @@ class Search(object):
     def __init__(self):
         self.db = getDB()
     
-    def query(self, keywords, all=True, emotion=False, page=1, **kw):
+    def query(self, keywords, all=True, emotion=False, page=1, limit=200, **kw):
         query_dict = {}
         query_dict.update(kw)
         if all:
@@ -38,9 +38,9 @@ class Search(object):
         else:
             query_dict['_keywords'] =  {'$in': keywords}
         try:
-            results = self.db['public_statuses'].find(query_dict, sort=[('ts', pymongo.ASCENDING)])
+            results = self.db['public_statuses'].find(query_dict, sort=[('ts',  pymongo.DESCENDING)])
             pages = int(math.ceil(results.count()/200.0))
-            results = results.skip((page-1)*200).limit(200)
+            results = results.skip((page-1)*200).limit(limit)
             texts = []
             statuses = []
             for status in results:

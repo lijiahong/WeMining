@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<head>
+  <title>topicWeibo</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="description" content="topicWeibo向您展示新浪微博的话题趋势，提供对新浪微博话题的深度分析">
+  <script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/static/js/topicweibo.js"></script>
+  <link href="/static/css/topicWeibo.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div class="main_body">
+    <!--	<div>
+		<div class="nav_top"></div>
+		<div class="nav_main">	
+		  <div id="d_logo">
+		    <img id="img_logo" src="/static/images/topicWB/logo.png" alt="mapWeibo" />		
+		    <div id="d_nav">
+		      <ul id="dd_nav">
+			<a class="nav" href="topicWeibo">主页</a>
+			<a class="nav">地图模式</a>
+			<a class="nav">联系</a>
+		      </ul>
+		      <div id="login">登录</div>
+		    </div>
+		  </div>
+		</div>
+		<div class="nav_bottom"></div>  
+    </div>  -->
+    <div class="content">
+      <div id="ct_top">
+	<div id="login_weibo">
+	  <img src="../static/images/topicWB/login_weibo.png" alt="新浪微博登陆">
+	</div>
+      </div>
+      <div id="ct_main">
+	<div id="content_main">
+	  <div id="search">
+	    <a href="topicWeibo.html" class="link">  
+	      <img id="img_logo1" src="/static/images/topicWB/logo.png" alt="mapWeibo"/>
+	    </a>  
+	    <input id="search_box" />
+	    <button id="search_button">分析</button>
+	    <!--		<input id="search_button" type="button" value="分析" />  -->
+	  </div>
+	  <!--	<div id="login_weibo">
+		<img src="../static/images/topicWB/login_weibo.png" alt="新浪微博登陆">
+	  </div> -->
+	  <div id="hTopics">
+	    <div id="hotTopics_my"></div>
+	    <div class="titleT">最近1小时热点话题</div>
+	    <div id="hotTopics_hourly" class="hotTopics"></div>
+	    <div class="titleT">最近1天热点话题</div>
+	    <div id="hotTopics_daily" class="hotTopics"></div>
+	    <div class="titleT">最近1周热点话题</div>
+	    <div id="hotTopics_weekly" class="hotTopics"></div>
+	  </div>
+	  <div id="empty2"></div>
+	  <div id="intro">
+	    <div id="introduce">
+	      <div class="titleT">topicWeibo告诉你：</div>
+	      <div id="intro_detail">
+		<div class="detail">
+		  <div class="pic"><img src="/static/images/topicWB/icon_zx.png" /></div>
+		  <div class="dtl_intr">
+		    <div class="dtl_ttl">微博时间分布图</div>
+		    <div class="dtl_dtl">丽江：与工作无关，与心情有关。 2.拉萨：从拉萨回去后许多人辞职了。 3.成都：一座来了就不想离开的城市，吃吃喝喝就是工作。 4.厦门：城在海上，海在城中</div>
+		  </div>
+		</div>
+		<div class="detail">
+		  <div class="pic"><img src="/static/images/topicWB/icon_dt.png" /></div>
+		  <div class="dtl_intr">
+		    <div class="dtl_ttl">微博空间分布</div>
+		    <div class="dtl_dtl">丽江：与工作无关，与心情有关。 2.拉萨：从拉萨回去后许多人辞职了。 3.成都：一座来了就不想离开的城市，吃吃喝喝就是工作。 4.厦门：城在海上，海在城中</div>
+		  </div>
+		</div>
+		<div class="detail">
+		  <div class="pic"><img src="/static/images/topicWB/icon_qx.png" /></div>
+		  <div class="dtl_intr">
+		    <div class="dtl_ttl">微博情绪分析</div>
+		    <div class="dtl_dtl">丽江：与工作无关，与心情有关。 2.拉萨：从拉萨回去后许多人辞职了。 3.成都：一座来了就不想离开的城市，吃吃喝喝就是工作。 4.厦门：城在海上，海在城中</div>
+		  </div>
+		</div>
+		<div class="detail">
+		  <div class="pic"><img src="/static/images/topicWB/icon_gj.png" /></div>
+		  <div class="dtl_intr">
+		    <div class="dtl_ttl">关键微博分析</div>
+		    <div class="dtl_dtl">丽江：与工作无关，与心情有关。 2.拉萨：从拉萨回去后许多人辞职了。 3.成都：一座来了就不想离开的城市，吃吃喝喝就是工作。 4.厦门：城在海上，海在城中</div>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <div class="footer">
+	copyright  @  buaa
+      </div>
+    </div>
+  </div>
+</body>
+</html>
