@@ -108,6 +108,9 @@ def province_color_map(city_count):
 def ts2date(ts):
     return time.strftime('%Y-%m-%d', time.localtime(ts))
 
+def date2ts(date):
+    return time.mktime(time.strptime(date, '%Y-%m-%d'))
+
 def location_count(statuses, emotions):
     count = {}
     most = [0, 0, 0]
@@ -142,8 +145,9 @@ def mood_location_f(statuses, emotions):
             dt[date] = {'statuses': [], 'emotions': []}
         dt[date]['statuses'].append(status)
         dt[date]['emotions'].append(emotion)
-    for date in dt:
-        data = location_count(dt[date]['statuses'], dt[date]['emotions'])
+    dt = sorted(dt.iteritems(), key=lambda(k, v): date2ts(k), reverse=True)
+    for date, d in dt:
+        data = location_count(d['statuses'], d['emotions'])
         count = data['count']
         most = data['most']
         location_emotion_tmline.append([date, count, most])
