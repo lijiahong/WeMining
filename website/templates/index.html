@@ -1,0 +1,18 @@
+$def with (screen_name, profile_image_url)
+<!DOCTYPE html>
+<head>
+  <title>WeMining</title>
+</head>
+<body>
+  <div>
+    $if screen_name and profile_image_url:
+      <p>$screen_name<img src="$profile_image_url" alt="$screen_name"></p>
+    $else:
+      <a href="/login"><img src="/static/images/login_weibo.png" alt="登录新浪微博"></a>
+  </div>
+  <ul>
+    <li><a href="/topicweibo/">微博话题</a></li>
+    <li><a href="http://idec.buaa.edu.cn:8080/">微博转发网</a></li>
+  </ul>
+</body>
+</html>

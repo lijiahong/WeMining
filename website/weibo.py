@@ -1,19 +1,18 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
-'''新浪微博API SDK(Liao Xuefeng,askxuefeng@gmail.com)改进
-   基于BasicAuth验证,仅限于授权应用开发者使用
+__version__ = '1.04'
+__author__ = 'Liao Xuefeng (askxuefeng@gmail.com)'
+
+'''
+Python client SDK for sina weibo API using OAuth 2.
 '''
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
+import simplejson as json
 import time
 import urllib
 import urllib2
 import logging
-import base64
 
 def _obj_hook(pairs):
     '''
@@ -47,18 +46,17 @@ class JsonObject(dict):
     def __setattr__(self, attr, value):
         self[attr] = value
 
-def _encode_params(app_key, **kw):
+def _encode_params(**kw):
     '''
     Encode parameters.
     '''
     args = []
-    args.append('%s=%s' % ('source', app_key))
     for k, v in kw.iteritems():
         qv = v.encode('utf-8') if isinstance(v, unicode) else str(v)
         args.append('%s=%s' % (k, urllib.quote(qv)))
     return '&'.join(args)
 
-def _encode_multipart(app_key, **kw):
+def _encode_multipart(**kw):
     '''
     Build a multipart/form-data body with generated random boundary.
     '''
@@ -93,21 +91,33 @@ _HTTP_GET = 0
 _HTTP_POST = 1
 _HTTP_UPLOAD = 2
 
-def _http_call(url, method, app_key, authorization, **kw):
+def _http_get(url, authorization=None, **kw):
+    logging.info('GET %s' % url)
+    return _http_call(url, _HTTP_GET, authorization, **kw)
+
+def _http_post(url, authorization=None, **kw):
+    logging.info('POST %s' % url)
+    return _http_call(url, _HTTP_POST, authorization, **kw)
+
+def _http_upload(url, authorization=None, **kw):
+    logging.info('MULTIPART POST %s' % url)
+    return _http_call(url, _HTTP_UPLOAD, authorization, **kw)
+
+def _http_call(url, method, authorization, **kw):
     '''
     send an http request and expect to return a json object if no error.
     '''
     params = None
     boundary = None
     if method==_HTTP_UPLOAD:
-        params, boundary = _encode_multipart(app_key, **kw)
+        params, boundary = _encode_multipart(**kw)
     else:
-        params = _encode_params(app_key, **kw)
+        params = _encode_params(**kw)
     http_url = '%s?%s' % (url, params) if method==_HTTP_GET else url
     http_body = None if method==_HTTP_GET else params
     req = urllib2.Request(http_url, data=http_body)
     if authorization:
-        req.add_header("Authorization", "Basic %s" % authorization)
+        req.add_header('Authorization', 'OAuth2 %s' % authorization)
     if boundary:
         req.add_header('Content-Type', 'multipart/form-data; boundary=%s' % boundary)
     resp = urllib2.urlopen(req)
@@ -125,26 +135,62 @@ class HttpObject(object):
 
     def __getattr__(self, attr):
         def wrap(**kw):
-            return _http_call('%s%s.json' % (self.client.api_url, attr.replace('__', '/')), self.method, self.client.app_key, self.client._b64up, **kw)
+            if self.client.is_expires():
+                raise APIError('21327', 'expired_token', attr)
+            return _http_call('%s%s.json' % (self.client.api_url, attr.replace('__', '/')), self.method, self.client.access_token, **kw)
         return wrap
 
 class APIClient(object):
     '''
     API client using synchronized invocation.
     '''
-    def __init__(self, username, password, app_key):
-        self.app_key = app_key
-        self._b64up = base64.b64encode('%s:%s' % (username, password))
-        self.api_url = 'https://api.t.sina.com.cn/'
+    def __init__(self, app_key, app_secret, redirect_uri=None, response_type='code', domain='api.weibo.com', version='2'):
+        self.client_id = app_key
+        self.client_secret = app_secret
+        self.redirect_uri = redirect_uri
+        self.response_type = response_type
+        self.auth_url = 'https://%s/oauth2/' % domain
+        self.api_url = 'https://%s/%s/' % (domain, version)
+        self.access_token = None
+        self.expires = 0.0
         self.get = HttpObject(self, _HTTP_GET)
         self.post = HttpObject(self, _HTTP_POST)
         self.upload = HttpObject(self, _HTTP_UPLOAD)
 
+    def set_access_token(self, access_token, expires_in):
+        self.access_token = str(access_token)
+        self.expires = float(expires_in)
+
+    def get_authorize_url(self, redirect_uri=None, display='default'):
+        '''
+        return the authroize url that should be redirect.
+        '''
+        redirect = redirect_uri if redirect_uri else self.redirect_uri
+        if not redirect:
+            raise APIError('21305', 'Parameter absent: redirect_uri', 'OAuth2 request')
+        return '%s%s?%s' % (self.auth_url, 'authorize', \
+                _encode_params(client_id = self.client_id, \
+                        response_type = 'code', \
+                        display = display, \
+                        redirect_uri = redirect))
+
+    def request_access_token(self, code, redirect_uri=None):
+        '''
+        return access token as object: {"access_token":"your-access-token","expires_in":12345678}, expires_in is standard unix-epoch-time
+        '''
+        redirect = redirect_uri if redirect_uri else self.redirect_uri
+        if not redirect:
+            raise APIError('21305', 'Parameter absent: redirect_uri', 'OAuth2 request')
+        r = _http_post('%s%s' % (self.auth_url, 'access_token'), \
+                client_id = self.client_id, \
+                client_secret = self.client_secret, \
+                redirect_uri = redirect, \
+                code = code, grant_type = 'authorization_code')
+        r.expires_in += int(time.time())
+        return r
+
+    def is_expires(self):
+        return not self.access_token or time.time() > self.expires
+
     def __getattr__(self, attr):
         return getattr(self.get, attr)
-
-def main():
-    api = APIClient('username', 'password', 'appkey')
-    print api.account__rate_limit_status()
-
-if __name__ == '__main__': main()

@@ -73,15 +73,26 @@ class access_log(object):
             _access_log(environ, self.status)
 
 #integrate py file in (url, class) map
-current_file = os.path.basename(sys.argv[0])
-port = sys.argv[1]
+argv = sys.argv
+current_file = os.path.basename(argv[0])
+log = False
+for arg in argv[1:]:
+    if arg == '-port':
+        port = argv[argv.index('-port')+1]
+    if arg == '-log':
+        log = True
+
 modules = [(x[:-3], os.path.join('.', x)) for x in os.listdir('.') if x.endswith('.py') and x != current_file]
 
 urls = import_modules(modules)
 app = web.application(urls, globals(), False)
 
-#access log middleware
-func = app.wsgifunc(access_log, )
+if log:
+    #access log middleware
+    func = app.wsgifunc(access_log, )
+else:
+    func = app.wsgifunc()
+
 web.config.debug = False
 
 whoami = platform.system()

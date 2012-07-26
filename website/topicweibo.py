@@ -4,7 +4,7 @@ import web
 
 render = web.template.render('./templates/')
 
-urls = ('/topicweibo', )
+urls = ('/topicweibo/', )
 
 class handler():
     def GET(self):
