@@ -1,0 +1,46 @@
+$def with (content)
+<!$:content.doctype>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>$content.title</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css"></link>
+    $if content.cssfiles:
+        $for f in content.cssfiles.split():
+            <link rel="stylesheet" href="$f" type="text/css" media="screen" charset="utf-8"></link>
+    $if content.jsfiles:
+        $for f in content.jsfiles.split():
+	    <script src="$f" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+	<div id="nav-container">
+          <div class="nav-collapse">
+	    <ul class="nav">
+	      <a href="/">
+		<li class="nav-nav">首页</li>
+	      </a>
+	      <a href="/contact/">
+		<li class="nav-nav">联系</li>
+	      </a>
+	      $if content.username and content.profile_image_url:
+	          <a href="http://weibo.com/n/$content.username">
+                      <img src="$content.profile_image_url" alt="$content.username" />
+		  </a>
+	      $else:
+	          <a href="/login">
+		      <img src="/static/images/login_weibo.png" alt="登录新浪微博" />
+	          </a>
+	    </ul>
+	  </div>
+	</div>
+      </div>
+      <div id="content">
+	$:content
+      </div>
+      <div id="footer">
+	2012 <a href="https://github.com/hanyangrabbit/WeMining">WeMining</a>
+      </div>
+    </div>
+  </body>
+</html>

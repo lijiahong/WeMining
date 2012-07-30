@@ -2,10 +2,14 @@
 
 import web
 
-render = web.template.render('./templates/')
+from config import getUser
 
-urls = ('/topicweibo/', )
+render = web.template.render('./templates/', base='layout')
+
+urls = ('/topicweibo/', '/topicweibo')
 
 class handler():
     def GET(self):
-        return render.topicweibo()
+        uid = web.cookies().get('WEIBO_UID')
+        screen_name, profile_image_url, access_token = getUser(uid)
+        return render.topicweibo(screen_name, profile_image_url)

@@ -1,6 +1,11 @@
 ﻿//set current china map section to null
 var current = null;
 
+//set emotion pie chart count
+var emotion_chart_count = 0;
+//set state of emotion chart
+var emotion_chart_hide = 1
+
 function getUrlParam(name) { 
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
     var r = window.location.search.substr(1).match(reg); 
@@ -19,24 +24,41 @@ $(document).ready(function() {
     topic_name = getUrlParam('topic');
     present_topic.innerText = "当前话题：" + topic_name + " ";
     present_time.innerText = "更新时间" + (new Date()).toString();
-	
     $("#submit_analysis").click(function() {
 	var _topic = $$("#keyword")[0].value;
 	if(_topic != undefined){
-	    window.location.href="/topicweibo/analysis?topic=" + _topic;
+	    window.location.href="/topicweibo/analysis?topic=" + encodeURIComponent(_topic);
 	}
     });
     
     $.ajax({
-	url:"/topicweibo/analysis?topic="+getUrlParam("topic")+"&json=1",
+	url:"/topicweibo/analysis?topic="+encodeURIComponent(topic_name)+"&json=1",
 	dataType:"json",
 	success:function(data){
+	    $('#ajax_loading').css("display", "none");
 	    drawWeekDist(data['timedist_week']);	
 	    drawDayDist(data['timedist_day']);
 	    drawRandomStatuses(data['random_statuses']);
 	    drawChinamap(data['china_map_count']);
 	    drawMoodTimelie(data['mood_timeline']);
 	    drawMoodMost(data['mood_location']);
+	}
+    });
+
+    $("#more_pie_charts").click(function() {
+	if(emotion_chart_hide){
+	    for(var i = 4;i <emotion_chart_count;i++){
+		$("#p_emotion_"+i).show();
+	    }
+	    $("#more_pie_charts").text('隐藏');
+	    emotion_chart_hide = 0; 
+	}
+	else{
+	    for(var i = 4;i <emotion_chart_count;i++){
+		$("#p_emotion_"+i).hide();
+	    }
+	    $("#more_pie_charts").text('显示更多...'); 
+	    emotion_chart_hide = 1; 
 	}
     });
 });
@@ -225,12 +247,19 @@ function drawMoodMost(emotion_timeline){
 		date_location_emotion.push([emotion_timeline[i][0],emotion_timeline[i][2][j],e]);	
 	    }
 	}
-	
     }
+    emotion_chart_count = date_location_emotion.length
     drawEmotionMostTable(date_most);
     for(var i = 0;i < date_location_emotion.length;i = i + 1){
-	$("#p_emotion").append("<div id='p_emotion_" + i + "' style='width: 320px; height: 200px;'></div>");
-	createEmotionPieChart(date_location_emotion[i],'p_emotion_' + String(i));
+	if(i > 3){
+	    $("#more_pie_charts").show();
+	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='display: none;width: 320px; height: 200px;'></div>");
+	    createEmotionPieChart(date_location_emotion[i],'p_emotion_' + String(i));
+	}
+	else{
+	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='width: 320px; height: 200px;'></div>");
+	    createEmotionPieChart(date_location_emotion[i],'p_emotion_' + String(i));
+	}
 	
     }
     function createEmotionPieChart(data,container_id){

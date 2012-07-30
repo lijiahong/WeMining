@@ -1,0 +1,357 @@
+body {
+    margin: 0px;
+    font-size: 12px;
+    font-family: "Lucida Sans", "Tahoma", "Arial", sans-serif;
+}
+
+#content2 {
+    background-color: white;
+    width: 972px; /* (960 + 6 * 2)px */
+    margin: 0px auto;
+    overflow: auto;
+}
+
+h1 {
+    margin: 30px;
+}
+
+h1 a {
+    text-indent: -9999px;
+    display: block;
+    width: 490px;
+    height: 51px;
+}
+
+#header {
+    position: relative;
+    top: 1px;
+    overflow: auto;
+}
+
+#search {
+    float: left;
+    background-color: #E2E2E2;
+    padding: 5px;
+    height: 35px;
+}
+
+#search input {
+    vertical-align: top;
+}
+
+#search input[type="text"] {
+    background: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0.80, rgb(255,255,255)),
+	color-stop(1, rgb(246,246,246))
+    );
+    background: -moz-linear-gradient(
+	center bottom,
+	rgb(255,255,255) 80%,
+	rgb(246,246,246) 100%
+    );
+    border: 1px solid #AAAAAA;
+    color: #828282;
+    font-size: 1.1em;
+    padding: 8.5px;
+    width: 300px;
+}
+
+#search input[type="text"]:disabled {
+    background: none;
+}
+
+input[type="submit"], .radio {
+    font-size: .9em;
+    color: white;
+    -moz-box-shadow: inset 0px 1px #7896b7;
+    -webkit-box-shadow: inset 0px 1px #7896b7;
+    border: 1px solid #245974;
+    padding: 9px;
+    cursor: pointer;
+    background-color: #537596;
+    background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, rgb(76,109,140)),
+	color-stop(1, rgb(95,131,165))
+    );
+    background-image: -moz-linear-gradient(
+	center bottom,
+	rgb(76,109,140) 0%,
+	rgb(95,131,165) 100%
+    );
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#search input[type="submit"]:hover, .radio:hover {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    background-color: #245974;
+    background-image: none;
+}
+
+#menu {
+    float: right;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+#menu p {
+    background-color: #E2E2E2;
+    text-decoration: none;
+    color: #222222;
+    text-shadow: 0px 1px #F2F2F2;
+    padding: 7px 14px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.radio {
+    color: white;
+    border: none;
+    text-shadow: none;
+    padding: 9px 20px;
+}
+
+#mapContainer {
+    padding: 5px;
+    background-color: #E2E2E2;
+}
+
+
+/* Map styles */
+
+#map {
+    border: 1px solid #BBBBBB;
+    clear: both;
+    height: 500px;
+    width: 960px;
+    position: relative;
+    cursor: url(../images/openhand.ico), pointer;
+    overflow: hidden;
+    background-color: white;
+}
+
+#mapBoundary {
+    stroke-width: 0px;
+    cursor: inherit;
+}
+
+#mapBoundary:hover {
+    stroke: none;
+}
+
+circle {
+    cursor: pointer;
+}
+
+.outer {
+    stroke-width: 0.2px;
+    fill: #000000;
+    stroke: #000000;
+}
+
+.inner:hover, .inner.current {
+    fill: black;
+}
+
+.drawed {
+    fill: red;
+}
+
+path {
+    stroke-width: 5px;
+    fill: none;
+    stroke: #999999;
+}
+
+text {
+    display: none;
+}
+
+.shadow {
+    stroke: white;
+    stroke-width: 3pt;
+}
+
+/* Popup style */
+#popup {
+    background-color: rgba(20, 20, 20, .9);
+    color: white;
+    position: absolute;
+    visibility: hidden;
+    padding: 10px;
+    cursor: auto;
+    z-index: 1; /* Keep the main popup on top of the hover popups */
+    min-width: 320px;
+}
+
+.arrow {
+    height: 0px;
+    width: 0px;
+    position: absolute;
+    border-style: solid;
+    border-width: 10px;
+}
+
+#popup .arrowLeft {
+    border-color: transparent rgba(20, 20, 20, .9) transparent transparent;
+    border-left-width: 0px;
+}
+
+#popup .arrowRight {
+    border-color: transparent transparent transparent rgba(20, 20, 20, .9);
+    border-right-width: 0px;
+}
+
+#popup a {
+    color: #63c6ff;
+    cursor: pointer;
+}
+
+
+
+#hoverPopup {
+    position: absolute;
+    color: white;
+    font-size: .8em;
+    background-color: rgba(0, 0, 0, .9);
+    visibility: hidden;
+}
+
+#hoverPopup .arrow {
+    border-width: 3px;
+    border-color: rgba(0, 0, 0, .9) transparent transparent transparent;
+}
+
+.close {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border: 1px solid #888888;
+    color: #BBBBBB;
+    float: right;
+    font-family: sans-serif;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 0 3px 2px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.close:hover {
+    color: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
+td {
+    padding-right: 5px;
+}
+
+td ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+#popup > ul {
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+#popup input {
+    background-color: inherit;
+    border: 1px solid white;
+    color: white;
+    font-size: .9em;
+    padding: 2px;
+    width: 250px;
+}
+
+/******* Zoom bar *******/
+#zoomBar {
+    position: absolute;
+    left: 13px;
+    top: 13px;
+    width: 22px;
+    height: 138px;
+    cursor: pointer;
+    background-image: url(../images/zoomBar.png);
+}
+
+#zoomBar div {
+    width: 22px;
+    height: 22px;
+}
+
+div#zoomBarSlider {
+    height: 81px;
+    padding: 5px 0px;
+    font-size: 0pt; /* For IE6 */
+    position: relative;
+}
+
+#zoomBar div.notch {
+    height: 10px;
+}
+
+#zoomBarKnob {
+    position: absolute;
+    width: 20px;
+    padding: 0px 1px;
+    cursor: url(../images/openhand.ico), pointer;
+}
+/* End map styles*/
+
+#data {
+    overflow: auto;
+}
+
+.section {
+    float: left;
+    width: 250px;
+    padding: 20px 20px 20px 50px;
+}
+
+.section h2 {
+    font-size: 1.1em;
+    color: #222222;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #CCCCCC;
+}
+
+.section:first-child {
+    background: none;
+}
+
+.section li {
+    padding-left: 15px;
+    margin: 10px 0px;
+}
+
+.section li span {
+    cursor: pointer;
+}
+
+.section li span:hover {
+    text-decoration: underline;
+}
+
+li .weak {
+    color: #777777;
+}
+
+.weak {
+    font-size: .8em;
+}
+
+ol {
+    padding-left: 20px;
+}
+
+
+

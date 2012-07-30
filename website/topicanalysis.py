@@ -14,24 +14,27 @@ import math
 from datetime import date
 from tokenizer.fenci import cut
 from public_search import Search
+from config import getUser
 
 search = Search()
 
-render = web.template.render('./templates/')
+render = web.template.render('./templates/', base='layout')
 
 urls = ('/topicweibo/analysis', )
 
 class handler():
     def GET(self):
+        uid = web.cookies().get('WEIBO_UID')
+        screen_name, profile_image_url, access_token = getUser(uid)
         form = web.input(topic=None, json=None)
         topic = form.topic
         json = form.json
         if topic and json:
             return analysis_data(topic)
         elif topic:
-            return render.topicanalysis()
+            return render.topicanalysis(screen_name, profile_image_url)
         else:
-            return render.topicweibo()
+            return render.topicweibo(screen_name, profile_image_url)
 
 def analysis_data(topic):
     keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])

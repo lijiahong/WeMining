@@ -1,0 +1,68 @@
+html, body{
+    margin:0;
+    padding:0;
+    height:100%; /* needed for container min-height */
+}
+#header{
+    position:relative;
+    width: 100%;
+    height: 60px;
+}
+#nav-container{
+    position:absolute;
+    top:0;
+    right:2em;
+    height:60px;
+}
+.nav-collapse{
+    height:40px;
+}
+.nav{
+    right: 0px;
+}
+.nav-nav{
+    width: 100px;
+    float: left;
+    height: auto;
+    margin: 2px;
+    padding-bottom: 4px;
+    display: block;
+    text-align: center;
+    border-bottom-style: solid;
+    border-bottom-width: 6px;
+    display: block;
+    padding-left: ;
+    text-align: center;
+    border-bottom-style: solid;
+    border-bottom-width: thick;
+}
+.nav a{
+    font-size: 19px;
+    font-family: sans-serif;
+    color: gray;
+}
+div#container {
+	position:relative; /* needed for footer positioning*/
+	margin:0 auto; /* center, not in IE5 */
+	width:100%;
+	height:auto !important; /* real browsers */
+	height:100%; /* IE6: treaded as min-height*/
+
+	min-height:100%; /* real browsers */
+}
+#content {
+    padding:1em 1em 5em;
+}
+#footer {
+    position:absolute;
+    width:100%;
+    height:25px;
+    bottom:0; /* stick to bottom */
+    text-align: center;
+    padding: 15px 0px;
+    font-size: .9em;
+}
+
+#footer, #footer a {
+    color: #555555;
+}

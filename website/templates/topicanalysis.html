@@ -1,120 +1,38 @@
-<!DOCTYPE html>
-<head>
-  <title>topicweibo</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  <meta name="description" content="topicWeibo向您展示新浪微博的话题趋势，提供对新浪微博话题的深度分析">
-  <script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script src="http://code.highcharts.com/stock/highstock.js"></script> 
-  <script src="http://code.highcharts.com/highcharts.js"></script>
-  <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
-  <script src="/static/libraries/highchart_theme_gray.js"></script>
-  <script type="text/javascript" charset="utf-8" src="/static/js/topicanalysis.js"></script>
-  <script type="text/javascript" src="/static/libraries/raphael.js"></script>
-  <script type="text/javascript" src="/static/js/chinamap.js"></script>   
-  <style type="text/css">
-    body{
-    margin:0;
-    padding:0;
-    }
-    a {
-    text-decoration:none;
-    }
-    .TopBar{
-    position:relative;
-    left:20%;
-    right:20%;
-    height:20px;
-    }
-    #logo{
-    float:left;
-    width:200px;
-    }
-    #head-nav-bar{
-    float:right;
-
-    }
-    #login{
-    float:left;
-    margin-left:20px;
-    }
-    ul#nav{
-    list-style-type: none;
-    margin:0px;
-    padding:0px;
-    float: left;	
-    }
-    ul#nav li{
-    display: inline;
-    
-    }
-    ul#nav li a{
-    text-decoration:none;
-    color:black;
-    text-align: center;
-    }
-    #main{
-    position:relative;
-    left:20%;
-    right:20%;
-    width:800px;
-    text-align:center;
-    margin:0 auto;
-    }
-    #Summary{
-    padding:50px;
-    float:left;
-    text-align:center;
-    }
-    #Map{
-    padding:10px;
-    float:left;
-    text-align:center;
-    }
-    #ChinaMap, #ColorBar{
-    width:560px;
-    margin:0 auto;
-    text-align:center
-    }
-    .clear-float{clear:both}
-    #tiplayer{position:absolute;z-index:1000;max-width:250px;word-wrap:break-word;background:#000;text-align:left;padding:5px;min-height:1em;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;color:#fff;font:12px 'Microsoft YaHei',Arial,Tahoma,Sans-Serif;}
-  </style>
-</head>
-<body>
-  <div class="TopBar" id="TopBar">
-    <div id="logo">Topic Weibo</div>
-    <div id="head-nav-bar" style="width:980px;">
-      <ul id="nav">
-	<li><a href="/weiming/topicweibo">首页</a></li>
-	<!--<li><a href="/weiming/topicweibo/analysis">话题分析</a></li>
-	    <li><a href="/weiming/topicweibo/search">话题搜索</a></li>-->
-	<li><a href="/weiming/topicweibo/history">历史话题统计</a></li>
-	<!--<li><a href="#">地图模式</a></li>-->
-	<li><a href="/weiming/topicweibo/contact">联系</a></li>
-      </ul>
-      <div id=login><em><a href="/weiming/login" alt="用微博账号登录">用微博账号登陆</a></em></div>
+$def with (screen_name, profile_image_url)
+$var doctype: DOCTYPE html
+$var title: 微博话题分析
+$var username: $screen_name
+$var profile_image_url: $profile_image_url
+$var cssfiles: /static/css/topicAnalysis.css
+$var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http://code.highcharts.com/stock/highstock.js http://code.highcharts.com/highcharts.js http://code.highcharts.com/stock/modules/exporting.js /static/libraries/highchart_theme_gray.js /static/js/topicanalysis.js /static/libraries/raphael.js /static/js/chinamap.js 
+<div id="div_logo">
+  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a></div>
+</div>
+<div id="div_input">
+  <div class="juzhong" id="search_background">
+    <input id="search_box" onKeyDown="EnterPress()"/>
+    <button id="search_button">分析</button>
+    <div id="warning"></div>
+    <div id="Second">
+      <em id="present_topic"></em>
+      <em id="present_time"></em>
+      <div id="ajax_loading"><img src="/static/images/ajax_loading.gif" /></div>
     </div>
   </div>
-  <div id="Main">
-    <h1 id="Second">新浪微博话题分析</h1>
-    <em id="present_topic"></em>	
-    <input type="text" id="keyword" />
-    <button id="submit_analysis">分析</button>
-    <em id="present_time"></em>		
-    <div id="hot">
-      <h3>话题最新微博</h3>
-      <div id='table_div'></div>
-      <div></div>
-    </div>
-    <div id="timedist">
+</div>
+<div id="result_body">
+  <div id="result">
+    <div id="timedist" class="result_de">
       <h3>话题微博数量时间分布</h3>
-      <!--<div id="timedist_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>-->
-      <h4>周分布</h4>
-      <div id="timedistweek_container" style='width: 700px; height: 240px;'></div>
-      <h4>日分布</h4>
-      <div id="timedistday_container" style='width: 700px; height: 240px;'></div>
+      <div>
+        <div id="timedistweek_container" style='width: 400px; height: 240px;'></div>
+      </div>
+      <div>
+	<div id="timedistday_container" style='width: 400px; height: 240px;'></div>
+      </div>
+      <div class="clear-float"></div>
     </div>
-    <div id="locationdist">
+    <div id="locationdist" class="result_de">
       <h3>话题微博数量地域分布</h3>
       <div id="Summary"></div>
       <div id="Map">
@@ -123,20 +41,18 @@
       </div>
       <div class="clear-float"></div>
     </div>
-    <div id="emotion_analysis">
+    <div id="emotion_analysis" class="result_de">
       <h3>话题情绪分析</h3>
       <h4>情绪时间线</h4>
-      <div id='annotatedtimeline_chart_div' style='width: 700px; height: 240px;'></div>
+      <div id='annotatedtimeline_chart_div' style='width: 700px; height: 240px; margin-left: auto;margin-right: auto;'></div>
       <h4>最情绪省份</h4>
       <div id='table_div_for_emotion'></div>
-      <div id='p_emotion'><h4>情绪饼图</h4></div>
+      <div id='outp_emotion'><h4>情绪饼图</h4><a href="javascript:void(0);" id="more_pie_charts">显示更多...</a><div id="p_emotion"></div>
+      </div>
+      <div id="hot" class="result_de">
+        <h3>话题最新微博</h3>
+	<div id='table_div'></div>
+      </div>
     </div>
-    <!--
-	<div id="network_analysis">
-	  <h3>话题关键点分析</h3>
-	  <div></div>
-	</div>-->
-
   </div>
-</body>
-</html>
+</div>

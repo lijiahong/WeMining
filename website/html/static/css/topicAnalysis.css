@@ -1,0 +1,149 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+    margin:0;
+    padding:0;
+}
+.TopBar{
+    position:relative;
+    left:20%;
+    right:20%;
+    height:20px;
+}
+#logo{
+    float:left;
+    width:200px;
+}
+#main{
+    position:relative;
+    left:20%;
+    right:20%;
+    width:800px;
+    text-align:center;
+    margin:0 auto;
+}
+#Summary{
+    padding:50px;
+    float:left;
+    text-align:center;
+}
+#Map{
+    padding:10px;
+    float:left;
+    text-align:center;
+}
+#ChinaMap, #ColorBar{
+    width:560px;
+    margin:0 auto;
+    text-align:center
+}
+.clear-float{clear:both}
+#tiplayer{position:absolute;z-index:1000;max-width:250px;word-wrap:break-word;background:#000;text-align:left;padding:5px;min-height:1em;-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;color:#fff;font:12px 'Microsoft YaHei',Arial,Tahoma,Sans-Serif;}	
+.main_body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    
+}
+.juzhong {
+    width: 830px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#logo_img {
+    margin-top: 15px;
+    margin-left: 10px;
+}
+#search_box {
+    
+    border: none;
+    padding-left: 15px;
+    background-image: url(images/box_bg3.png);
+    width: 586px;
+    height: 40px;
+    background-repeat: no-repeat;
+    font-size: 15px;
+}
+#search_button {
+    height: 40px;
+    width: 97px;
+    border: none;
+    font-size: 1.3em;
+    color: white;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-image: url(images/btn_bg.png);
+    cursor: pointer;
+}
+#search_button:hover{
+    
+    background-image: url(images/btn_bgOn.png);
+}
+#search_background {
+    //	background-image: url(images/box_bg3.png);
+//	background-repeat: no-repeat;
+}
+.result_de {
+    width:100%;
+    //height:400px;
+}
+#result {
+    width: 960px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 70px;
+}
+
+em{
+    //	font-weight: bold;
+	font-style: normal;
+}
+h3{
+    color:#0B54C2;
+}
+h4{
+    margin-left: 30px;
+    font-weight: normal;
+}
+#more_pie_charts{
+    margin-left: 30px;
+    font-weight: normal;
+    display:none;
+    text-decoration:none;
+}
+#Second{
+    //margin-bottom: 50px;
+	margin-top:10px;
+}
+#ajax_loading{
+    position:relative;
+    left:250px;
+}
+#timedistweek_container, #timedistday_container{
+    padding:10px;
+    float:left;
+    text-align:center;      
+}
+#p_emotion div{
+    display:inline;
+}
+#p_emotion{
+    width:800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+.foot{
+    height:80px;
+    width:100%;
+}
+#cyrgt{
+    width:150px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:100px;
+}
+#warning{
+    color:#F00;
+}
