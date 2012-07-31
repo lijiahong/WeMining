@@ -8,20 +8,21 @@ import time
 import re
 import md5
 import socket
+import urllib
+import json
 
 import sys
 sys.path.append('..')
 
 from spider.config import getDB
 from tokenizer.fenci import cut
+from weibo import _obj_hook, JsonObject
+from api_pool import APIPool
 
-from dev_api import APIClient
-
+api = APIPool()
 ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-api = APIClient('hope_thebest@qq.com', 'hanyang', '4136789956')
 source_a_pattern = r'<a(.+?)>(.+?)</a>'
 db = getDB()
-
 
 def clean_status(status_text):
     '''清洗微博内容 返回清洗后的文本、文本中包含的#话题#、文本中的[表情]
@@ -128,7 +129,10 @@ def local2unix(time_str):
     return time.mktime(time.strptime(time_str, time_format))
 
 def update(page=1):
-    public_statuses = api.statuses__public_timeline(count=200, page=page)
+    public_statuses = api.statuses__public_timeline(count=200)['statuses']
+    if not public_statuses:
+        time.sleep(10)
+        return None
     posts = []
     for status in public_statuses:
         mid = id2mid(str(status['id']))
@@ -183,11 +187,10 @@ def main():
     while True:
         try:
             posts = update()
-            if len(posts):
+            if posts and len(posts):
                 db.public_statuses.insert(posts)
-            time.sleep(8)
+            time.sleep(10)
         except Exception, e:
             print e
 
-if __name__ == '__main__': 
-    main()
+if __name__ == '__main__': main()

@@ -6,7 +6,7 @@ sys.path.append('..')
 
 import time
 
-from api.dev_api import APIClient
+from api.api_pool import APIPool
 from spider.config import getDB
 
 def topic(api, type=None):
@@ -28,7 +28,7 @@ def topic(api, type=None):
 def main():
     try:
         action = sys.argv[1]
-        api = APIClient('linhao1992@gmail.com', 'weibomap', '2298231745')
+        api = APIPool(max_accounts=1)
         present_time = int(time.time())
         data = topic(api, type=action)
         db = getDB()
