@@ -25,10 +25,7 @@ $var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http:
     <div id="timedist" class="result_de">
       <h3>话题微博数量时间分布</h3>
       <div>
-        <div id="timedistweek_container" style='width: 400px; height: 240px;'></div>
-      </div>
-      <div>
-	<div id="timedistday_container" style='width: 400px; height: 240px;'></div>
+        <div id="timedist_container" style='width: 820px; height: 240px;'></div>
       </div>
       <div class="clear-float"></div>
     </div>
@@ -46,12 +43,13 @@ $var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http:
       <h4>情绪时间线</h4>
       <div id='annotatedtimeline_chart_div' style='width: 700px; height: 240px; margin-left: auto;margin-right: auto;'></div>
       <h4>最情绪省份</h4>
-      <div id='table_div_for_emotion'></div>
+      <div id="table_div_for_emotion"></div>
       <div id='outp_emotion'><h4>情绪饼图</h4><a href="javascript:void(0);" id="more_pie_charts">显示更多...</a><div id="p_emotion"></div>
       </div>
-      <div id="hot" class="result_de">
+      <div id="public_statuses" class="result_de">
         <h3>话题最新微博</h3>
-	<div id='table_div'></div>
+	<div id="statuses_ajax_loading"><img src="/static/images/ajax_loading.gif" /></div>
+	<div id="statuses_table_div"></div>
       </div>
     </div>
   </div>

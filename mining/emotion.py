@@ -69,6 +69,8 @@ class EmotionClassifier(object):
         return results
 
     def predict(self, texts):
+        if not len(texts):
+            return []
         dictionary = self.dictionary 
         corpus = [dictionary.doc2bow(text) for text in texts]
         tfidf = models.TfidfModel(corpus)
@@ -90,9 +92,13 @@ class EmotionClassifier(object):
         p_labels, p_acc, p_vals = predict(y, x, model)
         labels = [classes[p_val.index(max(p_val))] for p_val in p_vals]
         labels.reverse()
+        emotions_times = [labels.count(i+1) for i in range(3)]
+        max_emotion = emotions_times.index(max(emotions_times))+1
         for index, label in enumerate(results):
             if label:
                 results[index] = labels.pop()
+            else:
+                results[index] = max_emotion
         assert len(labels) == 0
         return results
       

@@ -9,9 +9,10 @@ function drawChinamap(data) {
      * 配置Raphael生成svg的属性
      */
     var Bar = Raphael("ColorBar", 560, 100);
-    colors = ['#000079', '#0f1486', '#1e2893', '#2d3ca1', '#3c51ae', '#4b65bc', '#5a79c9', '#698ed6', '#78a2e4', '#87b6f1', '#96cafe'];
+    // colors = ['#000079', '#0f1486', '#1e2893', '#2d3ca1', '#3c51ae', '#4b65bc', '#5a79c9', '#698ed6', '#78a2e4', '#87b6f1', '#96cafe'];
+    colors = ['#2873AC', '#29AC80', '#51B133', '#FFD914', '#FD8D24', '#FF5B25']
     for(var i=0;i<colors.length;i++){
-	Bar.rect(i*50, 0, 50, 30).attr({
+	Bar.rect(i*50+130, 0, 50, 30).attr({
 	    "fill": colors[i]});
     };
     var R = Raphael("ChinaMap", 560, 470);//大小与矢量图形文件图形对应；这是比较操蛋的地方高宽不自适应。

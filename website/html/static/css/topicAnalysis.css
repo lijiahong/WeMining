@@ -135,7 +135,7 @@ h4{
     margin-right:auto;
 }
 .foot{
-    height:80px;
+    height:80px;4
     width:100%;
 }
 #cyrgt{
@@ -146,4 +146,8 @@ h4{
 }
 #warning{
     color:#F00;
+}
+
+#statuses_table_div{
+    text-align:center;
 }

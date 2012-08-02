@@ -40,7 +40,7 @@ class Search(object):
         try:
             results = self.db['public_statuses'].find(query_dict, sort=[('ts',  pymongo.DESCENDING)])
             pages = int(math.ceil(results.count()/200.0))
-            results = results.skip((page-1)*200).limit(limit)
+            results = results.skip((page-1)*limit).limit(limit)
             texts = []
             statuses = []
             for status in results:
