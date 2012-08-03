@@ -25,7 +25,7 @@ urls = ('/topicweibo/analysis', )
 class handler():
     def GET(self):
         uid = web.cookies().get('WEIBO_UID')
-        screen_name, profile_image_url, access_token = getUser(uid)
+        screen_name, profile_image_url, access_token, expires_in = getUser(uid)
         form = web.input(topic=None, json=None, public=None, page=None)
         topic = form.topic
         json = form.json
@@ -35,12 +35,12 @@ class handler():
             if not page:
                 page = 1
             return fetchPublicStatuses(topic, page)
-        if topic and json:
+        elif topic and json:
             return analysis_data(topic)
         elif topic:
             return render.topicanalysis(screen_name, profile_image_url)
         else:
-            return render.topicweibo(screen_name, profile_image_url)
+            return render.demo(screen_name, profile_image_url)
 
 def fetchPublicStatuses(topic, page):
     keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])
@@ -48,10 +48,8 @@ def fetchPublicStatuses(topic, page):
     start = current_ts - 2*7*24*60*60
     end = current_ts
     statuses = search.query(keywords, limit=500, ts={'$gte': start, '$lte': end})['results']
-    print len(statuses)
     results = []
     for status in statuses:
-        print status
         hashtags = status["hashtags"]
         hashtags_str = ""
         if hashtags:
@@ -222,6 +220,9 @@ def random_statuses_f(statuses, count=5):
     return results
 
 def time_dist(statuses, daypoint=None):
+    result = []
+    if not len(statuses):
+        return result
     day2id = {}
     for s in statuses:
         ts = s['ts']
@@ -231,7 +232,6 @@ def time_dist(statuses, daypoint=None):
             day2id[da] =  [weiboid]
         else:
             day2id[da].append(weiboid)
-    result = []
     daypoint = min(day2id.keys())
     day_list = [daypoint]
     i = 1

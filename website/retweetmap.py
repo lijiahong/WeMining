@@ -31,7 +31,7 @@ def unix2local(ts):
 class handler():
     def GET(self):
         uid = web.cookies().get('WEIBO_UID')
-        screen_name, profile_image_url, access_token = getUser(uid)
+        screen_name, profile_image_url, access_token, expires_in = getUser(uid)
         form = web.input(q=None, start=None, end=None, count=None)
         q = form.q
         count = form.count

@@ -1,4 +1,4 @@
-$def with (screen_name, profile_image_url)
+$def with (screen_name, profile_image_url, user_trends)
 $var doctype: DOCTYPE html
 $var title: 微博话题
 $var username: $screen_name
@@ -12,7 +12,9 @@ $var jsfiles: /static/libraries/jquery.min.js /static/js/topicweibo.js
   <div class="juzhong" id="search_background">
     <input id="search_box"/>
     <button id="search_button">分析</button>
-    <div id="warning" ></div>
+    <button id="follow_button">关注</button>
+    <div id="warning" >请输入微博话题</div>
+    <div id="information" ></div>
   </div>
 </div>
 <div id="hTopics">
@@ -23,6 +25,17 @@ $var jsfiles: /static/libraries/jquery.min.js /static/js/topicweibo.js
   <div id="hotTopics_daily" class="hotTopics"></div>
   <div class="titleT">最近1周热点话题</div>
   <div id="hotTopics_weekly" class="hotTopics"></div>
+  $if screen_name:
+      <div class="titleT">您最近关注的话题</div>
+      <div id="userTopics" class="hotTopics">
+        $if user_trends:
+            $for trend in user_trends:
+                <li><a href="#" title="选择话题" onclick=autofulfill("$trend[0]")>$trend[0]</a></li>
+        $else:
+	    您还没有参与任何话题.
+      </div>
+  $else:
+      <div class="titleT">登录新浪微博以获得个性化推荐</div>
   <div class="titleT">更多话题</div> 
   <div class="hotTopics"><a href="/topicweibo/history/">热门话题榜历史记录</a></div>
 </div>

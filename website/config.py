@@ -31,14 +31,16 @@ def getUser(uid):
     screen_name = None
     profile_image_url = None
     access_token = None
+    expires_in = None
     if uid:
         user = db['weibo_users'].find_one({'_id': uid})
         if user:
-            try: 
-                if user['expires_in'] > time.time():
+            try:
+                expires_in = user['expires_in']
+                if expires_in > time.time():
                     screen_name = user['screen_name']
                     profile_image_url = user['profile_image_url']
                     access_token = user['access_token']
             except KeyError:
                 pass
-    return screen_name, profile_image_url, access_token
+    return screen_name, profile_image_url, access_token, expires_in

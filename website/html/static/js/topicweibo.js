@@ -4,11 +4,38 @@
 
 $(document).ready(function(){
     $("#search_button").click(function() {
-  	console.log("here");
 	var _topic = $("#search_box")[0].value;
-	console.log(_topic);
-	if(_topic != undefined){
+	if(_topic == " " || _topic == ''){
+	    $('#warning').show();
+	    return;
+	}
+	else{
+	    $('#warning').hide();
 	    window.location.href="/topicweibo/analysis?topic=" + _topic;
+	}
+    });
+    $("#follow_button").click(function() {
+	$('#information').html('')
+	var _topic = $("#search_box")[0].value;
+	if(_topic == " " || _topic == ''){
+	    $('#warning').show();
+	    return;
+	}
+	else{
+	    $('#warning').hide();
+	    $.ajax({
+		url: '/topicweibo/followtrends?topic='+_topic,
+		dataType: 'json',
+		success: function(d) {
+		    console.log(d.status);
+		    if(d.status == 'is followed')
+			$('#information').html('该话题您已经关注过了.')
+		    else if(d.status == 'follow ok')
+			$('#information').html('关注成功.')
+		    else
+			$('#information').html('关注失败')
+		}
+	    });	    
 	}
     });
     $.ajax({
@@ -18,7 +45,7 @@ $(document).ready(function(){
 	    for(type in d ){
 		data = d[type];
 		for(var i=0;i<data.length;i+=1){
-		    $('#hotTopics_'+type).append('<li><a href="#search_box" class="tag' + data[i][2] + '" title="选择话题" onclick=autofulfill("' + data[i][0] + '")>' + data[i][0] + '</a></li>');}
+		    $('#hotTopics_'+type).append('<li><a href="#" class="tag' + data[i][2] + '" title="选择话题" onclick=autofulfill("' + data[i][0] + '")>' + data[i][0] + '</a></li>');}
 	    };
 	}
     });

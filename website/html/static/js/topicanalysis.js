@@ -44,10 +44,39 @@ $(document).ready(function() {
     topic_name = getUrlParam('topic');
     present_topic.innerText = "当前话题：" + topic_name + " ";
     present_time.innerText = "数据源：取自最近两周的公共微博数据";
-    $("#submit_analysis").click(function() {
-	var _topic = $$("#keyword")[0].value;
-	if(_topic != undefined){
-	    window.location.href="/topicweibo/analysis?topic=" + encodeURIComponent(_topic);
+    $("#search_button").click(function() {
+	var _topic = $("#search_box")[0].value;
+	if(_topic == " " || _topic == ''){
+	    $('#warning').show();
+	    return;
+	}
+	else{
+	    $('#warning').hide();
+	    window.location.href="/topicweibo/analysis?topic=" + _topic;
+	}
+    });
+    $("#follow_button").click(function() {
+	$('#information').html('')
+	var _topic = $("#search_box")[0].value;
+	if(_topic == " " || _topic == ''){
+	    $('#warning').show();
+	    return;
+	}
+	else{
+	    $('#warning').hide();
+	    $.ajax({
+		url: '/topicweibo/followtrends?topic='+_topic,
+		dataType: 'json',
+		success: function(d) {
+		    console.log(d.status);
+		    if(d.status == 'is followed')
+			$('#information').html('该话题您已经关注过了.')
+		    else if(d.status == 'follow ok')
+			$('#information').html('关注成功.')
+		    else
+			$('#information').html('关注失败')
+		}
+	    });	    
 	}
     });
     $.ajax({

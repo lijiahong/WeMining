@@ -17,7 +17,7 @@ urls = ('/topicweibo/history/', '/topicweibo/history')
 class handler():
     def GET(self):
         uid = web.cookies().get('WEIBO_UID')
-        screen_name, profile_image_url, access_token = getUser(uid)
+        screen_name, profile_image_url, access_token, expires_in= getUser(uid)
         topic_count_hour = topichash("hour")
         topic_count_day = topichash("day")
         topic_count_week = topichash("week")

@@ -91,7 +91,7 @@ button {
 }
 
 .juzhong {
-    width: 830px;
+    width: 860px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -100,7 +100,6 @@ button {
     margin-left: 10px;
 }
 #search_box {
-    
     border: none;
     padding-left: 15px;
     background-image: url(images/box_bg3.png);
@@ -109,7 +108,7 @@ button {
     background-repeat: no-repeat;
     font-size: 15px;
 }
-#search_button {
+#search_button, #follow_button{
     height: 40px;
     width: 97px;
     border: none;
@@ -120,6 +119,21 @@ button {
     cursor: pointer;
 }
 #search_button:hover{
-    
     background-image: url(images/btn_bgOn.png);
+}
+#follow_button:hover{
+    background-image: url(images/btn_bgOn.png);
+}
+#warning{
+    position:relative;
+    top:10px;
+    left:250px;
+    display:none;
+    color:#F00;
+}
+#information{
+    position:relative;
+    top:10px;
+    left:250px;
+    color:#F00;
 }
