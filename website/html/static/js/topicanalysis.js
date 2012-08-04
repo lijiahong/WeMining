@@ -73,6 +73,8 @@ $(document).ready(function() {
 			$('#information').html('该话题您已经关注过了.')
 		    else if(d.status == 'follow ok')
 			$('#information').html('关注成功.')
+		    else if(d.status == 'need login')
+			$('#information').html('请登录新浪微博.')
 		    else
 			$('#information').html('关注失败')
 		}
