@@ -28,7 +28,6 @@ class handler():
     def GET(self):
         pass
 
-
 def getLatLon(db, location):
     try:
         tokens = location.split(' ')
@@ -69,7 +68,7 @@ def getLatLon(db, location):
     return latlon
 
 
-def analysis_data(keywords, limit=10000)
+def analysis_data(keywords, limit=10000):
     db = getDB()
     dt = {}
     dt_province = {}
@@ -141,7 +140,8 @@ def analysis_data(keywords, limit=10000)
             elif 0.2 <= level <= 0.4:
                 level = 1
             elif 0.4 <= level <= 0.6:
-                level = 2            elif 0.6 <= level <= 0.8:
+                level = 2            
+            elif 0.6 <= level <= 0.8:
                 level = 3
             else:
                 level = 4
