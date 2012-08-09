@@ -3,6 +3,10 @@
 }
 
 $(document).ready(function(){
+    $("#search_box").tagSuggest({
+	url: '/api/topic/suggest.json',
+	delay: 250
+    });
     $("#search_button").click(function() {
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){
@@ -14,7 +18,7 @@ $(document).ready(function(){
 	    window.location.href="/topicweibo/analysis?topic=" + _topic;
 	}
     });
-    $("#follow_button").click(function() {
+    $("#follow_pic").click(function() {
 	$('#information').html('')
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){

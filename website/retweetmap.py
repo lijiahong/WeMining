@@ -54,7 +54,7 @@ class handler():
         if not q :
            return render.retweetmap_demo(screen_name, profile_image_url, start, end)
         search = WeiboSearch()
-        results = search.query(keywords=cut(q, f=['n', 'nr', 'ns', 'nt']), begin=start_ts, end=end_ts, limit=int(count))
+        results = search.query(job='repost_chain', keywords=cut(q, f=['n', 'nr', 'ns', 'nt']), begin=start_ts, end=end_ts, limit=int(count))
         if not results:
             return '没有搜索结果'
         node_ids, node_infos, dot_str, degree_nodes, key_nodes, between_nodes = graph_data(results)

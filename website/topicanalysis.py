@@ -26,28 +26,39 @@ class handler():
     def GET(self):
         uid = web.cookies().get('WEIBO_UID')
         screen_name, profile_image_url, access_token, expires_in = getUser(uid)
-        form = web.input(topic=None, json=None, public=None, page=None)
+        form = web.input(topic=None, json=None, public=None, page=None, history=None)
         topic = form.topic
         json = form.json
         public = form.public
         page = form.page
+        history = form.history
         if topic and json and public:
             if not page:
                 page = 1
-            return fetchPublicStatuses(topic, page)
+            if not history:
+                return fetchPublicStatuses(topic, page)
+            else:
+                return fetchPublicStatuses(topic, page, model='history')
         elif topic and json:
-            return analysis_data(topic)
+            if not history:
+                return analysis_data(topic)
+            else:
+                return analysis_data(topic, model='history')
         elif topic:
             return render.topicanalysis(screen_name, profile_image_url)
         else:
             return render.demo(screen_name, profile_image_url)
 
-def fetchPublicStatuses(topic, page):
+def fetchPublicStatuses(topic, page, model='hot'):
     keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])
     current_ts = int(time.time())
-    start = current_ts - 2*7*24*60*60
+    start = 0
+    #start = current_ts - 2*7*24*60*60
     end = current_ts
-    statuses = search.query(keywords, limit=500, ts={'$gte': start, '$lte': end})['results']
+    if model == 'hot':
+        statuses = search.query(keywords, limit=500, order=-1, ts={'$gte': start, '$lte': end})['results']
+    else:
+        statuses = search.query(keywords, limit=500, order=1, ts={'$gte': start, '$lte': end})['results']
     results = []
     for status in statuses:
         hashtags = status["hashtags"]
@@ -57,12 +68,16 @@ def fetchPublicStatuses(topic, page):
         results.append([str(date.fromtimestamp(status["ts"])), status["location"], status["name"], status["text"], hashtags_str])    
     return json.dumps(results)
 
-def analysis_data(topic):
+def analysis_data(topic, model='hot'):
     keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])
     current_ts = int(time.time())
-    start = current_ts - 2*7*24*60*60
+    start = 0
+    #start = current_ts - 2*7*24*60*60
     end = current_ts
-    results = search.query(keywords, emotion=True, limit=10000, ts={'$gte': start, '$lte': end})
+    if model == 'hot':
+        results = search.query(keywords, emotion=True, limit=10000, order=-1, ts={'$gte': start, '$lte': end})
+    else:
+        results = search.query(keywords, emotion=True, limit=10000, order=1, ts={'$gte': start, '$lte': end})
     statuses = results['results']
     emotions = results['emotions']
     timedist = time_dist(statuses)

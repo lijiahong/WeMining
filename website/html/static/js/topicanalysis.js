@@ -41,9 +41,14 @@ var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
 google.load('visualization', '1', {packages:['table','annotatedtimeline','corechart']});
 
 $(document).ready(function() {
+    $("#search_box").tagSuggest({
+	url: '/api/topic/suggest.json',
+	delay: 250
+    });
+    $('#result_body').css("display", "none");
     topic_name = getUrlParam('topic');
     present_topic.innerText = "当前话题：" + topic_name + " ";
-    present_time.innerText = "数据源：取自最近两周的公共微博数据";
+    present_time.innerText = "数据源：新浪公共微博数据";
     $("#search_button").click(function() {
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){
@@ -55,7 +60,8 @@ $(document).ready(function() {
 	    window.location.href="/topicweibo/analysis?topic=" + _topic;
 	}
     });
-    $("#follow_button").click(function() {
+    
+    $("#follow_pic").click(function() {
 	$('#information').html('')
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){
@@ -68,7 +74,6 @@ $(document).ready(function() {
 		url: '/topicweibo/followtrends?topic='+_topic,
 		dataType: 'json',
 		success: function(d) {
-		    console.log(d.status);
 		    if(d.status == 'is followed')
 			$('#information').html('该话题您已经关注过了.')
 		    else if(d.status == 'follow ok')
@@ -86,6 +91,9 @@ $(document).ready(function() {
 	dataType:"json",
 	success:function(data){
 	    $('#ajax_loading').css("display", "none");
+	    $('#result_body').css("display", "inline");
+	    if(data['timedist'].length == 0)
+		$('#information').html('当前话题还没有数据,请选择其他话题.')
 	    drawTimeDist(data['timedist']);
 	    drawChinamap(data['china_map_count']);
 	    drawMoodTimelie(data['mood_timeline']);
@@ -94,14 +102,14 @@ $(document).ready(function() {
     });
     $("#more_pie_charts").click(function() {
 	if(emotion_chart_hide){
-	    for(var i = 4;i <emotion_chart_count;i++){
+	    for(var i = 3;i <emotion_chart_count;i++){
 		$("#p_emotion_"+i).show();
 	    }
 	    $("#more_pie_charts").text('隐藏');
 	    emotion_chart_hide = 0; 
 	}
 	else{
-	    for(var i = 4;i <emotion_chart_count;i++){
+	    for(var i = 3;i <emotion_chart_count;i++){
 		$("#p_emotion_"+i).hide();
 	    }
 	    $("#more_pie_charts").text('显示更多...'); 
@@ -160,7 +168,7 @@ function drawTimeDist(data){
             type: 'column'
 	},
 	title: {
-            text: '微博数量时间分布条形图'
+            text: '微博数量时间分布柱状图'
 	},
 	subtitle: {
             text: '话题：' +  topic_name
@@ -169,7 +177,10 @@ function drawTimeDist(data){
             categories:  xdata_series,
             title: {
 		text: null
-            }
+            },
+	    labels:{
+		enabled:false,
+	    },
 	},
 	yAxis: {
             min: 0,
@@ -183,8 +194,8 @@ function drawTimeDist(data){
 	},
 	tooltip: {
             formatter: function() {
-		return ''+
-                    this.series.name +': '+ this.y;
+		return '时间:' + this.x + ' ' +
+                    this.series.name +':'+ this.y;
             }
 	},
 	plotOptions: {
@@ -199,7 +210,7 @@ function drawTimeDist(data){
             align: 'right',
             verticalAlign: 'top',
             x: -100,
-            y: 100,
+            y: 0,
             floating: true,
             borderWidth: 1,
             backgroundColor: '#FFFFFF',
@@ -211,7 +222,10 @@ function drawTimeDist(data){
 	series: [{
             name: '微博数量',
             data: value_series
-	}]
+	}],
+	exporting: {
+            enabled: false
+        }
     });
 }
 
@@ -227,13 +241,13 @@ function drawMoodMost(emotion_data){
     drawEmotionMostTable(date_most);
     emotion_chart_count = emotion_province_dist.length
     for(var i=0;i<emotion_chart_count;i+=1){
-    	if(i > 3){
+    	if(i > 2){
     	    $("#more_pie_charts").show();
-    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='display: none;width: 320px; height: 200px;'></div>");
+    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='display: none;width: 200px; height: 150px;'></div>");
     	    createEmotionPieChart(emotion_province_dist[i],'p_emotion_' + String(i));
     	}
     	else{
-    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='width: 320px; height: 200px;'></div>");
+    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='width: 200px; height: 150px;'></div>");
     	    createEmotionPieChart(emotion_province_dist[i],'p_emotion_' + String(i));
     	}
     }
@@ -246,6 +260,8 @@ function drawMoodMost(emotion_data){
     	var da = google.visualization.arrayToDataTable(result);
     	var options = {
     	    title: data[0],
+	    width:250,
+	    height:180
     	};
     	var emotion_chart = new google.visualization.PieChart(document.getElementById(container_id));
     	emotion_chart.draw(da, options);
@@ -264,7 +280,7 @@ function drawEmotionMostTable(serverData){
     data.addColumn('string', '最高兴省份');
     data.addRows(date_most_data);
     var tableforemotion = new google.visualization.Table(document.getElementById('table_div_for_emotion'));
-    tableforemotion.draw(data, {showRowNumber: false}); 
+    tableforemotion.draw(data, {showRowNumber: false,width:600}); 
 }
 
 function drawStatusesTable(statuses_data){

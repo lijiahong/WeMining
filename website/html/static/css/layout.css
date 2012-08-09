@@ -2,6 +2,10 @@ html, body{
     margin:0;
     padding:0;
     height:100%; /* needed for container min-height */
+    background-color:white;
+}
+body img{
+    border:none;
 }
 #header{
     position:relative;
@@ -11,11 +15,12 @@ html, body{
 #nav-container{
     position:absolute;
     top:0;
-    right:2em;
+    right:15em;
     height:60px;
 }
 .nav-collapse{
-    height:40px;
+    position: relative;
+    top: -10px;
 }
 .nav{
     right: 0px;
@@ -34,12 +39,16 @@ html, body{
     padding-left: ;
     text-align: center;
     border-bottom-style: solid;
-    border-bottom-width: thick;
+    border-bottom-width: 4px;
 }
 .nav a{
-    font-size: 19px;
+    font-size: 10px;
     font-family: sans-serif;
     color: gray;
+    font-weight: bold;
+}
+.nav a:hover{
+    color:#AE1932;
 }
 div#container {
 	position:relative; /* needed for footer positioning*/
@@ -65,4 +74,5 @@ div#container {
 
 #footer, #footer a {
     color: #555555;
+    text-decoration: none;
 }

@@ -4,28 +4,21 @@ $var title: 微博话题
 $var username: $screen_name
 $var profile_image_url: $profile_image_url
 $var cssfiles: /static/css/topicWeibo.css
-$var jsfiles: /static/libraries/jquery.min.js /static/js/topicweibo.js
+$var jsfiles: /static/libraries/jquery.min.js /static/js/tagsuggest.js /static/js/topicweibo.js
 <div id="div_logo">
-  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a></div>
+  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a><img src="/static/images/topicWB/guanzhu.png" alt=" 关注" id="follow_pic" title="在新浪微博关注此话题"/><em>关注</em></div>
 </div>
 <div id="div_input">
   <div class="juzhong" id="search_background">
-    <input id="search_box"/>
     <button id="search_button">分析</button>
-    <button id="follow_button">关注</button>
-    <div id="warning" >请输入微博话题</div>
-    <div id="information" ></div>
+    <input id="search_box"/>
+    <div id="warning" >请输入微博话题.</div>
+    <div id="information"></div>
+    <div id="tag"></div>
   </div>
 </div>
 <div id="hTopics">
-  <div id="hotTopics_my"></div>
-  <div class="titleT">最近1小时热点话题</div>
-  <div id="hotTopics_hourly" class="hotTopics"></div>
-  <div class="titleT">最近1天热点话题</div>
-  <div id="hotTopics_daily" class="hotTopics"></div>
-  <div class="titleT">最近1周热点话题</div>
-  <div id="hotTopics_weekly" class="hotTopics"></div>
-  $if screen_name:
+$if screen_name:
       <div class="titleT">您最近关注的话题</div>
       <div id="userTopics" class="hotTopics">
         $if user_trends:
@@ -35,42 +28,58 @@ $var jsfiles: /static/libraries/jquery.min.js /static/js/topicweibo.js
 	    您还没有参与任何话题.
       </div>
   $else:
-      <div class="titleT">登录新浪微博以获得个性化推荐</div>
+      <div class="titleT"><a href="/login" alt="登录新浪微博">登录新浪微博以获得个性化推荐</a></br></br></div>
+  <div id="hotTopics_my"></div>
+  <div class="titleT">最近1小时热点话题</div>
+  <div id="hotTopics_hourly" class="hotTopics"></div>
+  <div class="titleT">最近1天热点话题</div>
+  <div id="hotTopics_daily" class="hotTopics"></div>
+  <div class="titleT">最近1周热点话题</div>
+  <div id="hotTopics_weekly" class="hotTopics"></div>
+  
   <div class="titleT">更多话题</div> 
   <div class="hotTopics"><a href="/topicweibo/history/">热门话题榜历史记录</a></div>
 </div>
 <div id="empty2"></div>
 <div id="intro">
   <div id="introduce">
-    <div class="titleT">topicWeibo告诉你：</div>
+    <div class="titleT" style="color: #AE1932;">topicWeibo告诉你：</div>
     <div id="intro_detail">
      <div class="detail">
-	<div class="pic"><img src="/static/images/topicWB/icon_gj.png" /></div>
-	<div class="dtl_intr">
-	  <div class="dtl_ttl">热门话题推荐</div>
-	  <div class="dtl_dtl"></div>
+	<div class="pic"><img src="/static/images/topicWB/icon_gj.png" />
+		<div class="dtl_intr">
+	  		<div class="dtl_ttl">热门话题推荐</div>
+	  		<div class="dtl_dtl"></div>
+		</div>
 	</div>
+	
       </div>
       <div class="detail">
-	<div class="pic"><img src="/static/images/topicWB/icon_zx.png" /></div>
-	<div class="dtl_intr">
-	  <div class="dtl_ttl">微博时间分布图</div>
-	  <div class="dtl_dtl"></div>
+	<div class="pic"><img src="/static/images/topicWB/icon_zx.png" />
+		<div class="dtl_intr">
+	  		<div class="dtl_ttl">微博时间分布图</div>
+	  		<div class="dtl_dtl"></div>
+		</div>
 	</div>
+	
       </div>
       <div class="detail">
-	<div class="pic"><img src="/static/images/topicWB/icon_dt.png" /></div>
-	<div class="dtl_intr">
-	  <div class="dtl_ttl">微博空间分布</div>
-	  <div class="dtl_dtl"></div>
+	<div class="pic"><img src="/static/images/topicWB/icon_dt.png" />
+		<div class="dtl_intr">
+	  		<div class="dtl_ttl">微博空间分布</div>
+	  		<div class="dtl_dtl"></div>
+		</div>
 	</div>
+	
       </div>
       <div class="detail">
-	<div class="pic"><img src="/static/images/topicWB/icon_qx.png" /></div>
-	<div class="dtl_intr">
-	  <div class="dtl_ttl">微博情绪分析</div>
-	  <div class="dtl_dtl"></div>
+	<div class="pic"><img src="/static/images/topicWB/icon_qx.png" />
+		<div class="dtl_intr">
+	  		<div class="dtl_ttl">微博情绪分析</div>
+	  		<div class="dtl_dtl"></div>
+		</div>
 	</div>
+	
       </div>
     </div>
   </div>

@@ -4,17 +4,18 @@ $var title: 微博话题分析
 $var username: $screen_name
 $var profile_image_url: $profile_image_url
 $var cssfiles: /static/css/topicAnalysis.css
-$var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http://code.highcharts.com/stock/highstock.js http://code.highcharts.com/highcharts.js http://code.highcharts.com/stock/modules/exporting.js /static/libraries/highchart_theme_gray.js /static/js/topicanalysis.js /static/libraries/raphael.js /static/js/chinamap.js 
-<div id="div_logo">
-  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a></div>
+$var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http://code.highcharts.com/stock/highstock.js http://code.highcharts.com/highcharts.js http://code.highcharts.com/stock/modules/exporting.js /static/js/tagsuggest.js /static/js/topicanalysis.js /static/libraries/raphael.js /static/js/chinamap.js 
+<div id="div_logo" name="top">
+  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a><img src="/static/images/topicWB/guanzhu.png" alt=" 关注" id="follow_pic" title="在新浪微博关注此话题"/><em>关注</em></div>
 </div>
+<div id="backtotop"><a href="#top"><img src="/static/images/backtotop.gif" /></a></div>
 <div id="div_input">
   <div class="juzhong" id="search_background">
-    <input id="search_box" onKeyDown="EnterPress()"/>
     <button id="search_button">分析</button>
-    <button id="follow_button">关注</button>
-    <div id="warning">请输入微博话题</div>
+    <input id="search_box" onKeyDown="EnterPress()"/>
+    <div id="warning">请输入微博话题.</div>
     <div id="information" ></div>
+    <div id="tag"></div>
     <div id="Second">
       <em id="present_topic"></em>
       <em id="present_time"></em>
@@ -27,7 +28,8 @@ $var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http:
     <div id="timedist" class="result_de">
       <h3>话题微博数量时间分布</h3>
       <div>
-        <div id="timedist_container" style='width: 820px; height: 240px;'></div>
+        <div id="timedist_container" style='width: 600px; height: 240px;margin-left: auto;
+margin-right: auto;'></div>
       </div>
       <div class="clear-float"></div>
     </div>
@@ -43,7 +45,7 @@ $var jsfiles: /static/libraries/jquery.min.js https://www.google.com/jsapi http:
     <div id="emotion_analysis" class="result_de">
       <h3>话题情绪分析</h3>
       <h4>情绪时间线</h4>
-      <div id='annotatedtimeline_chart_div' style='width: 700px; height: 240px; margin-left: auto;margin-right: auto;'></div>
+      <div id='annotatedtimeline_chart_div' style='width: 600px; height: 240px; margin-left: auto;margin-right: auto;'></div>
       <h4>最情绪省份</h4>
       <div id="table_div_for_emotion"></div>
       <div id='outp_emotion'><h4>情绪饼图</h4><a href="javascript:void(0);" id="more_pie_charts">显示更多...</a><div id="p_emotion"></div>

@@ -3,6 +3,10 @@
 }
 
 $(document).ready(function(){
+    $("#search_box").tagSuggest({
+	url: '/api/topic/suggest.json',
+	delay: 250
+    });
     $("#search_button").click(function() {
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){
@@ -14,7 +18,7 @@ $(document).ready(function(){
 	    window.location.href="/topicweibo/analysis?topic=" + _topic;
 	}
     });
-    $("#follow_button").click(function() {
+    $("#follow_pic").click(function() {
 	$('#information').html('')
 	var _topic = $("#search_box")[0].value;
 	if(_topic == " " || _topic == ''){
@@ -47,7 +51,8 @@ $(document).ready(function(){
 	    for(type in d ){
 		data = d[type];
 		for(var i=0;i<data.length;i+=1){
-		    $('#hotTopics_'+type).append('<li><a href="#" class="tag' + data[i][2] + '" title="选择话题" onclick=autofulfill("' + data[i][0] + '")>' + data[i][0] + '</a></li>');}
+                    data[i][0] = data[i][0].replace(/\s/g,"");
+		    $('#hotTopics_'+type).append("<li><a href='#' class='tag" + data[i][2] + "' title='选择话题' onclick=autofulfill('" + data[i][0] + "')>" + data[i][0] + "</a></li>" );}
 	    };
 	}
     });
