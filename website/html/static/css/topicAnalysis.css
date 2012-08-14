@@ -60,7 +60,8 @@ body{
     color: gray;
 }
 #follow_pic{
-    margin-left: 50%;
+    position:relative;
+    right: -380px;
     cursor: pointer;
 }
 #logo_img {
@@ -68,20 +69,32 @@ body{
     margin-left: 10px;
 }
 #search_box {
-    border: none;
+    -webkit-border-radius: 10px; 
+    -moz-border-radius: 10px; 
+    border-radius: 10px; 
+    /* border: none; */
+    border: solid 5px #7eb3f6;
     padding-left: 15px;
     background-color:white;
-    background-image: url(images/box_bg3.png);
-    width: 586px;
+    /* background-image: url(images/box_bg3.png); */
+    width: 570px;
     height: 40px;
-    background-repeat: no-repeat;
+    /* background-repeat: no-repeat; */
     font-size: 15px;
     outline-color: white;
 }
+.bubbleInfo {
+    position: relative;
+}
+.popup {
+    position: absolute;
+    display: none; /* keeps the popup hidden if no JS available */
+}
 #search_button{
-    position:relative;
-    float:right;
-    right:18px;
+    position: relative;
+    float: right;
+    top: 5px;
+    right: 18px;
     height: 40px;
     width: 97px;
     border: none;
@@ -109,10 +122,6 @@ body{
 #follow_button:hover{
     background-image: url(images/btn_bgOn.png);
 }
-#search_background {
-    //	background-image: url(images/box_bg3.png);
-//	background-repeat: no-repeat;
-}
 .result_de {
     width:100%;
     //height:400px;
@@ -137,8 +146,9 @@ h4{
     color: #0B54C2;
 }
 #more_pie_charts{
-    margin-left: 30px;
-    font-weight: normal;
+    position:relative;
+    float:right;
+    right:150px;
     display:none;
     text-decoration:none;
 }
@@ -181,13 +191,8 @@ h4{
 #statuses_table_div{
     text-align:center;
 }
-#information{
-    position:relative;
-    top:10px;
-    left:250px;
-    color:#F00;
-}
 #table_div_for_emotion{
+    text-align:center;
     width:600px;
     margin-left:auto;
     margin-right:auto;

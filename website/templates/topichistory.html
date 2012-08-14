@@ -5,14 +5,21 @@ $var profile_image_url: $profile_image_url
 $var title: 微博话题历史记录
 $var cssfiles: /static/css/topicAnalysis.css /static/css/topicHistory.css 
 $var jsfiles: /static/libraries/jquery.min.js /static/js/tagsuggest.js /static/js/topichistory.js
-<div id="div_logo">
-  <div class="juzhong"><a href="/topicweibo/" class="link">  <img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a><img src="/static/images/topicWB/guanzhu.png" alt=" 关注" id="follow_pic" title="在新浪微博关注此话题"/><em>关注</em></div>
+<div id="div_logo" name="top">
+  <div class="juzhong">
+    <div class="bubbleInfo">
+      <a href="/topicweibo/" class="link"><img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a>
+      <img id="follow_pic" class="trigger" src="/static/images/topicWB/guanzhu.png"/>
+      <div class="popup">
+	<p id="information">在新浪微博关注此搜索框内的话题.</p>
+      </div>
+    </div>
+  </div>
 </div>
 <div id="div_input">
   <div class="juzhong" id="search_background">
     <button id="search_button">分析</button>
     <input id="search_box" onKeyDown="EnterPress()"/>
-    <div id="warning" >请输入微博话题.</div>
     <div id="information" ></div>
     <div id="tag"></div>
     <div id="Second">

@@ -103,21 +103,46 @@ button {
     margin-top: 15px;
     margin-left: 10px;
 }
+/* #search_box { */
+/*     border: none; */
+/*     padding-left: 15px; */
+/*     background-color:white; */
+/*     background-image: url(images/box_bg3.png); */
+/*     width: 586px; */
+/*     height: 40px; */
+/*     background-repeat: no-repeat; */
+/*     font-size: 15px; */
+/*     outline-color: white; */
+/* } */
 #search_box {
-    border: none;
+    -webkit-border-radius: 10px; 
+    -moz-border-radius: 10px; 
+    border-radius: 10px; 
+    /* border: none; */
+    border: solid 5px #7eb3f6;
     padding-left: 15px;
     background-color:white;
-    background-image: url(images/box_bg3.png);
-    width: 586px;
+    /* background-image: url(images/box_bg3.png); */
+    width: 570px;
     height: 40px;
-    background-repeat: no-repeat;
+    /* background-repeat: no-repeat; */
     font-size: 15px;
     outline-color: white;
+}
+.bubbleInfo {
+    position: relative;
+}
+.popup {
+    position: absolute;
+    display: none; /* keeps the popup hidden if no JS available */
 }
 #search_button{
     position:relative;
     float:right;
-    right:18px;
+    top: 5px;
+    right: 18px;
+    height: 40px;
+    width: 97px;
 }
 #follow_button{
     float:right;
@@ -142,12 +167,6 @@ button {
     top:10px;
     left:250px;
     display:none;
-    color:#F00;
-}
-#information{
-    position:relative;
-    top:10px;
-    left:250px;
     color:#F00;
 }
 .pic{

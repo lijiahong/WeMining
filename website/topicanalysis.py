@@ -50,7 +50,7 @@ class handler():
             return render.demo(screen_name, profile_image_url)
 
 def fetchPublicStatuses(topic, page, model='hot'):
-    keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])
+    keywords = cut(topic)
     current_ts = int(time.time())
     start = 0
     #start = current_ts - 2*7*24*60*60
@@ -69,7 +69,7 @@ def fetchPublicStatuses(topic, page, model='hot'):
     return json.dumps(results)
 
 def analysis_data(topic, model='hot'):
-    keywords = cut(topic, f=['n', 'nr', 'ns', 'nt'])
+    keywords = cut(topic)
     current_ts = int(time.time())
     start = 0
     #start = current_ts - 2*7*24*60*60
@@ -152,7 +152,7 @@ def ts2date(ts):
 def date2ts(date):
     return time.mktime(time.strptime(date, '%Y-%m-%d'))
 
-def location_count(statuses, emotions):
+def location_count(statuses, emotions, city_sorted=None):
     count = {}
     most = [0, 0, 0]
     most_city = ['', '', '']
@@ -170,10 +170,16 @@ def location_count(statuses, emotions):
         arr = count[city]
         total = sum(arr)*1.0
         for i in range(len(arr)):
-            if most[i] < arr[i]:
-                most_city[i] = city
-                most[i] = arr[i]
-            arr[i] /= total
+            if city_sorted:
+                for c, e in city_sorted[:10]:
+                    if c == city:
+                        if most[i] < arr[i]/total:
+                            most_city[i] = city
+                            most[i] = arr[i]/total
+            else:
+                if most[i] < arr[i]:
+                    most_city[i] = city
+                    most[i] = arr[i]
     return {'count': count, 'most': most_city}
 
 def mood_location_f(statuses, emotions, city_sorted):
@@ -189,7 +195,8 @@ def mood_location_f(statuses, emotions, city_sorted):
         dt[date]['statuses'].append(status)
         dt[date]['emotions'].append(emotion)
     total_data = location_count(statuses, emotions)
-    total_most = total_data['most']
+    total_data_2 = location_count(statuses, emotions, city_sorted=city_sorted)
+    total_most = [total_data['most'], total_data_2['most']]
     dt = sorted(dt.iteritems(), key=lambda(k, v): date2ts(k), reverse=True)
     for date, d in dt:
         data = location_count(d['statuses'], d['emotions'])
