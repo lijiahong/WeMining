@@ -2,18 +2,53 @@ $def with (screen_name, profile_image_url)
 <!DOCTYPE html>
 <head>
   <title>IDEC</title>
+  <style type="text/css">
+    #container{
+        margin-left:auto;
+        margin-right:auto;
+        width:800px;
+    }
+    #welcome{
+        margin: 20px;
+    }
+    .intro{
+        margin-left: auto;
+        margin-right:auto;
+        width:600px;
+    }
+    .intro h2{
+        position:relative;
+        top: -250px;
+        left: 300px;       
+    }
+    .intro img{
+        border-style: none
+    }
+    .intro p{
+        position:relative;
+        width: 300px;
+        top: -250px;
+        left: 300px;
+    }
+  </style>
 </head>
 <body>
-  <div>
-    $if screen_name and profile_image_url:
-      <p>$screen_name<img src="$profile_image_url" alt="$screen_name"></p>
-    $else:
-      <a href="/login"><img src="/static/images/login_weibo.png" alt="登录新浪微博"></a>
+  <div id="container">
+    <div id="welcome">
+      $if screen_name and profile_image_url:
+          <p>欢迎您, $screen_name</p>
+      $else:
+          <a href="/login"><img src="/static/images/login_weibo.png" alt="登录新浪微博"></a>
+    </div>
+    <div class="intro">
+      <div>
+	<a href="/topicweibo/">
+          <img src="/static/images/topicweibo.png"/>
+	</a>
+	<h2><a href="/topicweibo/">我看热话题</a></h2>
+	<p>新浪微博上热门话题的推荐，与热门话题相关的公共微博的时空分布展示以及情绪分析。授权后登录的用户可以看到自己已经关注过的话题，同时也可以关注感兴趣的热门话题。</p>
+      </div>
+    </div>
   </div>
-  <ul>
-    <li><a href="/topicweibo/">微博话题</a></li>
-    <li><a href="/retweetmap/">微博转发网</a></li>
-    <li><a href="http://idec.buaa.edu.cn:8080/">微博转发网</a></li>
-  </ul>
 </body>
 </html>

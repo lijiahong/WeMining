@@ -1,6 +1,6 @@
 $def with (screen_name, profile_image_url, user_trends)
 $var doctype: DOCTYPE html
-$var title: 微博话题
+$var title: 我看热话题
 $var username: $screen_name
 $var profile_image_url: $profile_image_url
 $var cssfiles: /static/css/topicWeibo.css
@@ -44,8 +44,7 @@ $if screen_name:
   <div id="hotTopics_daily" class="hotTopics"></div>
   <div class="titleT">最近1周热点话题</div>
   <div id="hotTopics_weekly" class="hotTopics"></div>
-  
-  <div class="titleT">更多话题</div> 
+  <div class="titleT">更多话题</div>
   <div class="hotTopics"><a href="/topicweibo/history/">热门话题榜历史记录</a></div>
 </div>
 <div id="empty2"></div>

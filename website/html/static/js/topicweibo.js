@@ -108,7 +108,7 @@ $(document).ready(function(){
 	}
 	else{
 	    $.ajax({
-		url: '/topicweibo/followtrends?topic='+_topic,
+		url: '/topicweibo/followtrends?topic='+encodeURIComponent(_topic),
 		dataType: 'json',
 		success: function(d) {
 		    if(d.status == 'is followed')
