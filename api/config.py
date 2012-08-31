@@ -9,6 +9,7 @@ import mechanize
 APP_KEY = '999494363'
 APP_SECRET = '53384a9bd6c88d1fa44f9d5ede95d58b'
 CALLBACK_URL = 'http://127.0.0.1:88799/callback'
+ACCOUNTS = ['hanyangprint@126.com hanyang' ,'hope_thebest@sina.com hanyang' ,'hope_thebest@msn.com hanyang']
 
 code = None
 

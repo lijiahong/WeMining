@@ -3,14 +3,12 @@
 import time
 import random
 from weibo import APIClient, APIError
-from config import APP_KEY, APP_SECRET, CALLBACK_URL, getCode
+from config import APP_KEY, APP_SECRET, CALLBACK_URL, ACCOUNTS, getCode
 
 class APIPool(object):
-    def __init__(self, accounts_file='accounts.txt', max_accounts=None):
+    def __init__(self, accounts=ACCOUNTS, max_accounts=None):
         usernames = []
         passwords = []
-        f = open(accounts_file, 'r')
-        accounts = f.readlines()
         random.shuffle(accounts)
         if max_accounts and max_accounts > 0:
             accounts = accounts[:max_accounts]
@@ -19,7 +17,6 @@ class APIPool(object):
             print '%s:%s is added.' % (username, password)
             usernames.append(username)
             passwords.append(password)
-        f.close()
         self.apis = []
         for username, password in zip(usernames, passwords):
             api = API(username, password)
