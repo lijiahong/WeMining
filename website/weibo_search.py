@@ -113,10 +113,10 @@ class WeiboSearch(object):
         results = []
         for m in matches:
             result = {}
-            result['username'] = m.document.get_value(self.usernamevi)
-            result['repost_chain'] = json.loads(m.document.get_value(self.repnameslistvi))
+            results['id'] = m.document.get_value(self.widvi)
+            result['location'] = m.document.get_value(self.loctvi)
+            result['repost_location'] = m.document.get_value(self.reploctvi)
             result['timestamp'] = xapian.sortable_unserialise(m.document.get_value(self.timestampvi))
-            result['keywords'] = json.loads(m.document.get_value(self.keywordsvi))
             results.append(result)
         return results
 

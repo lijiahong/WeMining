@@ -10,13 +10,13 @@ import web
 import random
 import math
 
+import sys
+sys.path.append('..')
+
 from tokenizer.fenci import cut
 from config import getUser, getDB
 from weibo_search import WeiboSearch
 from weibo import _obj_hook
-
-import sys
-sys.path.append('..')
 
 from mining.emotion import EmotionClassifier
 
@@ -68,7 +68,51 @@ def getLatLon(db, location):
     return latlon
 
 
-def analysis_data(keywords, limit=10000):
+def analysis_data(keywords, limit=10000, section=25):
+    '''[
+	{
+		ts:122838328,
+		province:{
+			"北京":[emotion_type,level],
+			"上海":[emotion_type,level],
+			...
+		},
+		most_province:[
+		        //最悲伤
+			[
+				"北京",
+				//悲伤、愤怒、高兴 数量
+				[30, 20, 10]
+			],
+
+			//最愤怒
+			["上海", [20, 30, 10]],
+
+                        //最高兴
+			["上海", [20, 10, 30]]
+		],
+		detail:[
+			[
+				//经纬度
+				'22.1638446 113.5549937',
+                                //悲伤、愤怒、高兴 数量
+				[12, 11, 10]
+			],
+
+                        ['20.1638446 110.5549937', [13, 12, 11]],
+
+			...
+
+		]
+	},
+
+	{
+	   ...
+	},
+	
+	...
+       ]
+    '''
     db = getDB()
     dt = {}
     dt_province = {}
@@ -76,23 +120,65 @@ def analysis_data(keywords, limit=10000):
     texts, results = search.query(job='emotion', keywords=keywords, limit=limit)
     ec = EmotionClassifier()
     emotions = ec.predict(texts)
+    ts_dic = {}
+    ts_final = {}
+    ts_arr = []
     for result, emotion in zip(results, emotions):
         ts = result['ts']
+        ts_arr.append(ts)
         location = result['location'].decode('utf-8')
-        province = location.split(' ')[0]
-        assert province
-        if province == u'其他' or province == u'海外':
-            continue
-        if ts not in dt:
-            dt[ts] = {}
-            dt[ts]['detail'] = []
-            dt_province[ts] = {}
-        if location not in dt[ts]:
-            dt[ts][location] = [0, 0, 0]
-        if province not in dt_province[ts]:
-            dt_province[ts][province] = [0, 0, 0]
-        dt[ts][location][emotion-1] += 1
-        dt_province[ts][province][emotion-1] += 1
+        if ts not in ts_dic:
+            ts_dic[ts] = {}
+        if location not in ts_dic[ts]:
+            ts_dic[ts][location] = [0, 0, 0]
+        ts_dic[ts][location][emotion-1] += 1
+    ts_arr = sorted(list(set(ts_arr)))
+    ts_series = []
+    each_step = int(math.floor(len(ts_arr)/section))
+    index = 0
+    index += each_step;
+    while index < len(ts_arr):
+        p_index = index - each_step
+        s_ts = ts_arr[p_index]
+        f_ts = ts_arr[index]
+        ts_final[s_ts] = {}
+        for t in ts_arr[p_index:index+1]:
+            data = ts_dic[t]
+            for location in data:
+                if location not in ts_final[s_ts]:
+                    ts_final[s_ts][location] = [0, 0, 0]
+                for i in range(len(data[location])):
+                    ts_final[s_ts][location][i] += data[location][i]
+        index += each_step;
+    if index != len(ts_arr)-1:
+        s_ts = f_ts
+        f_ts = ts_arr[-1]
+        ts_final[s_ts] = {}
+        for t in ts_arr[p_index:index+1]:
+            data = ts_dic[t]
+            for location in data:
+                if location not in ts_final[s_ts]:
+                    ts_final[s_ts][location] = [0, 0, 0]
+                for i in range(len(data[location])):
+                    ts_final[s_ts][location][i] += data[location][i]
+    for ts in ts_final:
+        for location in ts_final[ts]:
+            province = location.split(' ')[0]
+            assert province
+            data = ts_final[ts][location]
+            if province == u'其他' or province == u'海外':
+                continue
+            if ts not in dt:
+                dt[ts] = {}
+                dt[ts]['detail'] = []
+                dt_province[ts] = {}
+            if location not in dt[ts]:
+                dt[ts][location] = [0, 0, 0]
+            if province not in dt_province[ts]:
+                dt_province[ts][province] = [0, 0, 0]
+            for i in range(len(data)):
+                dt[ts][location][i] += data[i]
+                dt_province[ts][province][i] += data[i]
     for ts in dt:
         for location in dt[ts]:
             latlon = getLatLon(db, location)
@@ -157,3 +243,11 @@ def analysis_data(keywords, limit=10000):
                 })
     return results
 
+def main():
+    count = 0
+    for res in analysis_data([u'薄熙来'], limit=100):
+        count += 1
+        print res['ts']
+    print count
+
+if __name__ == '__main__': main()
