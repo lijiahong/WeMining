@@ -181,6 +181,8 @@ def analysis_data(keywords, limit=10000, section=25):
                 dt_province[ts][province][i] += data[i]
     for ts in dt:
         for location in dt[ts]:
+            if location == 'detail':
+                continue
             latlon = getLatLon(db, location)
             emotion = dt[ts][location][:]
             dt[ts]['detail'].append([latlon, emotion])
