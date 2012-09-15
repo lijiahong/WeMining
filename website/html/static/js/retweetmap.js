@@ -135,6 +135,10 @@ Event.observe(window, 'load', function() {
     // Handle the search default text
     Event.observe("query", "focus", function() { if (this.value  === "找人" ) { this.value = ""; } });
     Event.observe("query", "blur", function() { if (this.value === "") { this.value = "找人"; } });
+
+    // Handle the search default text
+    Event.observe("query_keywords", "focus", function() { if (this.value  === "请输入关键词" ) { this.value = ""; } });
+    Event.observe("query_keywords", "blur", function() { if (this.value === "") { this.value = "请输入关键词"; } });
     
     // Mouse wheel setup
     if (navigator.userAgent.toLowerCase().indexOf('webkit') >= 0) {
@@ -143,6 +147,8 @@ Event.observe(window, 'load', function() {
     else {
 	$("svg").addEventListener('DOMMouseScroll', mouseWheel, false); // Others
     }
+    first_play_animation();
+    
     
 });
 
@@ -187,6 +193,24 @@ function zoomBarSetup() {
     Event.observe(document, 'mousemove', zoomBarKnobMouseMove);
     zoomBarSlider.appendChild(zoomBarKnob);
     zoomBarKnob.style.top = (MAX_ZOOM_LEVEL - zoomLevel) * 10 + 5 + "px";
+}
+
+//first play animation
+function first_play_animation() {
+    button = $('play');
+    data = analysis_data();
+    var groups = data.groups;
+    var max_group_length = data.max_group_length;
+    if(paused){
+	paused = 0;
+	reset_graph();
+	button.textContent = '暂停';
+	timer = new PeriodicalExecuter(draw_graph, 1);
+    }
+    else{
+	paused = 1;
+	button.textContent = '播放';	
+    }
 }
 
 //play animation
@@ -259,6 +283,7 @@ function analysis_data() {
     if(!(index == ts_array.length-1))
 	ts_series.push(ts_array[ts_array.length-1]);
     max_group_length = 0;
+    groups.push(['0']);
     for(var i=0;i<ts_series.length;i++){
 	p_end = i==0 ? 0 : ts_series[i-1];
 	end = ts_series[i];
@@ -268,6 +293,9 @@ function analysis_data() {
 		ts = $(''+j).previousElementSibling.textContent.split('|')[1];
 		if(!isNaN(ts)){
 		    if(ts <= end && ts > p_end){
+			if(j == 0){
+			    continue
+			}
 			if($(''+j).previousElementSibling.getAttribute("class") == 'key'){
 			    groups.push([''+j]);
 			    continue
@@ -276,7 +304,7 @@ function analysis_data() {
 		    }
 		}
 	    }catch(e){
-		console.log(j);
+		//console.log(j);
 	    }
 	}
 	if(max_group_length < group.length)
@@ -334,6 +362,7 @@ function draw_graph() {
 	    $('time').textContent = date.format("yyyy-MM-dd hh:mm:ss");
 	    for(var i=0;i<group.length;i++){
 		node_id = ''+group[i];
+		console.log(node_id);
 		if(node_id == '0') {
 		    $(node_id).nextElementSibling.setAttributeNS(null, "fill", "yellow");
 		    expand_node(node_id);

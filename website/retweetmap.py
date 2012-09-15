@@ -74,10 +74,10 @@ class handler():
                        </div>'''
 
         if not len(between_nodes):
-            between_str = '''<div class="section"><h2>排名最高的的人(节点介数)</h2><p>节点数目过多，难于快速计算.</p></div>'''
+            between_str = '''<div class="section"><h2>排名最高的人(节点介数)</h2><p>节点数目过多，难于快速计算.</p></div>'''
         else:
             between_str = '''<div class="section">
-                                 <h2>排名最高的的人(节点介数)</h2>
+                                 <h2>排名最高的人(节点介数)</h2>
                                  <ol>'''
             for between_node in between_nodes:
                 li_str = '''<li>

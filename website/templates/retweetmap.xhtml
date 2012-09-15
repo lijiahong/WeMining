@@ -9,12 +9,18 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
       <p />
       <p><strong>微博转发传播网络</strong></p>
       <form id="keywords" action="/retweetmap" autocomplete="off">
-          <strong>关键词:</strong><input type="text" name="q" value="$query" />
+          <strong>关键词:</strong><input id="query_keywords" type="text" name="q" value="$query" />
 	  <strong>起始时间:</strong><input type="text" name="start" value="$start" />
           <strong>终止时间:</strong><input type="text" name="end" value="$end" />
 	  <input type="hidden" name="count" value="2000" />
 	  <input type="submit" value="分析" class="radio"/>
       </form>
+      <table>
+          <td><strong>图例:</strong></td>
+          <td width="10px" bgcolor="yellow" ></td><td width="40px" bgcolor="white" >起始点</td>
+          <td width="10px" bgcolor="blue" ></td><td width="40px" bgcolor="white" >关键点</td>
+          <td width="10px" bgcolor="red" ></td><td width="40px" bgcolor="white" >转发点</td>
+      </table>
       <p />
       <form id="search" action="#" autocomplete="off">
 	<input type="text" id="query" value="找人" />
@@ -25,6 +31,7 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
 	<p id="guage"></p>
         <button id="play" class="radio">播放</button>
         <button id="stop" class="radio">重置</button>
+        <a id="datarank" href="#data" class="radio">排名</a>
       </div>
       <div id="mapContainer">
 	<div id="map" >

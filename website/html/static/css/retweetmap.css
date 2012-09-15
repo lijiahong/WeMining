@@ -116,6 +116,7 @@ input[type="submit"], .radio {
     border: none;
     text-shadow: none;
     padding: 9px 20px;
+    text-decoration: none
 }
 
 #mapContainer {
