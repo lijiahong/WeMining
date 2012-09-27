@@ -18,7 +18,8 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
 	  <strong>起始时间:</strong><input type="text" name="start" value="$start" />
           <strong>终止时间:</strong><input type="text" name="end" value="$end" />
 	  <input type="hidden" name="count" value="2000" />
-	  <input type="submit" value="分析" class="radio"/>
+	  <input id="submit" type="submit" value="分析" class="radio"/>
+	  <img id='loading' style="display:none;" src='/static/images/ajax-loader.gif' />
       </form>
       <table>
           <td><strong>图例:</strong></td>
@@ -29,11 +30,11 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
       <p />
       <form id="search" action="#" autocomplete="off">
 	<input type="text" id="query" value="找人" />
-	<input type="submit" value="搜索" />
+	<input id="submit" type="submit" value="搜索" />
       </form>
       <div id="menu">
 	<p id="time">2012-04-05 14:00:00</p>
-	<p id="guage"></p>
+	<p id="count"></p>
         <button id="play" class="radio">播放</button>
         <button id="stop" class="radio">重置</button>
         <a id="datarank" href="#data" class="radio">排名</a>
@@ -42,6 +43,7 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
 	<div id="map" >
 	  <!-- One popup is used to show all sorts of information in the map -->
 	  <div id="popup" />
+          <div id='svg_region'>
           <svg width="100%" height="100%" id="svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
 <g id="viewport" class="graph" transform="scale(0.3 0.3)  rotate(0)  translate(-63.0 2304.5)">
 <g id="edge2" class="edge">
@@ -13578,7 +13580,7 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
 </g>
 </g>
 </svg>
-
+        </div>
         </div>
       </div>
       <div id="data">
@@ -13642,6 +13644,7 @@ $var jsfiles: /static/libraries/prototype.js /static/libraries/raphael-min.js /s
 	              <br /><br />
 	            </li></ol>
 	                </div>
+		   <a href="javascript:void(0);" style="display:none" id="more_rank"></a>
 
       </div>
     </div>

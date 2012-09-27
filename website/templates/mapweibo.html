@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>mapWeibo</title>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+
+
+    <!--<script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.mousewheel.js"></script>-->
+    <script type="text/javascript" src="/static/mapweibo/js/modernizr-2.5.3.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.cloud-carousel.1.0.5.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.cloud-carousel.1.0.5.js"></script>
+
+    <script type="text/javascript" src="/static/mapweibo/js/slicebox/jquery.slicebox.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/slicebox/jquery.slicebox.min.js"></script>
+
+    <script type="text/javascript" src="/static/mapweibo/js/Smooth-Div-Scroll/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/Smooth-Div-Scroll/jquery.smoothdivscroll-1.2-min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/Smooth-Div-Scroll/jquery.smoothDivScroll-1.2.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/static/mapweibo/css/slicebox.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mapweibo/css/smoothDivScroll.css" />
+
+    <script type="text/javascript">
+      $$(document).ready(function(){
+      /*CloudCarousel begin*/				
+      $$("#car_ul").CloudCarousel(		
+      {			
+      xPos: 510,
+      yPos: 80,
+      yRadius:40,
+      reflHeight: 156,
+      reflOpacity:0.4,
+      reflGap:10,
+      buttonLeft: $$("#left-but"),
+      buttonRight: $$("#right-but"),
+      altBox: $$("#alt-text"),
+      titleBox: $$("#title-text"),
+      autoRotate: 'right',
+      autoRotateDelay: 4000,
+      speed: 0.15,
+      bringToFront:true,
+      //mouseWheel:true,
+      FPS:30
+      }
+      );
+      /*CloudCarousel end*/	
+      /*sb-slider begin*/	
+      $$('#sb-slider').slicebox({
+      orientation         : 'v',      // (v)ertical or (h)orizontal.
+      perspective         : 1200,     // -webkit-perspective value.
+      slicesCount         : 5,        
+      // needs to be an odd number between 1 and 15
+      // (if you want the limit higher, change the _validate function).
+      disperseFactor		: 30,
+      // each slice will move x pixels left / top (depending on orientation). 
+      // The middle slice doesn't move. 
+      // The middle slice's neighbors will move disperseFactor pixels.
+      colorHiddenSides    : '#222',   
+      // color of the hidden sides.
+      sequentialRotation  : true,    
+      // the animation will start from left to right. 
+      // The left most slice will be the first one to rotate.
+      sequentialFactor	: 100,
+      // if sequentialRotation is true this will 
+      // be the interval between each rotation in ms.
+      speed3d             : 800,      
+      // animation speed3d.
+      
+      speed               : 600,      
+      // fallback speed. You might want to set 
+      // a different speed for the fallback animation...
+      
+      fallbackEasing      : 'easeOutExpo', 
+      // fallback easing.
+      
+      slideshow           : false,    
+      // if true the box will be rotating automatically.
+      
+      //slideshowTime       : 2000      
+      // interval for the slideshow in ms.
+      });
+      if( !Modernizr.csstransforms3d ) {
+      $$('#sb-note').show();
+      
+      $$('#sb-examples > li:gt(2)').remove();
+      
+      $$('body').append(
+      $$('script').attr( 'type', 'text/javascript' ).attr( 'src', '/static/mapweibo/js/slicebox/jquery.easing.1.3.js' )
+      );
+      }
+      /*sb-slider end*/
+      /*footerSlide begin*/	
+      var open = false;
+      $$('#footerSlideButton').click(function() {
+      if(open === false) {
+      $$('#footerSlideContent').animate({ height: '300px' });
+      $$(this).css('backgroundPosition', 'bottom left');
+      open = true;
+      } else {
+      $$('#footerSlideContent').animate({ height: '0px' });
+      $$(this).css('backgroundPosition', 'top left');
+      open = false;
+      }
+      });     
+      /*footerSlide end*/
+      
+      /*Smooth-Div-Scroll with colorbox begin*/
+      // Init Smooth Div Scroll	
+      $$("#makeMeScrollable").smoothDivScroll({
+      mousewheelScrolling: true,
+      manualContinuousScrolling: true
+      });
+
+      // Init colorbox
+      //$$("#makeMeScrollable a").colorbox({ speed: "500" });
+      /*Smooth-Div-Scroll with colorbox end*/
+      
+      });
+    </script>
+    <style>
+      body {
+      margin: 0;
+      padding: 0;
+      font: normal normal 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+      text-align: left;
+      background: #F8F7F7;
+      color: black;
+      }
+      .nav-header{
+      /* 对于其他浏览器 */
+      position:fixed;
+      top:0px;
+      /* 对于 IE6 */
+      _position: absolute;
+      _top: expression(documentElement.scrollTop + "px");
+      z-index:999999;
+
+      left: 0px;
+      width: 100%;
+      height: 58px;
+      padding-bottom:10px;
+      background-color: white;
+      background: url(/static/mapweibo/images/background.jpg) repeat-x;
+      }
+      
+      #nav-container {
+      margin: 0 auto;
+      width: 1020px;
+      height: 100%;
+      }
+      #logo {
+      width: 200px;
+      float: left;
+      margin: 2px;
+      height: 100%;
+      }
+      #logo img {
+      width: auto;
+      height: auto;
+      border: none;
+      margin-top: 8px;
+      
+      margin-right: 10px;
+      margin-bottom: 5px;
+      }
+      a {
+      color: steelBlue;
+      text-decoration: none;
+      cursor:auto;
+      }
+      .topnav{
+      height:100%;
+      background-color: white;
+      }
+      .nav-collapse{
+      height:100%;
+      }
+      .nav{
+      margin-left: 666px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      height: 100%;
+      }
+      
+      .nav-nav{
+      width: 100px;
+      float: left;
+      height: auto;
+      margin: 2px;
+      padding-top: 25px;
+      padding-bottom: 4px;
+      display: block;
+      text-align: center;
+      border-bottom-style: solid;
+      border-bottom-width: 6px;
+      display: block;
+      padding-left: ;
+      text-align: center;
+      border-bottom-style: solid;
+      
+      border-bottom-width: thick;
+
+      }
+      li#mapview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      li#home.nav-nav {
+      border-bottom-color: #61CCAA;
+      }
+      li#sentimentview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      li#networkview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      .nav a{
+      font-size: 19px;
+      font-family: sans-serif;
+      color: gray;
+      }
+      
+      #main {
+      position: relative;
+      left: 0px;
+      top: 68px;
+      width: 100%;
+      margin: auto;
+      background-color: #F8F7F7;
+      }
+      .content {
+      position: relative;
+      margin: 0 auto;
+      width: 1020px;
+      }
+      #h-introduction{
+      margin-bottom: 30px;
+      font: 14px Helvetica Neue;
+      }
+      #intro-ques{
+      left: 0px;
+      width: 192px;
+      }
+      #intro p{
+      font-size: 13px;
+      color: grey;
+      line-height: 1.7;
+      }
+      
+      
+      #car_ul{
+      width: 100%;
+      height: 438px;
+      }
+      #car_ul img { 
+      border:1px solid #ccc;
+      }
+      
+      #car_ul img:hover { 
+      border:1px solid #61CCAA;  	
+      }
+      #car_ul canvas { 
+      display: inline-block; 
+      *display: inline;
+      *zoom: 1;
+      }
+      #car_ul #title-text {
+      font-family: Tahoma, Geneva, sans-serif;
+      font-size: 22px;
+      color:#61CCAA;
+      margin: 10px 20px 0 0;
+      padding: 0;
+      text-align: right;
+      }
+      #alt-text {
+      font-family: Tahoma, Geneva, sans-serif;
+      font-size: 14px;
+      color:#1DADE9;
+      margin: 5px 20px 0 0;
+      padding: 0;
+      text-align: right;
+      }
+      #user-c {
+      padding: 0;
+      position: absolute;
+      right: 15px;
+      bottom: 10px;
+      }
+      #thumb {
+      margin:0px auto;
+      position: relative; 
+      border-left: 1px solid #C1C1C1;
+      border-right: 1px solid #C1C1C1;
+      background-color: white;
+      border-bottom: 1px solid #C1C1C1;
+      -webkit-box-shadow: 3px 3px 5px 5px #ccc;
+      box-shadow: 3px 3px 5px 3px #ccc;
+      }
+      /*sb-slider style begin*/
+      #sb-slider img{
+      width:720px;
+      height:418px;
+      }
+      .sb-slider{
+      margin:50px auto; 
+      }
+      /*sb-slider style end*/
+      
+      /*footerSlide style begin*/
+      #footerSlideContainer {
+      position: fixed;
+      bottom:0;
+      width: 100%;
+      z-index:1000;
+      }
+      #footerSlideButton {
+      background: url(/static/mapweibo/images/footerslide/sliderButton.png) top left no-repeat transparent;
+      position: absolute;
+      top: -55px;
+      right: 20px;
+      width:50px;
+      height:50px;
+      border: none;
+      cursor: pointer;
+      }
+      #footerSlideContent {
+      width: 100%;
+      height: 0px;
+      background: #251b15;
+      color: #CCCCCC;
+      font-size: 0.8em;
+      border: none;
+      font-family: DejaVuSansBook, Sans-Serif;
+      }
+      #footerSlideText {
+      margin:0px auto;
+      width:1020px;
+      padding: 15px;
+      text-align:left;
+      }
+      #footerSlideContent h3 {
+      font-size: 15px;
+      color: #9AC941;
+      margin: 10px 0 10px 0;
+      }
+
+      /*footerSlide style end*/
+      /*Smooth-Div-Scroll with colorbox style begin*/
+      #makeMeScrollable
+      {
+      margin:50px auto;
+      width:100%;
+      height: 418px;
+      position: relative;
+      border:1px solid #CCC;
+      }
+      
+      #makeMeScrollable div.scrollableArea img
+      {
+      position: relative;
+      float: left;
+      margin: 0;
+      padding: 0;
+      /* If you don't want the images in the scroller to be selectable, try the following
+      block of code. It's just a nice feature that prevent the images from
+      accidentally becoming selected/inverted when the user interacts with the scroller. */
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+      }
+      /*Smooth-Div-Scroll with colorbox style end*/
+      
+    </style>
+  </head>
+  <!--导航-->
+  <div class="nav-header">
+    <div class="topnav">
+      <div id="nav-container">
+        
+        <div id='logo' class='pic'>
+          <a href='/mapweibo/'><img src="/static/mapweibo/images/logo.jpg"  alt="MapWeibo" /></a>
+        </div>
+        
+        <div class='nav-collapse'>
+          <ul class='nav'>
+            <a href="/mapweibo/" id="nav-home">
+              <li class='nav-nav' id='home'>主页</li>
+            </a>
+            <a href="/mapweibo/mapview/" id="nav-mapview">
+              <li class='nav-nav' id='mapview'>传播</li>
+            </a>
+            <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
+              <li class='nav-nav' id='sentimentview'>情绪</li>
+            </a>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <!--导航结束-->
+  <!--主体开始-->
+  <div id="main">
+    <div class="content">
+      <h1 id="h-introduction">
+        <div id="intro-ques">
+          <img src="/static/mapweibo/images/title_weibo.png" alt="什么是mapWeibo?" />
+        </div>
+        <div id="intro">
+          <p><strong>mapWeibo</strong>贯彻可视化报告的理念，革新性地将新浪微博平台话题传播路径付诸路线图地图上展示，将新浪微博平台的用户情绪报告付诸热图模式，并通过复杂网络分析找到话题传播中的关键节点，展示关键微博和关键人，方便用户直观了解区域化微博舆情态势，调用google地图，支持缩放、拖拽，地理层级最小可至区/县级，能够精确呈现微博发布者地理位置。
+	    直观的数量报告、明晰的区域划分、准确的地理位置。传统列表式报告难以兼得，mapweibo则将它们完美结合。</p>
+        </div>
+	
+      </h1>
+      
+      <div id="sb-slider" class="sb-slider">
+        <img title="传播图谱/时间线" src="/static/mapweibo/images/slicebox-images/timeline.png" alt="传播图谱示例以时间线的方式揭示薄熙来事件发生发展的足迹"/>
+        <img title="传播图谱/数量分布" src="/static/mapweibo/images/slicebox-images/timedist.png" alt="数量分布展现话题所有相关微博在时间上的密度分布，以便用户选择适当的时间段进入分析"/>
+        <img title="传播图谱/地图视角" src="/static/mapweibo/images/slicebox-images/mapview.png" alt="地图视角使用google map可视化事件的传播路径"/> 
+        <img title="传播图谱/数据统计" src="/static/mapweibo/images/slicebox-images/data.png" alt="简洁明了的数据统计报告，提供微博数量和微博文本的查看" /> 
+        <img title="网络图谱" src="/static/mapweibo/images/slicebox-images/network.png" alt="网络图谱可视化事件传播过程中的关键节点"/> 
+        <!--<img title="网络图谱" src="/static/mapweibo/images/thumbnail/data.png" />-->
+      </div>
+    </div>
+  </div>
+  <!--主体结束-->
+  
+  <!-- jquery pop up footer version 2 begin-->
+  <div id="footerSlideContainer">
+    <div id="footerSlideButton"></div>
+    <div id="footerSlideContent">
+      <div id="footerSlideText">
+        <h3>团队介绍</h3>
+        <p>团队成员(按拼音):
+          <a href="http://weibo.com/u/1833150170">陈李军</a>(数据处理,前端实现),
+          <a href="#">胡玥</a>(块情绪分析模块),
+          <a href="http://weibo.com/linhao199201">林浩</a>(框架实现,界面设计),
+          <a href="http://weibo.com/rabbitoflittle">韩洋</a>(数据处理,前端实现),
+          <a href="#">王亚琼</a>(话题推荐模),
+          <a href="http://weibo.com/u/1877706273">周丹</a>(界面设计,前端实现).
+        </p>
+        <p>指导教师:<a href="http://datamining.buaa.edu.cn">吴俊杰教授</a>,
+          <a href="http://ipv6.nlsde.buaa.edu.cn/zhaojichang/">赵吉昌博士</a>.</p>
+        <h3>技术实现</h3>
+        <p>针对新浪weibo的相关话题进行传播路径、情绪、关键网络的可视化，跟踪微博平台舆情态势，提供面向网络舆情监测的在线微博的全景分析</p>
+        <h3>联系我们</h3>
+        <p>新浪微博:<a href="http://weibo.com/linhao199201">linhaobuaa</a></p>
+        <h3>待续工作</h3>
+        <p>深入探索新浪微博话题,如话题中广告等垃圾信息的过滤(Anti-spam)、代表性样本网络的构建(Sampling from large network)、微博新词的处理、微博Neutral情绪的识别</p>
+        <div style="text-align:center;">@2012<a href="http://idec.buaa.edu.cn">BUAA IDEC</a></div>
+      </div>
+    </div>
+  </div>
+  <!-- jquery pop up footer version 2 end-->
+  <body>
+  </body>
+</html>

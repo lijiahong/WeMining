@@ -1,0 +1,806 @@
+body {
+    margin: 0;
+    padding: 0;
+    font: normal normal 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    text-align: left;
+    background: #F8F7F7;
+    color: black;
+}
+
+.nav-header{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 58px;
+    padding-bottom:10px;
+    background-color: white;
+    background: url(/static/mapweibo/images/background.jpg) repeat-x;
+}
+#nav-container {
+    margin: 0 auto;
+    width: 1020px;
+    height: 100%;
+}
+#logo {
+    width: 200px;
+    float: left;
+    margin: 2px;
+    height: 100%;
+}
+#logo img {
+    width: auto;
+    height: auto;
+    border: none;
+    margin-top: 8px;
+    
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+a {
+    color: steelBlue;
+    text-decoration: none;
+    cursor:auto;
+}
+.topnav{
+    height:100%;
+    background-color: white;
+}
+.nav-collapse{
+    height:100%;
+}
+.nav{
+    margin-left: 666px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 100%;
+}
+
+.nav-nav{
+    width: 100px;
+    float: left;
+    height: auto;
+    margin: 2px;
+    padding-top: 25px;
+    padding-bottom: 4px;
+    display: block;
+    text-align: center;
+    border-bottom-style: solid;
+    border-bottom-width: 6px;
+    display: block;
+    padding-left: ;
+    text-align: center;
+    border-bottom-style: solid;
+    
+    border-bottom-width: thick;
+
+}
+li#mapview.nav-nav {
+    border-bottom-color: #61CCAA;
+}
+li#home.nav-nav {
+    border-bottom-color: #DDDCDC;
+}
+li#sentimentview.nav-nav {
+    border-bottom-color: #DDDCDC;
+}
+li#networkview.nav-nav {
+    border-bottom-color: #DDDCDC;
+}
+.nav a{
+    font-size: 19px;
+    font-family: sans-serif;
+    color: gray;
+}
+
+#main {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    margin: auto;
+    background-color: #F8F7F7;
+}
+.content {
+    position: relative;
+    margin: 0 auto;
+    width: 1020px;
+}
+#h-introduction{
+    margin-bottom: 0px;
+    font: 14px Helvetica Neue;
+}
+#intro-ques{
+    left: 0px;
+    width: 192px;
+}
+#intro p{
+    font-size: 13px;
+    color: grey;
+    line-height: 1.7;
+}
+
+#mapContainer {
+    position:relative;
+    height: 670px;
+    padding-top: 15px;
+/*background-color: #E2E2E2;*/
+}
+#map_canvas {
+    border: 1px solid #BBBBBB;
+    position: relative;
+    clear: both;
+    margin:auto;
+    height: 500px;
+    width: 1008px;
+    overflow: hidden;
+    background-color: white;
+}
+/*
+  #menu {
+  float: right;
+  overflow: hidden;
+  margin-right: 15px;
+  }
+  #menu p {
+  background-color: #E2E2E2;
+  text-decoration: none;
+  color: #222222;
+  text-shadow: 0px 1px #F2F2F2;
+  padding: 7px 14px;
+  display: inline-block;
+  margin-top: 10px;
+  }
+
+#menu .radio {
+color: white;
+border: none;
+text-shadow: none;
+padding: 9px 20px;
+}
+
+#menu #slider{
+width:100%;
+overflow: hidden;
+z-index:1002;
+margin-left:10px;
+}
+*/
+
+
+#data {
+    width:1020px;
+    overflow:hidden;
+    text-align:center;
+}
+
+.section {
+    float: left;
+    width: 250px;
+    padding: 20px 45px 20px 45px;
+}
+
+.section h2 {
+    font-size: 1.1em;
+    color: #222222;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #CCCCCC;
+}
+.section ol{
+    -webkit-padding-start:80px;
+    
+}
+.section li {
+    text-align:left;
+    padding-left:30px;
+    margin: 10px 0px;
+}
+.section li a{
+    font-size:12px;
+    color:black;
+}
+.section li span:hover {
+    text-decoration: underline;
+}
+
+li .weak {
+    color: #777;
+    font-size: .8em;
+}
+
+/*main.css begin*/
+:focus {
+    outline: none;
+}
+ul {
+    list-style: none;
+}
+
+ul#line_legend {
+    background-color: white;
+    float:left;
+    width:1010px;
+    height:15px;
+    margin-left:5px;
+    margin-top:1px;
+    margin-bottom:1px;
+    border:1px solid gray;
+    -webkit-padding-start:0px;
+}
+ul#line_legend li {
+    float:left;
+    width: 33.33%;
+    height: 100%;
+    text-align: center;
+}
+ul#line_legend .innerText{
+    font-color:#fff;
+}
+
+ul#line_legend li#line_blue{
+    background-color:#99cc99;
+    font-color:#fff;
+}
+ul#line_legend li#line_yellow{
+    background-color:rgb(255,191,0);
+    font-color:#fff;
+}
+ul#line_legend li#line_red{
+    background-color:rgb(255,0,0);
+    font-color:#fff;
+}
+p#date_p{
+    position: absolute;
+    right: 222px;
+    top: 29px;
+    width:285px;
+    border: 1px solid #000;
+    z-index: 1;
+}
+p#date_p span{
+    display: block;
+    width:283px;
+    padding: 1px 0;
+    border: 1px solid #707070;
+    border-right-color: #D0D0D0;
+    border-bottom-color: #D0D0D0;
+    text-align: center;
+    font-family: Arial,sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #EB1E23;
+    background: #FFF;
+    cursor: pointer;
+    z-index: 5;
+}
+p#back-to-nation-view {
+    position: absolute;
+    right: 98px;
+    top: 29px;
+    width: 120px;
+    border: 1px solid #000;
+    z-index: 1;
+}
+
+p#back-to-nation-view span {
+    display: block;
+    width: 118px;
+    padding: 1px 0;
+    border: 1px solid #707070;
+    border-right-color: #D0D0D0;
+    border-bottom-color: #D0D0D0;
+    text-align: center;
+    font-family: Arial,sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    color: #EB1E23;
+    background: #FFF;
+    cursor: pointer;
+    z-index: 5;
+}
+
+#slider_container{
+    position:relative;
+    top:80px;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+}
+#slider.ui-widget-content {
+    border: 1px solid #61CCAA;/*#FF0000;*/
+    background-color: #EEE;/*#E2E2E2;*/
+    color: #333;
+}
+
+#play_pause{
+    position:relative;
+    width:150px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+
+#play_pause1{
+    margin-left:auto;
+    margin-right:auto;
+    float:left
+}
+
+#play_pause2{
+    margin-left:auto;
+    margin-right:auto;
+    float:left
+}
+
+#play_pause3 {
+    margin-left: auto;
+    margin-right: auto;
+    float: left;
+}
+
+#tooltip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 9999;
+    padding: 0 0 24px 0;
+    background: url(/static/mapweibo/images/bg-tooltip.png) no-repeat bottom center;
+}
+
+#tooltip.hidden {
+    display: none;
+}
+
+#tooltip .inner {
+    padding: 5px 10px;
+    color: #FFF;    
+    background: #0B0E21;
+}
+
+
+
+
+#console{
+    position:relative;	
+    float:right;
+    width: 320px;
+    z-index: 4;
+}
+#console ul#helpers {
+    float: left;
+    margin: 0px;
+    -webkit-padding-start: 0px;
+}
+
+#console ul#helpers li {
+    float: left;
+    width: 60px;
+    height: 22px;
+    padding: 53px 10px 0 10px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#helpers li.active {
+    color: #3E2C26;
+}
+
+#console ul#helpers li#all {
+    background: url(/static/mapweibo/images/bg-categories-all.png) no-repeat center -71px;
+}
+
+#console ul#helpers li#all.active {
+    background-position: center 12px;
+}
+
+#console ul#categories {
+    float: left;
+    margin: 0;
+    -webkit-padding-start: 0px;
+}
+
+#console ul#categories li {
+    float: left;
+    width: 80px;
+    height: 22px;
+    padding: 53px 0px 0 0px;
+    text-align: center;
+    color: #727273;
+    cursor: pointer;
+}
+
+#console ul#categories li.active {
+    color: #3E2C26;
+}
+
+#console ul#categories li#fipost {
+    background: url(/static/mapweibo/images/bg-categories-fipost.png) no-repeat center -71px;
+}
+#console ul#categories li#fipost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#equalpost {
+    background: url(/static/mapweibo/images/bg-categories-equalpost.png) no-repeat center -71px;
+}
+#console ul#categories li#equalpost.active {
+    background-position: center 12px;
+}
+
+#console ul#categories li#repost {
+    background: url(/static/mapweibo/images/bg-categories-repost.png) no-repeat center -71px;
+}
+#console ul#categories li#repost.active {
+    background-position: center 12px;
+}
+
+#info-window {
+    background:url(/static/mapweibo/images/info_window.png);
+    position: absolute;
+    z-index: 1000;
+    left: -9999px;
+    top: -9999px;    
+    width: 70px;
+    height: 55px;
+}
+
+#info-window .inner {
+    margin: 7px auto auto 18px;
+/*background: #E9EAEB;*/
+}
+
+#info-window .inner h2 {
+    padding: 0 0 0 0;
+    margin:auto auto;
+    font-size: 8px;
+    font-weight: 700;
+    color: black;
+}
+
+#info-window .inner p {
+    margin-top: 10px;
+}
+
+#info-window .inner p#report-misplaced {
+    position: absolute;
+    bottom: 13px;
+    left: 15px;
+    color: green;
+}
+
+#info-window .inner p#report-misplaced.active {
+    text-decoration: underline;
+    color: #ED1C24;
+    cursor: pointer;
+}
+
+#info-window.video .inner p#report-misplaced {
+    display: none;
+}
+
+#info-window .inner p a.read-more {
+    color: #ED1C24;
+    font-weight: 700;
+}
+
+#info-window .inner .thumb {
+    position: relative;
+    float: right;
+    width: 120px;
+    height: 90px;
+    margin: 10px 0 0 10px;
+    cursor: pointer;
+}
+
+#info-window .inner .thumb .label {
+    position: absolute;
+    left: 42px;
+    top: 27px;
+    z-index: 100;
+}
+
+/*main.css end*/
+
+/*time size begin*/
+#time_size{
+    float:left;
+    margin:5px auto;
+}
+a.sctble_display span {
+    height: 22px;
+    width: 123px;
+    padding:0 0 0 6px;
+    
+}
+#select_timeInterval_mat{
+    width:129px;
+}
+div.sctble_mat a.selected {
+    color: #1972EA;
+}
+div.sctble_mat a {
+    color: #333;
+}
+/*time size end*/
+/*keywords style begin*/
+#keywords{
+    width:1010px;
+    padding:5px;
+    font: 13px Helvetica Neue;
+}
+#s_keyword{
+    float:left;
+    margin:5px auto;
+}
+#number{
+    width:1010px;
+    padding:5px;
+    margin: 0 auto 0 auto;
+    background-color: white;
+    position: relative;
+    font: 13px Helvetica Neue;
+}
+#keywords input{
+    width:125px;
+    border: 1px solid #CCC;
+}
+#keywords input:hover{
+    border: 1px solid steelBlue;
+}
+#total_number,#real_number{
+    width:125px;
+    border: 1px solid #CCC;
+}
+#total_number:hover,#real_number:hover{
+    border: 1px solid steelBlue;
+}
+
+/*keywords style end*/
+#se_time{
+    float:left;
+    margin:5px auto;
+}
+#ui-datepicker-div{
+/*width:129px;*/
+}
+/*se_time style begin*/
+
+
+/*later added*/
+.panel-outer{
+    padding-top:10px;
+    position:relative;
+}
+.panel {
+    width: 1020px;
+    margin: 20px auto 0 auto;
+    background-color:white;/*#E2E2E2;*/
+    position:relative;
+}
+.panel-nav {
+    position: absolute;
+    left: 30px;
+    color: #61CCAA;
+    background: #FCFAFA;
+    display: block;
+    padding-top: 10px;
+    height: 24px;
+    width: 150px;
+    box-shadow: 0px 2px 2px #DDD;
+    -webkit-box-shadow: 0px 2px 2px #DDD;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    z-index:100;
+}
+
+#event .item {
+    width: 488px;
+    margin: 15px 10px 5px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #CCC;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+}
+#event .item:hover{
+    width: 488px;
+    margin: 15px 10px 5px 10px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid steelBlue;
+    min-height: 50px;
+    text-align: justify;
+    word-wrap: break-word;
+}
+#event .inner {
+    padding: 10px;
+}
+#event .inner .title{
+    border-bottom: 1px solid #E5E5E5;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    color:#3B5998;
+}
+#event .inner .content{
+    
+}
+/*timeline navigatior css*/
+#event .timeline_container {
+    width: 16px;
+    text-align: center;
+    margin: 0 auto;
+    cursor: default;
+    display: block;
+}
+#event .timeline{
+    margin: 0 auto;
+    background-color: #CCC;/*#3B5998;*/
+    display: block;
+    float: left;
+    height: 100%;
+    left: 508px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    position: absolute;
+    width: 4px;
+}
+/*
+  #event .timeline:hover{
+  cursor: default;
+  margin: 0 auto;
+  }
+  */
+/*
+  #event .timeline div.plus{
+  width: 14px;
+  height: 14px;
+  position:relative;
+  left: -6px;
+  }*/
+/*arrow css style*/
+#event .rightCorner {
+    background-image: url("/static/mapweibo/images/timeline/right.png");
+    display: block;
+    height: 15px;
+    margin-left: 488px;
+    margin-top: 8px;
+    padding: 0;
+    vertical-align: top;
+    width: 13px;
+    z-index: 2;
+    position: absolute;
+}
+#event .leftCorner {
+    background-image:url("/static/mapweibo/images/timeline/left.png");
+    display: block;
+    height: 15px;
+    width: 13px;
+    margin-left: -13px;
+    margin-top: 8px;
+    position: absolute;
+    z-index: 2;
+}
+
+
+h3.uiHeaderTitle {
+    background: #A9B5D3;
+    width:200px;
+    margin:0px auto 0px auto;
+    -webkit-border-radius: 3px;
+    color: white;
+    text-align:center;
+    font-weight: normal;
+    font-size: 15px;
+    padding: 3px 5px;
+    word-wrap: normal;
+    outline: none;
+}
+
+#timedist{
+    margin:15px auto 5px 5px;
+    width:1010px;
+    height:400px;
+    background-color:white;
+}
+
+/*button style begin*/
+button {
+    background-image: url(/static/mapweibo/images/btn_normal.jpg);
+    font: 12px Helvetica Neue;
+    color: #917E7E;
+    text-shadow: none;
+    padding: 6px;
+    border: 0;
+    border-bottom: 1px solid #222;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: 0 1px 3px #999;
+    width: 130px;
+}
+button:hover {
+    color: white;
+    background-image: url(/static/mapweibo/images/btn_selected.jpg);
+}
+/*button style end*/
+/*footer style begin*/
+#footer {
+    /*position:relative;*/
+    width:100%;
+    height:55px;
+    text-align:center;
+    /*margin:10px auto 0 auto;*/
+    background-color: #251B15;
+    color: #fff;
+    font-size: 12px;
+    z-index:2000;
+}
+#footer-text{
+    position:relative;
+    top:20px;
+}
+/*footer style end*/
+/*
+  #click_event{
+  position: absolute;
+  top: 40px;
+  left: 549px;
+  }
+  #click_time{
+  position: absolute;
+  top: 40px;
+  left: 699px;
+  }
+  #click_data{
+  position: absolute;
+  top: 40px;
+  left: 849px;
+  }*/
+#demo{
+    position:relative;
+    float:right;
+    top:-45px;
+    /*
+      top: 50px;
+      left: 630px;
+      */
+    color:#555;
+    
+}
+#demo a:hover{
+    color:#FFFFFF;
+    background-image: url(/static/mapweibo/images/btn_selected.jpg);
+    border:none;
+}
+#demo a {
+    background: #EEE repeat-x;
+    display: inline-block;
+    padding: 3px 8px;
+    color: #555;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 10px;
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+    font-size: 9pt;
+}
+.demo-nav {
+    float: left;
+    margin: 2px;
+    display: block;
+    text-align: center;
+    display: block;
+}
+p#date_p span {
+    font-size: 15px;
+}

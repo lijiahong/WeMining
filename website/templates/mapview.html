@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>mapWeibo</title>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script type='text/javascript' src='/static/mapweibo/js/lightview.js'></script>
+    <link rel="stylesheet" type="text/css" href="/static/mapweibo/css/lightview.css" />
+
+    <link rel="stylesheet"  type="text/css" href="/static/mapweibo/css/skins/jqselectable/selectable/style.css">
+
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <link type="text/css" href="/static/mapweibo/css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script>
+    <script type='text/javascript' src='/static/mapweibo/js/jquery.masonry.min.js'></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.jQselectable.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.jdpicker.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.ez-pinned-footer.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="http://ditu.google.cn/maps/api/js?libraries=geometry&sensor=false"></script> <!--引用Maps JavaScript API 的 google.maps.geometry 库-->
+
+    <script type="text/javascript" src="/static/mapweibo/js/StyledMarker.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/clustermarker.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/Line.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/infowindow.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/mapview.js"></script>
+
+    <link type="text/css" href="/static/mapweibo/css/mapview.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!--导航-->
+    <div class="nav-header">
+      <div class="topnav">
+        <div id="nav-container">
+          <div id="logo" class="pic">
+            <a href='/mapweibo/'><img src="/static/mapweibo/images/logo.jpg"  alt="MapWeibo" /></a>
+          </div>
+          
+          <div class='nav-collapse'>
+            <ul class='nav'>
+              <a href="/mapweibo/" id="nav-home">
+                <li class='nav-nav' id='home'>主页</li>
+              </a>
+              <a href="/mapweibo/mapview/" id="nav-mapview">
+                <li class='nav-nav' id='mapview'>传播</li>
+              </a>
+              <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
+                <li class='nav-nav' id='sentimentview'>情绪</li>
+              </a>
+              <!--<a href="/weiming/mapweibo/networkview" id="nav-networkview">
+                  <li class='nav-nav' id='networkview'>网络</li>
+              </a>-->
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <!--导航结束-->
+    <!--main开始-->
+    <div id="main">
+      <div class="content">
+        <h1 id="h-introduction">
+          <div id="intro-ques">
+            <img src="/static/mapweibo/images/propagation.png" alt="什么是mapWeibo?" />
+          </div>
+          <div id="intro">
+            <p><strong>传播图谱</strong>革新性地将新浪微博平台话题传播路径付诸路线图地图上展示，调用google地图，支持缩放、拖拽，地理层级最小可至区/县级，能够精确呈现微博发布者地理位置。通过点、线显示微博的发布地点与传播路径，可视化微博转发数量、方向，提供转发、原创微博的单独查看，方便用户轻松找到转发量激增点，跟踪突发性事件的传播态势。</p>
+          </div>
+          <div class="panel-outer">       
+            <div class="panel-nav">新的分析</div>       
+            <form id="keywords" class="panel" action="/mapweibo/mapview" autocomplete="off">
+              <p>输入<strong>筛选条件</strong>以便开始<strong>新</strong>的分析:</p>
+              <div id="s_keyword">
+		<strong>关键词:</strong><input type="text" name="topic" id="topic_input" placeholder="请输入关键词..." value="" />
+              </div>
+              <div id="se_time">
+		<strong>起始时间:</strong><input type="text" id="starttime" name="starttime" value="2012-9-1"/>
+		<strong>终止时间:</strong><input type="text" id="endtime" name="endtime" value="2012-12-12"/>
+              </div>
+              
+              <!-- <div id="time_size"> -->
+              <!--   <strong>选择查看的时间片段数</strong> -->
+              <!--   <select name="timeInterval" id="select_timeInterval"> -->
+              <!--     <option value="25" selected="selected">25</option> -->
+              <!--     <option value="50">50</option> -->
+              <!--     <option value="75">75</option> -->
+              <!--     <option value="100">100</option> -->
+              <!--     <option value="200">200</option> -->
+              <!--   </select> -->
+              <!-- </div> -->
+              
+              <button id="submit" style="margin-left:20px;">分析</button>
+              
+            </form>
+            <div id="number">
+              <strong>总数量:</strong><input type="text" id="total_number" value="微博总数" readonly="readonly"/>
+              <strong style="margin-left:-7px;">分析数量:</strong><input type="text" id="real_number" value="分析数量" readonly="readonly"/>
+            </div>
+          </div>
+          
+          <div class="panel-outer">
+            <div class="panel-nav">地图动态</div>
+            <div id="mapContainer" class="panel">
+              <ul id="line_legend">
+		<li id="line_blue"></li>
+		<li id="line_yellow"></li>
+		<li id="line_red"></li>
+              </ul>
+              
+              <div id="map_canvas"></div>
+              <p id="date_p"><span id="date_div">当前时间</span></p>
+              
+              <div id="console">
+		<ul id="helpers">
+                  <li id="all">所有</li>
+		</ul>
+		<ul id="categories">
+                  <li id="fipost">原创</li>
+                  <li id="equalpost">原创等于转发</li>
+                  <li id="repost">转发</li>
+		</ul>
+              </div>  
+              <div id="slider_container"><div id="slider"></div></div>
+              <div id="play_pause">
+		<div id="play_pause1"><button>播放</button></div>
+		<div id="play_pause2"><button>暂停</button></div>
+		<div id="play_pause3"><button>重置</button></div>
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="panel-outer">
+            <div class="panel-nav">数据动态</div>
+            <div id="data" class="panel">
+              <div class="section" id='left'>
+		<h2>原创微博省份数量累计</h2>
+		<ol id="most_fipost"></ol>
+              </div>
+              <div class="section" id='middle'>
+		<h2>转发微博省份数量累计</h2>
+		<ol id="most_repost"></ol>
+              </div>
+              <div class="section" id='right'>
+		<h2>微博总数累计</h2>
+		<ol id="most_post"></ol>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div><!--content结束-->
+</div>
+<!--main结束-->
+<div id="footer"><div id="footer-text">@2012&nbsp&nbsp<a href="http://idec.buaa.edu.cn">BUAA IDEC</a></div></div>
+</body>
+</html>

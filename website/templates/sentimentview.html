@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<title>mapWeibo</title>
+<link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+<script type='text/javascript' src='/static/mapweibo/js/lightview.js'></script>
+<link rel="stylesheet" type="text/css" href="/static/mapweibo/css/lightview.css" />
+
+ <link rel="stylesheet"  type="text/css" href="/static/mapweibo/css/skins/jqselectable/selectable/style.css">
+
+<script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link type="text/css" href="/static/mapweibo/css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>-->
+<!--<link type="text/css" href="/static/mapweibo/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />-->
+
+ <script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script>
+<!-- <script type='text/javascript' src='/static/mapweibo/js/jquery.masonry.min.js'></script>-->
+ <script type="text/javascript" src="/static/mapweibo/js/jquery.jQselectable.js"></script>
+ <script type="text/javascript" src="/static/mapweibo/js/jquery.jdpicker.js"></script>
+ <script type="text/javascript" src="/static/mapweibo/js/jquery.ez-pinned-footer.js" charset="utf-8"></script>
+
+<script type="text/javascript" src="http://ditu.google.cn/maps/api/js?libraries=geometry,visualization&sensor=false"></script> <!--引用Maps JavaScript API 的 google.maps.geometry 库-->
+<!--<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>-->
+
+<!--<script type="text/javascript" src="/static/mapweibo/js/clustermarker.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/Line.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/infowindow.js"></script>-->
+<script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/sentimentview.js"></script>
+
+<style>
+            body {
+				margin: 0;
+				padding: 0;
+				font: normal normal 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+				text-align: left;
+				background: #F8F7F7;
+				color: black;
+			}
+			
+		   .nav-header{
+				position: relative;
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 58px;
+				padding-bottom:10px;
+				background-color: white;
+				background: url(/static/mapweibo/images/background.jpg) repeat-x;
+			  }
+			#nav-container {
+				  margin: 0 auto;
+				  width: 1020px;
+				  height: 100%;
+			}
+			#logo {
+				  width: 200px;
+				  float: left;
+				  margin: 2px;
+				  height: 100%;
+			}
+			#logo img {
+				  width: auto;
+				  height: auto;
+				  border: none;
+				  margin-top: 8px;
+			
+				  margin-right: 10px;
+				  margin-bottom: 5px;
+			}
+			a {
+				color: steelBlue;
+				text-decoration: none;
+				cursor:auto;
+			}
+			.topnav{
+					height:100%;
+					background-color: white;
+			}
+			 .nav-collapse{
+					height:100%;
+			}
+			.nav{
+					margin-left: 666px;
+					margin-top: 0px;
+					margin-bottom: 0px;
+					height: 100%;
+			}
+			
+			.nav-nav{
+					width: 100px;
+					float: left;
+					height: auto;
+					margin: 2px;
+					padding-top: 25px;
+					padding-bottom: 4px;
+					display: block;
+					text-align: center;
+					border-bottom-style: solid;
+					border-bottom-width: 6px;
+					display: block;
+					padding-left: ;
+					text-align: center;
+					border-bottom-style: solid;
+					
+					border-bottom-width: thick;
+
+			}
+			li#mapview.nav-nav {
+				border-bottom-color: #DDDCDC;
+			}
+			li#home.nav-nav {
+				border-bottom-color: #DDDCDC;
+			}
+			li#sentimentview.nav-nav {
+				border-bottom-color: #61CCAA;
+			}
+			li#networkview.nav-nav {
+				border-bottom-color: #DDDCDC;
+			}
+			.nav a{
+					font-size: 19px;
+					font-family: sans-serif;
+					color: gray;
+			}
+			
+			#main {
+				position: relative;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				margin: auto;
+				background-color: #F8F7F7;
+			}
+			.content {
+				position: relative;
+				margin: 0 auto;
+				width: 1020px;
+			}
+    		#h-introduction{
+                margin-bottom: 0px;
+				font: 14px Helvetica Neue;
+            }
+			#intro-ques{
+					left: 0px;
+					width: 192px;
+			}
+			#intro p{
+                        font-size: 13px;
+                        color: grey;
+                        line-height: 1.7;
+                }
+			
+			#mapContainer {
+				position:relative;
+    			height: 670px;
+				padding-top: 15px;
+    			/*background-color: #E2E2E2;*/
+			}
+			#map_canvas {
+				border: 1px solid #BBBBBB;
+				position: relative;
+				clear: both;
+		        margin:auto;
+				height: 500px;
+				width: 1008px;
+				overflow: hidden;
+				background-color: white;
+			}
+			/*
+			#menu {
+    			float: right;
+   				overflow: hidden;
+    			margin-right: 15px;
+			}
+			#menu p {
+				background-color: #E2E2E2;
+				text-decoration: none;
+				color: #222222;
+				text-shadow: 0px 1px #F2F2F2;
+				padding: 7px 14px;
+				display: inline-block;
+				margin-top: 10px;
+			}
+
+			#menu .radio {
+				color: white;
+				border: none;
+				text-shadow: none;
+				padding: 9px 20px;
+			}
+			
+			#menu #slider{
+				width:100%;
+				overflow: hidden;
+				z-index:1002;
+				margin-left:10px;
+			}
+			*/
+		
+			
+			#data {
+    			width:1020px;
+				overflow:hidden;
+				text-align:center;
+			}
+
+			.section {
+				float: left;
+				width: 250px;
+				padding: 20px 45px 20px 45px;
+			}
+			
+			.section h2 {
+				font-size: 1.1em;
+				color: #222222;
+				padding-bottom: 10px;
+				border-bottom: 1px dotted #CCCCCC;
+			}
+			.section ol{
+				-webkit-padding-start:80px;
+				
+			}
+			.section li {
+				text-align:left;
+				padding-left:30px;
+				margin: 10px 0px;
+			}
+			.section li a{
+				font-size:12px;
+				color:black;
+			}
+			.section li span:hover {
+				text-decoration: underline;
+			}
+			
+			li .weak {
+				color: #777;
+				font-size: .8em;
+			}
+			
+			/*main.css begin*/
+			:focus {
+				outline: none;
+			}
+			ul {
+				list-style: none;
+			}
+
+			ul#line_legend {
+				background-color: white;
+				float:left;
+				width:1010px;
+				height:15px;
+				margin-left:5px;
+				margin-top:1px;
+				margin-bottom:1px;
+				border:1px solid gray;
+				-webkit-padding-start:0px;
+			}
+			ul#line_legend li {
+				float:left;
+				width: 33.33%;
+				height: 100%;
+				text-align: center;
+			}
+			ul#line_legend .innerText{
+				font-color:#fff;
+			}
+			
+			ul#line_legend li#line_blue{
+				background-color:#99cc99;
+				font-color:#fff;
+			}
+			ul#line_legend li#line_yellow{
+				background-color:rgb(255,191,0);
+				font-color:#fff;
+			}
+			ul#line_legend li#line_red{
+				background-color:rgb(255,0,0);
+				font-color:#fff;
+			}
+			p#date_p{
+				position: absolute;
+				right: 222px;
+				top: 11px;
+				width:285px;
+				border: 1px solid #000;
+				z-index: 1;
+			}
+			p#date_p span{
+				display: block;
+				width:283px;
+				padding: 1px 0;
+				border: 1px solid #707070;
+				border-right-color: #D0D0D0;
+				border-bottom-color: #D0D0D0;
+				text-align: center;
+				font-family: Arial,sans-serif;
+				font-size: 12px;
+				font-weight: 700;
+				line-height: 1;
+				color: #EB1E23;
+				background: #FFF;
+				cursor: pointer;
+				z-index: 5;
+			}
+			p#back-to-nation-view {
+				position: absolute;
+				right: 98px;
+				top: 11px;
+				width: 120px;
+				border: 1px solid #000;
+				z-index: 1;
+			}
+			
+			p#back-to-nation-view span {
+				display: block;
+				width: 118px;
+				padding: 1px 0;
+				border: 1px solid #707070;
+				border-right-color: #D0D0D0;
+				border-bottom-color: #D0D0D0;
+				text-align: center;
+				font-family: Arial,sans-serif;
+				font-size: 12px;
+				font-weight: 700;
+				line-height: 1;
+				color: #EB1E23;
+				background: #FFF;
+				cursor: pointer;
+				z-index: 5;
+			}
+			
+			#slider_container{
+				position:relative;
+				top:80px;
+				width:90%;
+				margin-left:auto;
+				margin-right:auto;
+			}
+			#slider.ui-widget-content {
+				border: 1px solid #61CCAA;/*#FF0000;*/
+				background-color: #EEE;/*#E2E2E2;*/
+				color: #333;
+		    }
+			
+			#play_pause{
+				position:relative;
+				top:30px;
+				width:93px;
+				margin-left:auto;
+				margin-right:auto;
+			}
+			
+			
+			
+			#play_pause1{
+				margin-left:auto;
+				margin-right:auto;
+				float:left
+			}
+			
+			#play_pause2{
+				margin-left:auto;
+				margin-right:auto;
+				float:left
+			}
+			
+			#play_pause3 {
+			margin-left: auto;
+			margin-right: auto;
+			float: left;
+			}
+			
+			#tooltip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				z-index: 9999;
+				padding: 0 0 24px 0;
+				background: url(/static/mapweibo/images/bg-tooltip.png) no-repeat bottom center;
+			}
+			
+			#tooltip.hidden {
+				display: none;
+			}
+			
+			#tooltip .inner {
+				padding: 5px 10px;
+				color: #FFF;    
+				background: #0B0E21;
+			}
+			
+			
+			
+			
+			#console{
+				position:relative;	
+				margin:0px auto;
+				width: 320px;
+				z-index: 4;
+			}
+			#console ul#helpers {
+				float: left;
+				margin: 0px;
+				-webkit-padding-start: 0px;
+			}
+			
+			#console ul#helpers li {
+				float: left;
+				width: 60px;
+				height: 22px;
+				padding: 53px 10px 0 10px;
+				text-align: center;
+				text-transform: uppercase;
+				font-weight: 700;
+				color: #727273;
+				cursor: pointer;
+			}
+			
+			#console ul#helpers li.active {
+				color: #3E2C26;
+			}
+			
+			#console ul#helpers li#all {
+				background: url(/static/mapweibo/images/bg-categories-mix.png) no-repeat center -99px;
+			}
+			
+			#console ul#helpers li#all.active {
+				background-position: center 12px;
+			}
+			
+			#console ul#categories {
+				float: left;
+				margin: 0;
+				-webkit-padding-start: 0px;
+			}
+			
+			#console ul#categories li {
+				float: left;
+				width: 80px;
+				height: 22px;
+				padding: 53px 0px 0 0px;
+				text-align: center;
+				color: #727273;
+				cursor: pointer;
+			}
+			
+			#console ul#categories li.active {
+				color: #3E2C26;
+			}
+			
+			#console ul#categories li#happy {
+				background: url(/static/mapweibo/images/bg-categories-happy.png) no-repeat center -99px;
+			}
+			#console ul#categories li#happy.active {
+				background-position: center 12px;
+			}
+			
+			#console ul#categories li#angry {
+				background: url(/static/mapweibo/images/bg-categories-angry.png) no-repeat center -99px;
+			}
+			#console ul#categories li#angry.active {
+				background-position: center 12px;
+			}
+			
+			#console ul#categories li#sad {
+				background: url(/static/mapweibo/images/bg-categories-sad.png) no-repeat center -99px;
+			}
+			#console ul#categories li#sad.active {
+				background-position: center 12px;
+			}
+			
+			#info-window {
+				background:url(/static/mapweibo/images/info_window.png);
+				position: absolute;
+				z-index: 1000;
+				left: -9999px;
+				top: -9999px;    
+				width: 70px;
+				height: 55px;
+			}
+			
+			#info-window .inner {
+				margin: 7px auto auto 18px;
+				/*background: #E9EAEB;*/
+			}
+			
+			#info-window .inner h2 {
+				padding: 0 0 0 0;
+				margin:auto auto;
+				font-size: 8px;
+				font-weight: 700;
+				color: black;
+			}
+			
+			#info-window .inner p {
+				margin-top: 10px;
+			}
+			
+			#info-window .inner p#report-misplaced {
+				position: absolute;
+				bottom: 13px;
+				left: 15px;
+				color: green;
+			}
+			
+			#info-window .inner p#report-misplaced.active {
+				text-decoration: underline;
+				color: #ED1C24;
+				cursor: pointer;
+			}
+			
+			#info-window.video .inner p#report-misplaced {
+				display: none;
+			}
+			
+			#info-window .inner p a.read-more {
+				color: #ED1C24;
+				font-weight: 700;
+			}
+			
+			#info-window .inner .thumb {
+				position: relative;
+				float: right;
+				width: 120px;
+				height: 90px;
+				margin: 10px 0 0 10px;
+				cursor: pointer;
+			}
+			
+			#info-window .inner .thumb .label {
+				position: absolute;
+				left: 42px;
+				top: 27px;
+				z-index: 100;
+			}
+
+		/*main.css end*/
+		
+		/*time size begin*/
+		#time_size{
+			float:left;
+			margin:5px auto;
+		}
+		a.sctble_display span {
+			height: 22px;
+			width: 123px;
+			padding:0 0 0 6px;
+			
+		}
+		#select_timeInterval_mat{
+			width:129px;
+		}
+		div.sctble_mat a.selected {
+			color: #1972EA;
+		}
+		div.sctble_mat a {
+			color: #333;
+		}
+		/*time size end*/
+		/*keywords style begin*/
+		#keywords{
+			width:1010px;
+			padding:5px;
+			font: 13px Helvetica Neue;
+		}
+		#s_keyword{
+			float:left;
+			margin:5px auto;
+		}
+		#limit{
+			float:left;
+			margin:5px auto;
+		}
+		#timeinterval {
+			float: left;
+			margin: 5px auto;
+		}
+		#keywords input{
+			width:125px;
+			border: 1px solid #CCC;
+		}
+		#keywords input:hover{
+			border: 1px solid steelBlue;
+		}
+		
+		/*keywords style end*/
+		/*se_time style begin*/
+		#se_time{
+			float:left;
+			margin:5px auto;
+		}
+		#ui-datepicker-div{
+			/*width:129px;*/
+		}
+		/*se_time style end*/
+		
+			
+		/*later added*/
+		.panel-outer{
+			padding-top:10px;
+			position:relative;
+		}
+		.panel {
+			width: 1020px;
+			margin: 20px auto 0 auto;
+			background-color:white;/*#E2E2E2;*/
+			position:relative;
+		}
+		.panel-nav {
+			position: absolute;
+			left: 30px;
+			color: #61CCAA;
+			background: #FCFAFA;
+			display: block;
+			padding-top: 10px;
+			height: 24px;
+			width: 150px;
+			box-shadow: 0px 2px 2px #DDD;
+			-webkit-box-shadow: 0px 2px 2px #DDD;
+			font-size: 14px;
+			font-weight: bold;
+			text-align: center;
+			z-index:100;
+		}
+		
+		#event .item {
+			width: 488px;
+			margin: 15px 10px 5px 10px;
+			float: left;
+			background-color: #fff;
+			border: 1px solid #CCC;
+			min-height: 50px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+		#event .item:hover{
+			width: 488px;
+			margin: 15px 10px 5px 10px;
+			float: left;
+			background-color: #fff;
+			border: 1px solid steelBlue;
+			min-height: 50px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+		#event .inner {
+			padding: 10px;
+		}
+		#event .inner .title{
+			border-bottom: 1px solid #E5E5E5;
+			margin-bottom: 5px;
+			padding-bottom: 5px;
+			color:#3B5998;
+		}
+		#event .inner .content{
+			
+		}
+		/*timeline navigatior css*/
+		#event .timeline_container {
+			width: 16px;
+			text-align: center;
+			margin: 0 auto;
+			cursor: default;
+			display: block;
+		}
+		#event .timeline{
+			margin: 0 auto;
+			background-color: #CCC;/*#3B5998;*/
+			display: block;
+			float: left;
+			height: 100%;
+			left: 508px;
+			margin-top: 0px;
+			margin-bottom: 0px;
+			position: absolute;
+			width: 4px;
+		}
+		/*
+		#event .timeline:hover{
+			cursor: default;
+			margin: 0 auto;
+		}
+		*/
+		/*
+		#event .timeline div.plus{
+			width: 14px;
+			height: 14px;
+			position:relative;
+			left: -6px;
+		}*/
+		/*arrow css style*/
+		#event .rightCorner {
+			background-image: url("/static/mapweibo/images/timeline/right.png");
+			display: block;
+			height: 15px;
+			margin-left: 488px;
+			margin-top: 8px;
+			padding: 0;
+			vertical-align: top;
+			width: 13px;
+			z-index: 2;
+			position: absolute;
+		}
+		#event .leftCorner {
+			background-image:url("/static/mapweibo/images/timeline/left.png");
+			display: block;
+			height: 15px;
+			width: 13px;
+			margin-left: -13px;
+			margin-top: 8px;
+			position: absolute;
+			z-index: 2;
+		}
+		
+		
+		h3.uiHeaderTitle {
+			background: #A9B5D3;
+			width:200px;
+			margin:0px auto 0px auto;
+			-webkit-border-radius: 3px;
+			color: white;
+			text-align:center;
+			font-weight: normal;
+			font-size: 15px;
+			padding: 3px 5px;
+			word-wrap: normal;
+			outline: none;
+		}
+		
+		#timedist{
+			margin:15px auto 5px 5px;
+			width:1010px;
+			height:400px;
+			background-color:white;
+		}
+		
+		/*button style begin*/
+		button {
+			background-image: url(/static/mapweibo/images/btn_normal.jpg);
+			font: 12px Helvetica Neue;
+			color: #917E7E;
+			text-shadow: none;
+			padding: 6px;
+			border: 0;
+			border-bottom: 1px solid #222;
+			-webkit-border-radius: 5px;
+			-webkit-box-shadow: 0 1px 3px #999;
+			width: 130px;
+		}
+		button:hover {
+			color: white;
+			background-image: url(/static/mapweibo/images/btn_selected.jpg);
+		}
+		/*button style end*/
+		/*footer style begin*/
+		#footer {
+			/*position:relative;*/
+			width:100%;
+			height:55px;
+			text-align:center;
+			/*margin:10px auto 0 auto;*/
+			background-color: #251B15;
+			color: #fff;
+			font-size: 12px;
+			z-index:2000;
+		}
+		#footer-text{
+			position:relative;
+			top:20px;
+		}
+		/*footer style end*/
+		#click_data{
+			position:absolute;
+			top: 36px;
+			left: 853px;
+		}
+		#demo{
+			position:relative;
+			float:right;
+			top:-45px;
+			/*
+			top: 50px;
+			left: 630px;
+			*/
+			color:#555;
+			
+		}
+		#demo a:hover{
+			color:#FFFFFF;
+			background-image: url(/static/mapweibo/images/btn_selected.jpg);
+			border:none;
+		}
+		#demo a {
+			background: #EEE repeat-x;
+			display: inline-block;
+			padding: 3px 8px;
+			color: #555;
+			text-decoration: none;
+			font-weight: bold;
+			cursor: pointer;
+			margin-right: 10px;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 10px;
+			-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+			-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+			text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+			font-size: 9pt;
+		}
+		.demo-nav {
+			float: left;
+			margin: 2px;
+			display: block;
+			text-align: center;
+			display: block;
+		}
+</style>
+
+</head>
+<body>
+	  <!--导航-->
+        <div class="nav-header">
+                <div class="topnav">
+                        <div id="nav-container">
+                                
+                                        <div id='logo' class='pic'>
+                                        <a href='/mapweibo/'><img src="/static/mapweibo/images/logo.jpg"  alt="MapWeibo" /></a>
+                                </div>
+            
+                                        <div class='nav-collapse'>
+                                        <ul class='nav'>
+                                                <a href="/mapweibo/" id="nav-home">
+                                                <li class='nav-nav' id='home'>主页</li>
+                                                </a>
+                                                <a href="/mapweibo/mapview/" id="nav-mapview">
+                                                <li class='nav-nav' id='mapview'>传播</li>
+                                                </a>
+                                                <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
+                                                <li class='nav-nav' id='sentimentview'>情绪</li>
+                                                </a>
+                                                 <!--<a href="/weiming/mapweibo/networkview" id="nav-networkview">
+                                                <li class='nav-nav' id='networkview'>网络</li>
+                                                </a>-->
+                                        </ul>
+                                </div>
+                                
+                        </div>
+                        </div>
+        </div>
+        <!--导航结束-->
+        <!--main开始-->
+      <div id="main">
+      	<div class="content">
+            <h1 id="h-introduction">
+                                      <div id="intro-ques">
+                                              <img src="/static/mapweibo/images/sentiment.png" alt="情绪" />
+                                      </div>
+                                      <div id="intro">
+                                      <p><strong>情绪图谱</strong>将新浪微博平台话题情绪态势付诸路线图地图上展示，革新性地结合google地图和heatmap，支持缩放、拖拽，地理层级最小可至区/县级。通过情感图标可视化三类情绪高兴、生气、悲伤的情感密度，跟踪突发性事件的情感模式。</p>
+                                      </div>
+                                      <ul id="demo">
+                                      <a href="/weiming/mapweibo/sentimentview"><li class="demo-nav">钓鱼岛事件</li></a>
+                                      <a href="/weiming/mapweibo/sentimentview?topic=薄熙来&limit=23735&timeinterval=25&collection=statuses"><li class="demo-nav">薄熙来事件</li></a>
+                                      <a href="/weiming/mapweibo/sentimentview?topic=金陵十三钗&limit=16682&timeinterval=25&collection=statuses"><li class="demo-nav">金陵十三钗</li></a>
+                                      <a href="/weiming/mapweibo/sentimentview?topic=名古屋&limit=8135&timeinterval=25&collection=statuses"><li class="demo-nav">名古屋事件</li></a>
+                                      </ul>
+              </h1>
+      			<!--
+               <div class="panel-outer">
+               <div class="panel-nav">薄熙来事件时间线</div>
+         
+               <div id="event" class="panel">
+                  <!-- TimeLine导航 -->
+                  <!--
+                  <div class="timeline_container">
+                    <div class="timeline">
+                    </div>
+                  </div>
+                  
+                  <div class="item">
+                  <div class="inner"><div class="title">2011年11月15日</div>英国公民尼尔·伍德在重庆被发现死亡</div>
+                  </div>
+                  <div class="item">
+                  <div class="inner"><div class="title">2012年2月6日</div>王立军私自进入美国驻成都总领事馆滞留事件。</div>
+                  </div>
+                   <div class="item">
+                    <div class="inner"><div class="title">2012年2月9日23时</div>新华社电文称，外交部发言人办公室当日应询答问时表示，重庆市副市长王立军于2月6日进入美国驻成都总领事馆，滞留1天后离开。有关部门正在对此进行调查。</div>
+                  </div>
+                  <div class="item">
+        
+                    <div class="inner"><div class="title">3月2日</div>全国两会开幕前，全国政协新闻发言人赵启正在新闻发布会上称，王立军目前正在接受有关部门的调查，调查工作也取得了进展。他是全国人民代表大会代表，已经请假不出席这次会议。</div>
+                  </div>
+                  <div class="item">
+        
+                    <div class="inner"><div class="title">3月14日</div>十一届全国人大五次会议闭幕后，国务院总理温家宝在人民大会堂与中外记者见面，回答记者提问时称：“王立军事件发生后，引起社会的高度关注，国际社会也十分关注。我可以告诉大家，中央高度重视，立即责成有关部门进行专门调查。目前调查已经取得进展，我们将以事实为依据，以法律为准则，严格依法办理。调查和处理的结果一定会给人民以回答，并且经受住法律和历史的检验。“</div>
+                  </div>
+                  <div class="item">
+                    <div class="inner"><div class="title">3月15日</div>新华社发布中共中央决定：张德江同志兼任重庆市委委员、常委、书记；薄熙来同志不再兼任重庆市委书记、常委、委员职务。</div>
+                  </div>
+                  <div class="item">
+                    <div class="inner"><div class="title">2012年4月10日23时整</div>新华社授权发布：中共中央决定对薄熙来同志严重违纪问题立案调查。新华社称：“鉴于薄熙来同志涉嫌严重违纪，中央决定，依据《中国共产党章程》和《中国共产党纪律检查机关案件检查工作条例》的有关规定，停止其担任的中央政治局委员、中央委员职务，由中共中央纪律检查委员会对其立案调查。”新华社同时发布的另一则消息称：公安机关对尼尔·伍德死亡案依法进行复查。同一时间，CCTV新闻频道播发了新华社电文。</div>
+                  </div>
+                  <div class="item">
+                    <div class="inner"><div class="title">4月11日</div>CCTV新闻频道早7时30分、上午11时、晚7时等不同时间段重播了4月10日内容。</div>
+                  </div>
+                  <div class="item">
+                    <div class="inner"><div class="title">4月11日至13日</div>薄熙来案经官方公布之后的3天内，人民日报连发三篇评论员文章，北京、重庆、上海、广东等地均发文表示：“坚决拥护党中央的正确决定。”</div>
+                  </div>
+                </div>
+                </div>
+                 -->
+                
+                <!--<div class="panel-outer">
+                <div class="panel-nav">数量分布</div>
+                <div id="time" class="panel">
+                	<div id="timedist"></div>
+                </div>
+                </div>-->
+                
+            <div class="panel-outer">       
+              <div class="panel-nav">新的分析</div>       
+              <form id="keywords" class="panel" action="/weiming/mapweibo/sentimentview" autocomplete="off">
+                  <p>输入<strong>筛选条件</strong>以便开始<strong>新</strong>的分析:</p>
+                  <div id="s_keyword">
+                  <strong>关键词:</strong><input type="text" name="topic" placeholder="请输入关键词..." value="钓鱼岛" />
+                  </div>
+                  <div id="limit">
+                  <strong>微博数量上限:</strong><input type="text" name="limit" id="absolutelimit" value="100000" style="width:100px;" placeholder="请输入绝对数..." onKeyPress="check();" />条 &nbsp;<input type="text" id="relativelimit" placeholder="请输入百分数..." onKeyPress="check();" value="" style="width:100px;"/>%&nbsp;<input type="label" id="count" value="微博总数" readonly="readonly"/>
+                  </div>
+                  <div id="timeinterval">
+                  <strong>时间片段数:</strong><input type="text" name="timeinterval" value="25" />
+                  </div>      
+                  <button id="submit" style="margin-left:15px;">分析</button>
+              </form>
+              	  <button id="click_data" style="margin-left:15px;" onClick="window.location.href='#data';">数据动态</button>
+             </div>
+               
+               
+             <div class="panel-outer">
+              <div class="panel-nav">地图动态</div>
+              <div id="mapContainer" class="panel">               
+                        <div id="map_canvas"></div>
+                        <p id="date_p"><span id="date_div">当前时间</span></p>
+                        
+                        <div id="console">
+                              <ul id="helpers">
+                                  <li id="all">混合</li>
+                              </ul>
+                              <ul id="categories">
+                                  <li id="happy">高兴</li>
+                                  <li id="angry">生气</li>
+                                  <li id="sad">悲伤</li>
+                              </ul>
+                        </div>  
+                        <div id="slider_container"><div id="slider"></div></div>
+                        <div id="play_pause">
+                         <div id="play_pause1"><button>play</button></div>
+                         <div id="play_pause2"><button>pause</button></div>
+                         <div id="play_pause3"><button>reset</button></div>
+                        </div>
+                        
+                        
+              </div>
+           </div>
+            
+             
+            <div class="panel-outer">
+            	<div class="panel-nav">数据动态</div>
+                <div id="data" class="panel">
+                  <div class="section" id='left'>
+                              <h2>最高兴的省份</h2>
+                              <ol id="most_happy"></ol>
+                  </div>
+                  <div class="section" id='middle'>
+                               <h2>最生气的省份</h2>
+                                <ol id="most_angry"></ol>
+                  </div>
+                  <div class="section" id='right'>
+                              <h2>最悲伤的省份</h2>
+                              <ol id="most_sad"></ol>
+                  </div>
+                 </div>
+              </div>
+            </div>
+       </div><!--content结束-->
+	</div>
+    <!--main结束-->
+	
+    <div id="footer"><div id="footer-text">@2012&nbsp&nbsp<a href="http://idec.buaa.edu.cn">北航社会舆情分析实验室</a></div></div>
+
+
+
+
+
+
+</body>
+</html>
+

@@ -76,11 +76,14 @@ class access_log(object):
 argv = sys.argv
 current_file = os.path.basename(argv[0])
 log = False
+debug = False
 for arg in argv[1:]:
     if arg == '-port':
         port = argv[argv.index('-port')+1]
     if arg == '-log':
         log = True
+    if arg == '-debug':
+        debug = True
 
 modules = [(x[:-3], os.path.join('.', x)) for x in os.listdir('.') if x.endswith('.py') and x != current_file]
 
@@ -97,8 +100,10 @@ web.config.debug = False
 
 whoami = platform.system()
 
-if whoami == 'Windows':
+if whoami == 'Windows' or debug:
+    sys.argv[1] = '127.0.0.1:%d' % int(port)
     app.run()
+
 elif whoami =='Linux':
     #is fork better than epoll or select?
     from flup.server.fcgi_fork import WSGIServer

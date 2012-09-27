@@ -95,6 +95,21 @@ input[type="submit"], .radio {
     background-image: none;
 }
 
+.radio {
+    color: white;
+    border: none;
+    text-shadow: none;
+    padding: 8px 20px;
+    text-decoration: none
+}
+
+#datarank {
+    -webkit-border-radius: 10px; 
+    -moz-border-radius: 10px; 
+    border-radius: 10px;
+    color: black;
+}
+
 #menu {
     float: right;
     overflow: hidden;
@@ -102,21 +117,19 @@ input[type="submit"], .radio {
 }
 
 #menu p {
+    clear:both;
+    position: relative;
+    top: 5px;
     background-color: #E2E2E2;
     text-decoration: none;
     color: #222222;
     text-shadow: 0px 1px #F2F2F2;
-    padding: 7px 14px;
     display: inline-block;
-    margin-top: 10px;
 }
 
-.radio {
-    color: white;
-    border: none;
-    text-shadow: none;
-    padding: 9px 20px;
-    text-decoration: none
+#menu .radio {
+    position: relative;
+    top: 5px;
 }
 
 #mapContainer {
@@ -355,4 +368,9 @@ ol {
 }
 
 
-
+#more_rank {
+    float: right;
+    position: relative;
+    top: -40px;
+    right: 10px;
+}

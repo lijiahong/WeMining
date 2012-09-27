@@ -1,3 +1,11 @@
+function getUrlParam(name) { 
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+    var r = window.location.search.substr(1).match(reg); 
+    if (r != null){ 
+	return decodeURI(r[2]); 
+    }
+    return null; 
+}
 // Date format
 Date.prototype.format = function(format)
 { 
@@ -24,7 +32,7 @@ var step = 0;
 var total_step = 20;
 var node_sizes = {};
 var timer = null;
-var gauge = null;
+var ranked_status = 0;
 
 // Mouse position when dragging
 var oldX = 0,
@@ -64,7 +72,9 @@ myPic.src = "/static/images/closedhand.ico";
 var stateTf;
 
 Event.observe(window, 'load', function() {
-
+    topic = getUrlParam('q');
+    console.log(topic);
+    $('query_keywords').value = topic;
     // Display warning for browsers that don't support SVG
     if (!$("svg").preserveAspectRatio) {
 	$("svg").style.visibility = "hidden";
@@ -119,18 +129,13 @@ Event.observe(window, 'load', function() {
 	Event.observe(innerCircles[i], 'mouseover', innerMouseOverFunction);
 	Event.observe(innerCircles[i], 'mouseout', innerMouseOutFunction);
     }
-	
-
-    //setup guage
-    gauge = Raphael('guage', 100, 10);
-    rect = gauge.rect(0, 0, 100, 10);
-    rect.attr({"fill": "##E2E2E2"});
-
 
     zoomBarSetup();
-
+    
     Event.observe($("play"), 'click', play_animation);
     Event.observe($("stop"), 'click', stop_animation);
+    Event.observe($("submit"), 'click', click_analysis);
+    Event.observe($("more_rank"), 'click', more_rank);
 	
     // Handle the search default text
     Event.observe("query", "focus", function() { if (this.value  === "找人" ) { this.value = ""; } });
@@ -147,6 +152,7 @@ Event.observe(window, 'load', function() {
     else {
 	$("svg").addEventListener('DOMMouseScroll', mouseWheel, false); // Others
     }
+    $('time').textContent = '';
     first_play_animation();
     
     
@@ -205,12 +211,39 @@ function first_play_animation() {
 	paused = 0;
 	reset_graph();
 	button.textContent = '暂停';
-	timer = new PeriodicalExecuter(draw_graph, 1);
+	timer = new PeriodicalExecuter(draw_graph, 2);
     }
     else{
 	paused = 1;
 	button.textContent = '播放';	
     }
+}
+
+//show loading when clik analysis button
+function click_analysis(event) {
+    // console.log('analysis click');
+    $('svg_region').hide();
+    $('data').hide();
+    stop_animation(null);
+    $('loading').show();
+    $('map').style.backgroundColor = "#C0C0C0";
+    var p = document.createElement("p");
+    p.textContent = "请稍候,数据加载中...";
+    // p.setStyle({
+    // 	lineHeight: "1.7em",
+    // 	fontSize: "250%",
+    // 	width: "280px",
+    // 	padding: "10px",
+    // 	visibility: "visible"
+    // });
+    p.style.lineHeight = "1.7em";
+    p.style.fontSize = "200%";
+    $("popup").appendChild(p);
+    
+    // $("popup").style.width = "280px";
+    centerPopup();
+    $("popup").style.padding = "10px";
+    $("popup").style.visibility = "visible";
 }
 
 //play animation
@@ -227,14 +260,14 @@ function play_animation(event) {
     }
     else{
 	paused = 1;
-	button.textContent = '播放';	
+	button.textContent = '播放';
     }
 }
 
 //reset graph
 function reset_graph() {
-    rect = gauge.rect(0, 0, 100, 10);
-    rect.attr({"fill": "#E2E2E2"});
+    $('time').textContent = '';
+    $('count').textContent = '';
     innerCircles = document.getElementsByClassName("inner");
     for (i = innerCircles.length - 1; i >= 0; i--) {
 	innerCircles[i].setAttributeNS(null, "fill", "white");
@@ -272,18 +305,28 @@ function analysis_data() {
     }
     ts_array = unique_array(ts_array);
     ts_array.sort();
-    each_step = Math.floor(ts_array.length / total_step);
     ts_series = [];
-    index = 0;
-    index += each_step;
-    while(index < ts_array.length){
-	ts_series.push(ts_array[index])
-	index += each_step;
-    }
-    if(!(index == ts_array.length-1))
-	ts_series.push(ts_array[ts_array.length-1]);
     max_group_length = 0;
-    groups.push(['0']);
+
+    // each_step = Math.floor(ts_array.length / total_step);
+    // index = 0;
+    // index += each_step;
+    // while(index < ts_array.length){
+    // 	ts_series.push(ts_array[index])
+    // 	index += each_step;
+    // }
+    // if(!(index == ts_array.length-1))
+    // 	ts_series.push(ts_array[ts_array.length-1]);
+
+    var datehash = new Hash();
+    for(var i=0;i<ts_array.length;i++){
+    	ts = ts_array[i];
+    	cdate = new Date(ts*1000).format("yyyy-MM-dd");
+    	datehash.set(cdate, ts);
+    }
+    ts_series = datehash.values().sort();
+
+    // groups.push(['0']);
     for(var i=0;i<ts_series.length;i++){
 	p_end = i==0 ? 0 : ts_series[i-1];
 	end = ts_series[i];
@@ -293,13 +336,13 @@ function analysis_data() {
 		ts = $(''+j).previousElementSibling.textContent.split('|')[1];
 		if(!isNaN(ts)){
 		    if(ts <= end && ts > p_end){
-			if(j == 0){
-			    continue
-			}
-			if($(''+j).previousElementSibling.getAttribute("class") == 'key'){
-			    groups.push([''+j]);
-			    continue
-			}
+			// if(j == 0){
+			//     continue
+			// }
+			// if($(''+j).previousElementSibling.getAttribute("class") == 'key'){
+			//     groups.push([''+j]);
+			//     continue
+			// }
 			group.push(''+j);
 		    }
 		}
@@ -342,12 +385,9 @@ function expand_node(node_id) {
     
 }
 
-//draw guage
-function draw_guage(power) {
-    rect = gauge.rect(0, 0, 100, 10);
-    rect.attr({"fill": "#E2E2E2"});
-    rect = gauge.rect(0, 0, power, 10);
-    rect.attr({"fill": "red"});
+//draw retweet count in period
+function draw_count(power) {
+    $('count').textContent = '转发数量: ' + power
 }
 
 //draw graph as time going on
@@ -355,14 +395,20 @@ function draw_graph() {
     if(!paused){
 	if(step < groups.length){
 	    group = groups[step];
-	    power = parseInt(group.length * 1.0 / max_group_length * 100);
-	    draw_guage(power);
-	    ts = $(''+group[group.length-1]).previousElementSibling.textContent.split('|')[1];
-	    date = new Date(ts*1000);
-	    $('time').textContent = date.format("yyyy-MM-dd hh:mm:ss");
+	    power = group.length
+	    draw_count(power);
+	    try{
+		ts_end = $(''+group[group.length-1]).previousElementSibling.textContent.split('|')[1];
+		ts_start = $(''+group[0]).previousElementSibling.textContent.split('|')[1];
+		end_date = new Date(ts_end*1000);
+		start_date = new Date(ts_start*1000);
+	    }catch(e){
+		step += 1;
+		return;
+	    }
+	    $('time').textContent = '时间: '+start_date.format("yyyy-MM-dd");
 	    for(var i=0;i<group.length;i++){
 		node_id = ''+group[i];
-		console.log(node_id);
 		if(node_id == '0') {
 		    $(node_id).nextElementSibling.setAttributeNS(null, "fill", "yellow");
 		    expand_node(node_id);
@@ -389,6 +435,31 @@ function draw_graph() {
 	}
     }
 }
+
+function more_rank(){
+    sections = document.getElementsByClassName("section");
+    for(var i=0;i<sections.length;i++){
+	section = sections[i];
+	count = 0;
+	section.select('li').each(function(el){
+	    if(count >= 5){
+		if(!ranked_status){
+		    $(el).show();
+		}
+		else{
+		    $(el).hide();
+		}
+	    }
+	    count += 1;
+	});
+    }
+    ranked_status = !ranked_status;
+    if(ranked_status)
+	$('more_rank').textContent = '隐藏'
+    else
+	$('more_rank').textContent = '更多排名'
+}
+
 
 // Show the name of the retweet-user in a popup when hovering over the node
 function mouseOver(node) {
@@ -584,9 +655,15 @@ function mouseClick(node) {
     $("popup").appendChild(arrow);
     
     // Show user name
-    var user_name = document.createElement("strong");
-    user_name.textContent = node.previousElementSibling.previousElementSibling.textContent;
-    $("popup").appendChild(user_name);
+    // var user_name = document.createElement("strong");
+    // user_name.textContent = node.previousElementSibling.previousElementSibling.textContent;
+    // $("popup").appendChild(user_name);
+
+    var user_href = document.createElement("a");
+    user_href.textContent = node.previousElementSibling.previousElementSibling.textContent;
+    user_href.href = 'http://idec.buaa.edu.cn:8080/search?q='+node.previousElementSibling.previousElementSibling.textContent;
+    user_href.target = '_blank'
+    $("popup").appendChild(user_href);
     
     // Add close button
     addCloseButtonToPopup();

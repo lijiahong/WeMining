@@ -313,22 +313,15 @@ function drawMoodMost(emotion_data){
     emotion_timeline = emotion_data.tmline
     emotion_total_most = emotion_data.total_most
     emotion_province_dist = emotion_data.province_emotion_dist
-    var date_most = [];
-    date_most.push(['汇总', emotion_total_most[1][0], emotion_total_most[1][1], emotion_total_most[1][2]]);
-    // date_most.push(['汇总(数量)', emotion_total_most[0][0], emotion_total_most[0][1], emotion_total_most[0][2]]);
-    for(var i = 0;i < emotion_timeline.length;i = i + 1){
-	date_most.push([emotion_timeline[i][0],emotion_timeline[i][1][0],emotion_timeline[i][1][1],emotion_timeline[i][1][2]]);
-    }
-    drawEmotionMostTable(date_most);
-    emotion_chart_count = emotion_province_dist.length
+    emotion_chart_count = emotion_province_dist.length;
     for(var i=0;i<emotion_chart_count;i+=1){
     	if(i > 2){
     	    $("#more_pie_charts").show();
-    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='display: none;width: 200px; height: 150px;'></div>");
+    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='float: left;display: none;width: 200px; height: 150px;'></div>");
     	    createEmotionPieChart(emotion_province_dist[i],'p_emotion_' + String(i));
     	}
     	else{
-    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='width: 200px; height: 150px;'></div>");
+    	    $("#p_emotion").append("<div id='p_emotion_" + i + "' style='float: left;width: 200px; height: 150px;'></div>");
     	    createEmotionPieChart(emotion_province_dist[i],'p_emotion_' + String(i));
     	}
     }
@@ -347,6 +340,13 @@ function drawMoodMost(emotion_data){
     	var emotion_chart = new google.visualization.PieChart(document.getElementById(container_id));
     	emotion_chart.draw(da, options);
     }
+    var date_most = [];
+    date_most.push(['汇总', emotion_total_most[1][0], emotion_total_most[1][1], emotion_total_most[1][2]]);
+    // date_most.push(['汇总(数量)', emotion_total_most[0][0], emotion_total_most[0][1], emotion_total_most[0][2]]);
+    for(var i = 0;i < emotion_timeline.length;i = i + 1){
+	date_most.push([emotion_timeline[i][0],emotion_timeline[i][1][0],emotion_timeline[i][1][1],emotion_timeline[i][1][2]]);
+    }
+    drawEmotionMostTable(date_most);
 }
 
 function drawEmotionMostTable(serverData){

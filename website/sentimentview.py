@@ -1,6 +1,6 @@
-#-*- coding:utf-8 -*-
+#-*- coding: utf-8 -*-
 
-'''微博话题分析页面以及相关数据接口
+'''微博情绪地图页面以及相关数据接口
 '''
 
 import json
@@ -10,24 +10,41 @@ import web
 import random
 import math
 
+from tokenizer.fenci import cut
+from config import getUser, getDB
+from weibo_search_xapian import WeiboSearch as WeiboSearch_userstatuses
+from weibo_search_mongo import WeiboSearch as WeiboSearch_statuses
+from weibo import _obj_hook
+
 import sys
 sys.path.append('..')
 
-from tokenizer.fenci import cut
-from config import getUser, getDB
-from weibo_search import WeiboSearch
-from weibo import _obj_hook
-
 from mining.emotion import EmotionClassifier
 
-render = web.template.render('./templates/', base='layout')
+render = web.template.render('./templates/')
 
-urls = ('/sentimentmap/', )
+urls = ('/mapweibo/sentimentview', '/mapweibo/sentimentview/')
 
 class handler():
     def GET(self):
-        pass
-
+        return render.sentimentview()
+    def POST(self):
+        form = web.input(topic=None,limit=None,timeinterval=None,collection="user_statuses")
+        _limit = form.limit
+        _section = form.timeinterval
+        _collection = form.collection
+        if form.topic:
+            topic = cut(form.topic)
+            if _limit and _section:
+                result = analysis_data(topic,limit=int(_limit),section=int(_section),collection=_collection)
+            if not _limit and not _section:
+                result = analysis_data(topic,collection=_collection)
+            if not _limit and _section:
+                result = analysis_data(topic,section=int(_section),collection=_collection)
+            if _limit and not _section:
+                result = analysis_data(topic,limit=int(_limit),collection=_collection)
+            return json.dumps(result)
+    
 def getLatLon(db, location):
     try:
         tokens = location.split(' ')
@@ -67,8 +84,7 @@ def getLatLon(db, location):
         latlon = db.location.find_one({'location': location})['latlon']
     return latlon
 
-
-def analysis_data(keywords, limit=10000, section=25):
+def analysis_data(keywords, limit=10000, section=25,collection="user_statuses"):
     '''[
 	{
 		ts:122838328,
@@ -116,7 +132,10 @@ def analysis_data(keywords, limit=10000, section=25):
     db = getDB()
     dt = {}
     dt_province = {}
-    search = WeiboSearch()
+    if collection == "statuses":
+        search = WeiboSearch_statuses()
+    else:
+        search = WeiboSearch_userstatuses()
     texts, results = search.query(job='emotion', keywords=keywords, limit=limit)
     ec = EmotionClassifier()
     emotions = ec.predict(texts)
@@ -244,12 +263,3 @@ def analysis_data(keywords, limit=10000, section=25):
                        'detail_province': dic['detail']
                 })
     return results
-
-def main():
-    count = 0
-    for res in analysis_data([u'薄熙来'], limit=100):
-        count += 1
-        print res['ts']
-    print count
-
-if __name__ == '__main__': main()

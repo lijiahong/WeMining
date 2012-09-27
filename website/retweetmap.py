@@ -15,7 +15,7 @@ sys.path.append('..')
 import networkx as nx
 
 from tokenizer.fenci import cut
-from weibo_search import WeiboSearch
+from weibo_search_xapian import WeiboSearch
 from config import getUser
 
 urls = ('/retweetmap/', '/retweetmap')
@@ -32,8 +32,9 @@ class handler():
     def GET(self):
         uid = web.cookies().get('WEIBO_UID')
         screen_name, profile_image_url, access_token, expires_in = getUser(uid)
-        form = web.input(q=None, start=None, end=None, count=None)
+        form = web.input(q=None, start=None, end=None, count=None, t=None)
         q = form.q
+        t = form.t
         count = form.count
         if not count or count < 0:
             count = 2000
@@ -42,33 +43,42 @@ class handler():
         now_day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
         if start and end:
             try:
-                start_ts = str(date2ts(start))
-                end_ts = str(date2ts(end))
+                start_ts = int(date2ts(start))
+                end_ts = int(date2ts(end))
             except:
                 return '错误的日期格式,正确格式(YYYY-MM-DD, %s)' % now_day
         else:
-            start = '2010-1-1'
+            start = '2012-8-1'
             end = now_day
-            start_ts = str(date2ts(start))
-            end_ts = str(date2ts(end))
-        if not q :
+            start_ts = int(date2ts(start))
+            end_ts = int(date2ts(end))
+        if not q or t == 'demo':
            return render.retweetmap_demo(screen_name, profile_image_url, start, end)
         search = WeiboSearch()
         results = search.query(job='repost_chain', keywords=cut(q, f=['n', 'nr', 'ns', 'nt']), begin=start_ts, end=end_ts, limit=int(count))
         if not results:
-            return '没有搜索结果'
+            return 'no results'
         node_ids, node_infos, dot_str, degree_nodes, key_nodes, between_nodes = graph_data(results)
         print 'data ok.'
         svg_str = svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot_str)
-        print 'draw ok'
+        print 'draw ok.'
+        count = 0
+        max_count = 5
         pagerank_str = '''<div class="section">
 	                    <h2>排名最高的人(PageRank)</h2>
 	                    <ol>'''
         for key_node in key_nodes:
-            li_str = '''<li>
+            if count >= max_count:
+                li_str = '''<li style="display:none;">
                           <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
                           <br /><br />
                         </li>''' % (node_ids[key_node], node_ids[key_node], node_ids[key_node], key_node)
+            else:
+                li_str = '''<li>
+                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <br /><br />
+                        </li>''' % (node_ids[key_node], node_ids[key_node], node_ids[key_node], key_node)
+            count += 1
             pagerank_str += li_str
         pagerank_str += '''</ol>
                        </div>'''
@@ -79,11 +89,20 @@ class handler():
             between_str = '''<div class="section">
                                  <h2>排名最高的人(节点介数)</h2>
                                  <ol>'''
+            count = 0
+            max_count = 5
             for between_node in between_nodes:
-                li_str = '''<li>
+                if count >= max_count:
+                    li_str = '''<li style="display:none;">
                           <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
                           <br /><br />
                         </li>''' % (node_ids[between_node], node_ids[between_node], node_ids[between_node], between_node)
+                else:
+                    li_str = '''<li>
+                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <br /><br />
+                        </li>''' % (node_ids[between_node], node_ids[between_node], node_ids[between_node], between_node)
+                count += 1
                 between_str += li_str
             between_str += '''</ol>
                       </div>'''
@@ -91,11 +110,20 @@ class handler():
         degree_str = '''<div class="section">
                           <h2>连接数最多的人</h2>
                           <ol>'''
+        count = 0
+        max_count = 5
         for degree_node, degree in degree_nodes:
-            li_str = '''<li>
+            if count >= max_count:
+                li_str = '''<li style="display:none;">
                           <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span><br />
                           <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))" class="weak">%s 个连接</span>
                         </li>''' % (node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree_node, node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree)
+            else:
+                li_str = '''<li>
+                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span><br />
+                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))" class="weak">%s 个连接</span>
+                        </li>''' % (node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree_node, node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree)
+            count += 1
             degree_str += li_str
 
         degree_str += '''</ol>
@@ -110,8 +138,11 @@ def graph_data(results):
     g = nx.DiGraph()
     for result in results:
         ts = result['timestamp']
-        keywords = result['keywords']
-        text = ''.join(keywords).encode('utf-8')
+        try:
+            text = result['text'].encode('utf-8')
+        except:
+            keywords = result['keywords']
+            text = ''.join(keywords).encode('utf-8')
         username = result['username']
         if username not in node_ids:
             node_infos[node_index] = '%s|%s' % (text, ts)
@@ -122,23 +153,32 @@ def graph_data(results):
             if username not in g.nodes():
                 g.add_node(username)
             continue
+        repost_weight = False
         for from_name in repost_chain:
             from_name = from_name.encode('utf-8')
             if from_name not in node_ids:
                 node_ids[from_name] = node_index
                 node_index += 1
-            g.add_edge(username, from_name)
+            if not (username, from_name) in g.edges():
+                g.add_edge(username, from_name, weight=1)
+            else:
+                c_weight = g[username][from_name]['weight']
+                if not repost_weight:
+                    g.add_edge(username, from_name, weight=c_weight+1)
+                else:
+                    g.add_edge(username, from_name, weight=c_weight)
     degrees = nx.degree(g)
     zero_degree_nodes = [node for node in degrees if degrees[node] == 0]
     dot = ['"%s" -- "%s"' % (n1, n2) for n1, n2 in g.edges()]
     dot.extend(['"%s"' % n for n in zero_degree_nodes])
     dot_str = 'strict graph retweet_networks {\ngraph [layout=sfdp, outputorder=edgesfirst, overlap=prism];\nnode [shape=doublecircle, fixedsize=true, label="", tooltip=""];\nedge [color=grey, label="", tooltip=""];\n%s\n}' % ';\n'.join(dot)
-    page_rank = nx.pagerank(g)
+    page_rank = nx.pagerank(g, weight='weight', max_iter=1000)
     dd = sorted(page_rank.iteritems(), key=operator.itemgetter(1), reverse=True)
     count = 0
+    max_count = 10
     key_nodes = []
     for key, value in dd:
-        if count >= 5:
+        if count >= max_count:
             break
         key_nodes.append(key)
         count += 1
@@ -147,18 +187,18 @@ def graph_data(results):
     count = 0
     degree_nodes = []
     for key, value in dd:
-        if count >= 5:
+        if count >= max_count:
             break
         degree_nodes.append((key, value))
         count += 1
 
-    if len(g.nodes()) < 2000:
+    if len(g.nodes()) < 3000:
         betweenness = nx.betweenness_centrality(g)
         dd = sorted(betweenness.iteritems(), key=operator.itemgetter(1), reverse=True)
         count = 0
         between_nodes = []
         for key, value in dd:
-            if count >= 5:
+            if count >= max_count:
                 break
             between_nodes.append(key)
             count += 1
@@ -176,7 +216,7 @@ def svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot
                            stderr=subprocess.PIPE, 
                            shell = True)
     data_str = graphviz_cmd.communicate(dot_str)[0]
-    print 'graphviz scale ok'
+    print 'graphviz scale ok.'
     data = StringIO.StringIO(data_str).readlines()
     width = float(re.search(r'width="(\d+)pt"', data[6]).group(1))
     height = float(re.search(r'height="(\d+)pt"', data[6]).group(1))
@@ -234,7 +274,7 @@ def svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot
                         else:
                             new_data.append('<text>%s</text>\n' % node_infos[node_ids[node_title]])
                     except KeyError:
-                        new_data.append('<text>%s</text>\n' % '该用户信息不在此数据集中.|该用户信息不在次数据集中.')
+                        new_data.append('<text>%s</text>\n' % '该用户信息不在此数据集中.|该用户信息不在此数据集中.')
                     while len(node_lines):
                         new_data.append(node_lines.pop())
                     node_title = None
@@ -244,7 +284,10 @@ def svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot
                         line = re.sub(r'<ellipse fill="none" stroke="black"', '<ellipse class="inner" fill="white"', line)
                     else:
                         inner_circle = 1
-                        line = re.sub(r'<ellipse fill="none" stroke="black"', '<ellipse id="%s" class="outer" fill="black"' % node_ids[node_title], line)
+                        try:
+                            line = re.sub(r'<ellipse fill="none" stroke="black"', '<ellipse id="%s" class="outer" fill="black"' % node_ids[node_title], line)
+                        except KeyError:
+                            pass
                     node_lines.append(line)
         if not node_area:
             new_data.append(line)

@@ -2,11 +2,7 @@
 
 import json
 import xapian
-import urllib
 import time
-
-from config import getDB
-from weibo import _obj_hook
 
 import sys
 sys.path.append('..')
@@ -14,7 +10,7 @@ sys.path.append('..')
 from mining.emotion import EmotionClassifier
 
 class WeiboSearch(object):
-    def __init__(self, dbpath='/home/mirage/Downloads/weiboxa/han'):
+    def __init__(self, dbpath='./new_userstatuses/'):
         database = xapian.Database(dbpath)
         enquire = xapian.Enquire(database)
         qp = xapian.QueryParser()
@@ -36,7 +32,7 @@ class WeiboSearch(object):
         self.repnameslistvi = 9
         self.widvi = 10
 
-    def repost_chain_query(self, begin=None, end=None, keywords=[], limit=1000):
+    def repost_chain_query(self, begin=None, end=None, keywords=[], limit=50000):
         if not len(keywords) > 0:
             return None
 
@@ -46,13 +42,13 @@ class WeiboSearch(object):
         wordsquery = xapian.Query(xapian.Query.OP_AND,keywords)
 
         if begin and end:
-            timequerystr = begin+'..'+end
+            timequerystr = str(begin) + '..' + str(end)
             timequery = self.qp.parse_query(timequerystr)
             query = xapian.Query(xapian.Query.OP_AND,[timequery, wordsquery])
         else:
             query = wordsquery
         self.enquire.set_query(query)
-        self.enquire.set_sort_by_value(self.timestampvi,False)
+        self.enquire.set_sort_by_value(self.timestampvi, False)
         matches = self.enquire.get_mset(0, limit)
         results = []
         for m in matches:
@@ -64,7 +60,7 @@ class WeiboSearch(object):
             results.append(result)
         return results
 
-    def emotion_query(self, begin=None, end=None, keywords=[], limit=1000):
+    def emotion_query(self, begin=None, end=None, keywords=[], limit=50000):
         if not len(keywords) > 0:
             return None
 
@@ -74,13 +70,13 @@ class WeiboSearch(object):
         wordsquery = xapian.Query(xapian.Query.OP_AND,keywords)
 
         if begin and end:
-            timequerystr = begin+'..'+end
+            timequerystr = str(begin) + '..' + str(end)
             timequery = self.qp.parse_query(timequerystr)
             query = xapian.Query(xapian.Query.OP_AND,[timequery, wordsquery])
         else:
             query = wordsquery
         self.enquire.set_query(query)
-        self.enquire.set_sort_by_value(self.timestampvi,False)
+        self.enquire.set_sort_by_value(self.timestampvi, False)
         matches = self.enquire.get_mset(0, limit)
         results = []
         texts = []
@@ -92,7 +88,7 @@ class WeiboSearch(object):
             results.append(result)
         return texts, results
 
-    def spread_query(self, begin=None, end=None, keywords=[], limit=1000):
+    def spread_query(self, begin=None, end=None, keywords=[], limit=50000):
         if not len(keywords) > 0:
             return None
 
@@ -102,21 +98,21 @@ class WeiboSearch(object):
         wordsquery = xapian.Query(xapian.Query.OP_AND,keywords)
 
         if begin and end:
-            timequerystr = begin+'..'+end
+            timequerystr = str(begin) + '..' + str(end)
             timequery = self.qp.parse_query(timequerystr)
             query = xapian.Query(xapian.Query.OP_AND,[timequery, wordsquery])
         else:
             query = wordsquery
         self.enquire.set_query(query)
-        self.enquire.set_sort_by_value(self.timestampvi,False)
+        self.enquire.set_sort_by_value(self.timestampvi, False)
         matches = self.enquire.get_mset(0, limit)
         results = []
         for m in matches:
             result = {}
-            result['username'] = m.document.get_value(self.usernamevi)
-            result['repost_chain'] = json.loads(m.document.get_value(self.repnameslistvi))
+            result['location'] = m.document.get_value(self.loctvi)
+            result['repost_location'] = m.document.get_value(self.reploctvi)
             result['timestamp'] = xapian.sortable_unserialise(m.document.get_value(self.timestampvi))
-            result['keywords'] = json.loads(m.document.get_value(self.keywordsvi))
+            result['_id'] = m.document.get_value(self.widvi)
             results.append(result)
         return results
 
@@ -130,13 +126,13 @@ class WeiboSearch(object):
         wordsquery = xapian.Query(xapian.Query.OP_AND,keywords)
 
         if begin and end:
-            timequerystr = begin+'..'+end
+            timequerystr = str(begin) + '..'+ str(end)
             timequery = self.qp.parse_query(timequerystr)
             query = xapian.Query(xapian.Query.OP_AND,[timequery, wordsquery])
         else:
             query = wordsquery
         self.enquire.set_query(query)
-        self.enquire.set_sort_by_value(self.timestampvi,False)
+        self.enquire.set_sort_by_value(self.timestampvi, False)
         matches = self.enquire.get_mset(0, limit)
         return matches.size()
 

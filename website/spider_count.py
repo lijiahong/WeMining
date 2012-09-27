@@ -8,4 +8,4 @@ db = getDB()
 
 class handler():
     def GET(self):
-        return '%d;%d' % (db.statuses.find().count(), db['target_statuses'].find().count())
+        return '%d;%d' % (db.user_statuses.find().count(), db['user_statuses'].find().count())
