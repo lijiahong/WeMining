@@ -33,6 +33,8 @@ var total_step = 20;
 var node_sizes = {};
 var timer = null;
 var ranked_status = 0;
+var sample_ranked_status = 0;
+var data_status = 'sample';
 
 // Mouse position when dragging
 var oldX = 0,
@@ -73,7 +75,6 @@ var stateTf;
 
 Event.observe(window, 'load', function() {
     topic = getUrlParam('q');
-    console.log(topic);
     $('query_keywords').value = topic;
     // Display warning for browsers that don't support SVG
     if (!$("svg").preserveAspectRatio) {
@@ -136,6 +137,8 @@ Event.observe(window, 'load', function() {
     Event.observe($("stop"), 'click', stop_animation);
     Event.observe($("submit"), 'click', click_analysis);
     Event.observe($("more_rank"), 'click', more_rank);
+    Event.observe($("more_sample_rank"), 'click', more_sample_rank);
+    Event.observe($("change_data"), 'click', change_data);
 	
     // Handle the search default text
     Event.observe("query", "focus", function() { if (this.value  === "找人" ) { this.value = ""; } });
@@ -436,8 +439,47 @@ function draw_graph() {
     }
 }
 
+function change_data(){
+    if(data_status == 'sample'){
+	data_status = 'total';
+	$('sample_data').hide();
+	$('data').show();
+	$('change_data').textContent = '切换到抽样数据'
+    }
+    else{
+	data_status = 'sample';
+	$('data').hide();
+	$('sample_data').show();
+	$('change_data').textContent = '切换到全网数据'
+    }
+}
+
+function more_sample_rank(){
+    sections = $('sample_data').getElementsByClassName("section");
+    for(var i=0;i<sections.length;i++){
+	section = sections[i];
+	count = 0;
+	section.select('li').each(function(el){
+	    if(count >= 5){
+		if(!sample_ranked_status){
+		    $(el).show();
+		}
+		else{
+		    $(el).hide();
+		}
+	    }
+	    count += 1;
+	});
+    }
+    sample_ranked_status = !sample_ranked_status;
+    if(sample_ranked_status)
+	$('more_sample_rank').textContent = '隐藏'
+    else
+	$('more_sample_rank').textContent = '更多排名'
+}
+
 function more_rank(){
-    sections = document.getElementsByClassName("section");
+    sections = $('data').getElementsByClassName("section");
     for(var i=0;i<sections.length;i++){
 	section = sections[i];
 	count = 0;

@@ -1,4 +1,4 @@
-$def with(screen_name, profile_image_url, query, svg_str, pagerank_str, between_str, degree_str, start, end)
+$def with(screen_name, profile_image_url, query, svg_str, pagerank_str, between_str, degree_str, sample_pagerank_str, sample_between_str, sample_degree_str, start, end)
 $var doctype: DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
 $var username: $screen_name
 $var profile_image_url: $profile_image_url
@@ -44,7 +44,14 @@ $var jsfiles: /static/libraries/prototype.js /static/js/retweetmap.js /static/js
 	  </div>
         </div>
       </div>
-      <div id="data">
+      <button id="change_data" class="radio">切换到全网数据</button>
+      <div id="sample_data">
+	$:sample_degree_str
+	$:sample_pagerank_str
+	$:sample_between_str
+	<a id="more_sample_rank" href="javascript:void(0);">更多排名</a>
+      </div>
+      <div id="data" style="display:none;">
 	$:degree_str
 	$:pagerank_str
 	$:between_str

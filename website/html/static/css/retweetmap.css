@@ -321,7 +321,7 @@ div#zoomBarSlider {
 }
 /* End map styles*/
 
-#data {
+#data, #sample_data{
     overflow: auto;
 }
 
@@ -347,6 +347,16 @@ div#zoomBarSlider {
     margin: 10px 0px;
 }
 
+#data a {
+    text-decoration: none;
+    color: #222;
+}
+
+#sample_data a {
+    text-decoration: none;
+    color: #222;
+}
+
 .section li span {
     cursor: pointer;
 }
@@ -355,11 +365,9 @@ div#zoomBarSlider {
     text-decoration: underline;
 }
 
-li .weak {
-    color: #777777;
-}
-
 .weak {
+    text-decoration: none;
+    color: #777777;
     font-size: .8em;
 }
 
@@ -373,4 +381,17 @@ ol {
     position: relative;
     top: -40px;
     right: 10px;
+}
+
+#more_sample_rank {
+    float: right;
+    position: relative;
+    top: -40px;
+    right: 10px;
+}
+
+#change_data{
+    position: relative;
+    top: 15px;
+    left: 50px;
 }

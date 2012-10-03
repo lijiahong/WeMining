@@ -5,6 +5,7 @@ import re
 import time
 import math
 import json
+import random
 import StringIO
 import subprocess
 import operator
@@ -55,13 +56,10 @@ class handler():
         if not q or t == 'demo':
            return render.retweetmap_demo(screen_name, profile_image_url, start, end)
         search = WeiboSearch()
-        results = search.query(job='repost_chain', keywords=cut(q, f=['n', 'nr', 'ns', 'nt']), begin=start_ts, end=end_ts, limit=int(count))
+        results = search.query(job='repost_chain', keywords=cut(q, f=['n', 'nr', 'ns', 'nt']), begin=start_ts, end=end_ts)
         if not results:
             return 'no results'
-        node_ids, node_infos, dot_str, degree_nodes, key_nodes, between_nodes = graph_data(results)
-        print 'data ok.'
-        svg_str = svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot_str)
-        print 'draw ok.'
+        sample_results, degree_nodes, key_nodes, between_nodes = rank_data(results, int(count))
         count = 0
         max_count = 5
         pagerank_str = '''<div class="section">
@@ -70,14 +68,14 @@ class handler():
         for key_node in key_nodes:
             if count >= max_count:
                 li_str = '''<li style="display:none;">
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
                           <br /><br />
-                        </li>''' % (node_ids[key_node], node_ids[key_node], node_ids[key_node], key_node)
+                        </li>''' % (key_node, key_node)
             else:
                 li_str = '''<li>
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
                           <br /><br />
-                        </li>''' % (node_ids[key_node], node_ids[key_node], node_ids[key_node], key_node)
+                        </li>''' % (key_node, key_node)
             count += 1
             pagerank_str += li_str
         pagerank_str += '''</ol>
@@ -94,14 +92,14 @@ class handler():
             for between_node in between_nodes:
                 if count >= max_count:
                     li_str = '''<li style="display:none;">
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
                           <br /><br />
-                        </li>''' % (node_ids[between_node], node_ids[between_node], node_ids[between_node], between_node)
+                        </li>''' % (between_node, between_node)
                 else:
                     li_str = '''<li>
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
                           <br /><br />
-                        </li>''' % (node_ids[between_node], node_ids[between_node], node_ids[between_node], between_node)
+                        </li>''' % (between_node, between_node)
                 count += 1
                 between_str += li_str
             between_str += '''</ol>
@@ -115,21 +113,149 @@ class handler():
         for degree_node, degree in degree_nodes:
             if count >= max_count:
                 li_str = '''<li style="display:none;">
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span><br />
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))" class="weak">%s 个连接</span>
-                        </li>''' % (node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree_node, node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree)
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span><br />
+                          <span class="weak">%s 个连接</span>
+                        </li>''' % (degree_node, degree_node, degree)
             else:
                 li_str = '''<li>
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))">%s</span><br />
-                          <span onclick="snapToUser($('%s'))" onmouseover="mouseOver($('%s'))" onmouseout="mouseOut($('%s'))" class="weak">%s 个连接</span>
-                        </li>''' % (node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree_node, node_ids[degree_node], node_ids[degree_node], node_ids[degree_node], degree)
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span><br />
+                          <span class="weak">%s 个连接</span>
+                        </li>''' % (degree_node, degree_node, degree)
             count += 1
             degree_str += li_str
 
         degree_str += '''</ol>
                      </div>'''
+        print 'rank ok.'
+        node_ids, node_infos, dot_str, degree_nodes, key_nodes, between_nodes = graph_data(sample_results)
+        svg_str = svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot_str)
+        print 'draw ok.'
+        count = 0
+        max_count = 5
+        sample_pagerank_str = '''<div class="section">
+	                    <h2>排名最高的人(PageRank)</h2>
+	                    <ol>'''
+        for key_node in key_nodes:
+            if count >= max_count:
+                li_str = '''<li style="display:none;">
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
+                          <br /><br />
+                        </li>''' % (key_node, key_node)
+            else:
+                li_str = '''<li>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
+                          <br /><br />
+                        </li>''' % (key_node, key_node)
+            count += 1
+            sample_pagerank_str += li_str
+        sample_pagerank_str += '''</ol>
+                       </div>'''
 
-        return render.retweetmap(screen_name, profile_image_url, q, svg_str, pagerank_str, between_str, degree_str, start, end)
+        if not len(between_nodes):
+            sample_between_str = '''<div class="section"><h2>排名最高的人(节点介数)</h2><p>节点数目过多，难于快速计算.</p></div>'''
+        else:
+            sample_between_str = '''<div class="section">
+                                 <h2>排名最高的人(节点介数)</h2>
+                                 <ol>'''
+            count = 0
+            max_count = 5
+            for between_node in between_nodes:
+                if count >= max_count:
+                    li_str = '''<li style="display:none;">
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
+                          <br /><br />
+                        </li>''' % (between_node, between_node)
+                else:
+                    li_str = '''<li>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span>
+                          <br /><br />
+                        </li>''' % (between_node, between_node)
+                count += 1
+                sample_between_str += li_str
+            sample_between_str += '''</ol>
+                      </div>'''
+
+        sample_degree_str = '''<div class="section">
+                          <h2>连接数最多的人</h2>
+                          <ol>'''
+        count = 0
+        max_count = 5
+        for degree_node, degree in degree_nodes:
+            if count >= max_count:
+                li_str = '''<li style="display:none;">
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span><br />
+                          <span class="weak">%s 个连接</span>
+                        </li>''' % (degree_node, degree_node, degree)
+            else:
+                li_str = '''<li>
+                          <span><a href="http://idec.buaa.edu.cn:8080/search?q=%s" target="_blank">%s</a></span><br />
+                          <span class="weak">%s 个连接</span>
+                        </li>''' % (degree_node, degree_node, degree)
+            count += 1
+            sample_degree_str += li_str
+
+        sample_degree_str += '''</ol>
+                     </div>'''
+
+        return render.retweetmap(screen_name, profile_image_url, q, svg_str, pagerank_str, between_str, degree_str, sample_pagerank_str, sample_between_str, sample_degree_str, start, end)
+
+def rank_data(results, count):
+    total_count = len(results)
+    prob = count*1.0/total_count
+    sample_results = []
+    node_ids = {}
+    node_index = 0
+    g = nx.DiGraph()
+    for result in results:
+        if random.random() < prob:
+            sample_results.append(result)
+        username = result['username']
+        repost_chain = result['repost_chain']
+        if not len(repost_chain):
+            if username not in g.nodes():
+                g.add_node(username)
+            continue
+        repost_weight = False
+        for from_name in repost_chain:
+            from_name = from_name.encode('utf-8')
+            try:
+                c_weight = g[username][from_name]['weight']
+                g.add_edge(username, from_name, weight=c_weight+1)
+            except:
+                g.add_edge(username, from_name, weight=1)
+    degrees = nx.degree(g)
+    page_rank = nx.pagerank(g, weight='weight', max_iter=5000)
+    dd = sorted(page_rank.iteritems(), key=operator.itemgetter(1), reverse=True)
+    count = 0
+    max_count = 10
+    key_nodes = []
+    for key, value in dd:
+        if count >= max_count:
+            break
+        key_nodes.append(key)
+        count += 1
+    node_degree = nx.degree(g)
+    dd = sorted(node_degree.iteritems(), key=operator.itemgetter(1), reverse=True)
+    count = 0
+    degree_nodes = []
+    for key, value in dd:
+        if count >= max_count:
+            break
+        degree_nodes.append((key, value))
+        count += 1
+    if len(g.nodes()) < 3000:
+        betweenness = nx.betweenness_centrality(g)
+        dd = sorted(betweenness.iteritems(), key=operator.itemgetter(1), reverse=True)
+        count = 0
+        between_nodes = []
+        for key, value in dd:
+            if count >= max_count:
+                break
+            between_nodes.append(key)
+            count += 1
+    else:
+        between_nodes = []
+    return sample_results, degree_nodes, key_nodes, between_nodes
 
 def graph_data(results):
     node_ids = {}
@@ -216,7 +342,6 @@ def svg_output(node_ids, node_infos, degree_nodes, key_nodes, between_nodes, dot
                            stderr=subprocess.PIPE, 
                            shell = True)
     data_str = graphviz_cmd.communicate(dot_str)[0]
-    print 'graphviz scale ok.'
     data = StringIO.StringIO(data_str).readlines()
     width = float(re.search(r'width="(\d+)pt"', data[6]).group(1))
     height = float(re.search(r'height="(\d+)pt"', data[6]).group(1))
