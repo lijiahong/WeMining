@@ -10,7 +10,7 @@ sys.path.append('..')
 from mining.emotion import EmotionClassifier
 
 class WeiboSearch(object):
-    def __init__(self, dbpath='./new_userstatuses/'):
+    def __init__(self, dbpath='/opt/data/index/userstatuses/'):
         database = xapian.Database(dbpath)
         enquire = xapian.Enquire(database)
         qp = xapian.QueryParser()
