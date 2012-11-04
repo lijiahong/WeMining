@@ -367,6 +367,8 @@ function initialize() {
 	    circle_data = data.circle;
 	    ts_series = data.ts_series;
 	    alert_data = data.alert;
+	      
+		
 	    max_repost_num = data.max_repost_num;
 	    statistics_data = data.statistics_data;
 	    var each_step = parseInt(max_repost_num/3);
@@ -447,14 +449,36 @@ function initialize() {
 	}
 	alert_latlng = alert_data[mapWeibo.now_step];
 	var province_name = '';
-	for(var latlng in alert_latlng){
-	    date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
-	    province_name = alert_latlng[latlng].name;
-	    split_latlng = latlng.split(' ');
-	    point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
-	    var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: "ff0000", text: date+': '+province_name}), position:point, map:map});
-	    mapWeibo.infos.push(marker);
-	}
+
+	//if(alert_latlng != {}){
+	  for(var latlng in alert_latlng){
+		  date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
+		  province_name = alert_latlng[latlng].name;
+		  split_latlng = latlng.split(' ');
+		  var status = alert_latlng[latlng].status;
+		  var maxv = 0;
+		  var maxindex = '';
+		  for(key in status){
+			  if(maxv < status[key]){
+				  maxv = status[key];
+				  maxindex = key;
+			  }
+		  }
+		  if(maxindex == 'total'){
+		  maxstatus = ['微博发布总数激增', '0000ff'];
+		  }
+		  if(maxindex == 'repost'){
+		  maxstatus = ['微博转发总数激增', 'ffff00'];
+		  }
+		  if(maxindex == 'fipost'){
+		  maxstatus = ['微博原创总数激增', 'ff0000'];
+		  }
+		  point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
+		  var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: maxstatus[1], text: date+': '+province_name + maxstatus[0]}), position:point, map:map});
+		  mapWeibo.infos.push(marker);
+		 
+	  }
+	//}
 	var marker;		
 	var markers = [];
 	period_circle_data = circle_data[mapWeibo.now_step];

@@ -132,13 +132,16 @@ Event.observe(window, 'load', function() {
     }
 
     zoomBarSetup();
-    
     Event.observe($("play"), 'click', play_animation);
     Event.observe($("stop"), 'click', stop_animation);
     Event.observe($("submit"), 'click', click_analysis);
-    Event.observe($("more_rank"), 'click', more_rank);
-    Event.observe($("more_sample_rank"), 'click', more_sample_rank);
-    Event.observe($("change_data"), 'click', change_data);
+    try{
+	Event.observe($("more_rank"), 'click', more_rank);
+	Event.observe($("more_sample_rank"), 'click', more_sample_rank);
+	Event.observe($("change_data"), 'click', change_data);
+    }catch(e){
+	
+    }
 	
     // Handle the search default text
     Event.observe("query", "focus", function() { if (this.value  === "找人" ) { this.value = ""; } });

@@ -113,7 +113,6 @@ class handler():
         statistic_data, alerts = statistics_data(groups)
         return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data, 'max_repost_num': max_repost_num, 'alert': alerts})
 
-
 def raw_data(topic, starttime, endtime, limit=1000, section=25):
     global locations, location2latlon
     search = WeiboSearch()
@@ -307,6 +306,9 @@ def statistics_data(groups):
     alerts = []
     alert = False
     first = True
+    max_phi = 0
+    max_delta_repost = 0
+    max_delta_fipost = 0
     for index, group in enumerate(groups):
         latlng_count_dict = {}
         for status in group:
@@ -340,20 +342,65 @@ def statistics_data(groups):
             delta_repost = cur_repost - pre_repost
             delta_fipost = cur_fipost - pre_fipost
             phi = delta_repost + delta_fipost
-            if phi > 200 and first:
-                alert = True
-                province_alert[latlng] = {'name': province_name, 'count': phi}
+            if j > 0:
+                if max_phi < phi:
+                    max_phi = phi
+                if max_delta_repost < delta_repost:
+                    max_delta_repost = delta_repost
+                if max_delta_fipost < delta_fipost:
+                    max_delta_fipost = delta_fipost
+                
+##            if phi > 200 and first:
+##                alert = True
+##                province_alert[latlng] = {'name': province_name, 'count': phi}
+            province_alert[latlng] = {'name': province_name, 'count': (phi, delta_repost, delta_fipost)}
+                
             data = [cur_repost, cur_fipost, phi]
             province_count_dict[province_name] = data
-        if alert:
-            first = False
+##        if alert:
+##            first = False
         alerts.append(province_alert)
         history_data.append(latlng_count_dict)
         province_count_dict = sorted(province_count_dict.iteritems(), key=lambda(k, v): math.fabs(v[2]), reverse=True)
         statistics_data.append(province_count_dict)
     alerts.append({})
-    return statistics_data, alerts
-           
+    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost)
+    
+    alerts_results = []
+    count = 0
+    for ale in alerts:
+        if count == 0:
+            alerts_results.append({})
+            count +=1
+            continue
+        count += 1
+        alert_dict = {}
+        for key in ale.keys():
+            latlng = key
+            name = ale[key]['name']
+            phi, delta_repost, delta_fipost = ale[key]['count']
+            status_dict = {}
+            if phi > alert_phi:
+                status_dict['total'] = int(phi*100/max_phi)/100.0
+            else:
+                status_dict['total'] = 0
+            if delta_repost > alert_delta_repost:
+                status_dict['repost'] = int(delta_repost*100/max_delta_repost)/100.0
+            else:
+                status_dict['repost'] = 0
+            if delta_fipost > alert_delta_fipost:
+                status_dict['fipost'] = int(delta_fipost*100/max_delta_fipost)/100.0
+            else:
+                status_dict['fipost'] = 0
+            if status_dict['total'] != 0 or status_dict['repost'] != 0 or status_dict['fipost'] != 0:
+                alert_dict[latlng] = {'name': name, 'status': status_dict}
+        alerts_results.append(alert_dict)
+    print alerts_results
+    return statistics_data, alerts_results
+
+def alert_degree(max_phi, max_delta_repost, max_delta_fipost):
+    per = 0.9
+    return (round(max_phi*per), round(max_delta_repost*per), round(max_delta_fipost*per))
 
 def repost_level(count, max_repost_num):
     step = int(max_repost_num/3)
@@ -373,13 +420,14 @@ def reverse_key(key):
 
 def main():
     topic = u'钓鱼岛'
-    ts_arr, results = raw_data(topic, date2ts('2012-9-1'), date2ts('2012-9-20'))
+    print date2ts('2012-9-1'),date2ts('2012-9-30')
+    ts_arr, results = raw_data(topic, int(date2ts('2012-9-1')), int(date2ts('2012-9-20')))
     ts_series, groups = partition_count(ts_arr, results)
     draw_circle_data = map_circle_data(groups)
     max_repost_num, draw_line_data = map_line_data(groups)
     statistic_data, alerts = statistics_data(groups)
-    print alerts
-    # return json.dumps({'line': draw_line_data, 'circle': draw_circle_data})
+    #print alerts
+    #return json.dumps({'line': draw_line_data, 'circle': draw_circle_data})
 
 if __name__ == '__main__': main()
         
