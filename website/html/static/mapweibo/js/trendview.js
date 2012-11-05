@@ -16,7 +16,7 @@ function getNumber(topic, collection){
 
     $.each(names, function(i, name) {
 	$.getJSON('/mapweibo/trendnum?topic=' + topic + '&filename=' + name + '&collection=' + collection,    function(data) {
-	    //$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename='+ name.toLowerCase() +'-c.json&callback=?',    function(data) {
+	    
 		seriesOptions[i] = {
 		name: name,
 		data: data,
@@ -196,7 +196,7 @@ $(document).ready(function(){
 		}
     });
 });
-$("#timedist").block({
+/*$("#timedist").block({
     message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" /> Just a moment...</h2>'
-});
+});*/
 

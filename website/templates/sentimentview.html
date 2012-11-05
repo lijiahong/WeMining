@@ -5,7 +5,7 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <title>mapWeibo</title>
 <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+<script type="text/javascript" src="/static/mapweibo/js/jquery-1.7.min.js"></script>
 <script type='text/javascript' src='/static/mapweibo/js/lightview.js'></script>
 <link rel="stylesheet" type="text/css" href="/static/mapweibo/css/lightview.css" />
 
@@ -13,8 +13,6 @@
 
 <script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
 <link type="text/css" href="/static/mapweibo/css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
-<!--<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>-->
-<!--<link type="text/css" href="/static/mapweibo/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />-->
 
  <script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script>
 <!-- <script type='text/javascript' src='/static/mapweibo/js/jquery.masonry.min.js'></script>-->
@@ -23,12 +21,7 @@
  <script type="text/javascript" src="/static/mapweibo/js/jquery.ez-pinned-footer.js" charset="utf-8"></script>
 
 <script type="text/javascript" src="http://ditu.google.cn/maps/api/js?libraries=geometry,visualization&sensor=false"></script> <!--引用Maps JavaScript API 的 google.maps.geometry 库-->
-<!--<script src="http://code.highcharts.com/stock/highstock.js"></script>
-<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>-->
 
-<!--<script type="text/javascript" src="/static/mapweibo/js/clustermarker.js"></script>
-<script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/Line.js"></script>
-<script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/infowindow.js"></script>-->
 <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/sentimentview.js"></script>
 
 <style>
@@ -84,7 +77,7 @@
 					height:100%;
 			}
 			.nav{
-					margin-left: 666px;
+					margin-left: 564px;
 					margin-top: 0px;
 					margin-bottom: 0px;
 					height: 100%;
@@ -119,6 +112,9 @@
 				border-bottom-color: #61CCAA;
 			}
 			li#networkview.nav-nav {
+				border-bottom-color: #DDDCDC;
+			}
+			li#trendview.nav-nav {
 				border-bottom-color: #DDDCDC;
 			}
 			.nav a{
@@ -840,6 +836,9 @@
                                                 <a href="/mapweibo/mapview/" id="nav-mapview">
                                                 <li class='nav-nav' id='mapview'>传播</li>
                                                 </a>
+                                                <a href="/mapweibo/trendview/?topic=钓鱼岛" id="nav-trendview">
+                                                  <li class='nav-nav' id='trendview'>演化</li>
+                                                </a>
                                                 <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
                                                 <li class='nav-nav' id='sentimentview'>情绪</li>
                                                 </a>
@@ -870,57 +869,6 @@
                                       <a href="/weiming/mapweibo/sentimentview?topic=名古屋&limit=8135&timeinterval=25&collection=statuses"><li class="demo-nav">名古屋事件</li></a>
                                       </ul>
               </h1>
-      			<!--
-               <div class="panel-outer">
-               <div class="panel-nav">薄熙来事件时间线</div>
-         
-               <div id="event" class="panel">
-                  <!-- TimeLine导航 -->
-                  <!--
-                  <div class="timeline_container">
-                    <div class="timeline">
-                    </div>
-                  </div>
-                  
-                  <div class="item">
-                  <div class="inner"><div class="title">2011年11月15日</div>英国公民尼尔·伍德在重庆被发现死亡</div>
-                  </div>
-                  <div class="item">
-                  <div class="inner"><div class="title">2012年2月6日</div>王立军私自进入美国驻成都总领事馆滞留事件。</div>
-                  </div>
-                   <div class="item">
-                    <div class="inner"><div class="title">2012年2月9日23时</div>新华社电文称，外交部发言人办公室当日应询答问时表示，重庆市副市长王立军于2月6日进入美国驻成都总领事馆，滞留1天后离开。有关部门正在对此进行调查。</div>
-                  </div>
-                  <div class="item">
-        
-                    <div class="inner"><div class="title">3月2日</div>全国两会开幕前，全国政协新闻发言人赵启正在新闻发布会上称，王立军目前正在接受有关部门的调查，调查工作也取得了进展。他是全国人民代表大会代表，已经请假不出席这次会议。</div>
-                  </div>
-                  <div class="item">
-        
-                    <div class="inner"><div class="title">3月14日</div>十一届全国人大五次会议闭幕后，国务院总理温家宝在人民大会堂与中外记者见面，回答记者提问时称：“王立军事件发生后，引起社会的高度关注，国际社会也十分关注。我可以告诉大家，中央高度重视，立即责成有关部门进行专门调查。目前调查已经取得进展，我们将以事实为依据，以法律为准则，严格依法办理。调查和处理的结果一定会给人民以回答，并且经受住法律和历史的检验。“</div>
-                  </div>
-                  <div class="item">
-                    <div class="inner"><div class="title">3月15日</div>新华社发布中共中央决定：张德江同志兼任重庆市委委员、常委、书记；薄熙来同志不再兼任重庆市委书记、常委、委员职务。</div>
-                  </div>
-                  <div class="item">
-                    <div class="inner"><div class="title">2012年4月10日23时整</div>新华社授权发布：中共中央决定对薄熙来同志严重违纪问题立案调查。新华社称：“鉴于薄熙来同志涉嫌严重违纪，中央决定，依据《中国共产党章程》和《中国共产党纪律检查机关案件检查工作条例》的有关规定，停止其担任的中央政治局委员、中央委员职务，由中共中央纪律检查委员会对其立案调查。”新华社同时发布的另一则消息称：公安机关对尼尔·伍德死亡案依法进行复查。同一时间，CCTV新闻频道播发了新华社电文。</div>
-                  </div>
-                  <div class="item">
-                    <div class="inner"><div class="title">4月11日</div>CCTV新闻频道早7时30分、上午11时、晚7时等不同时间段重播了4月10日内容。</div>
-                  </div>
-                  <div class="item">
-                    <div class="inner"><div class="title">4月11日至13日</div>薄熙来案经官方公布之后的3天内，人民日报连发三篇评论员文章，北京、重庆、上海、广东等地均发文表示：“坚决拥护党中央的正确决定。”</div>
-                  </div>
-                </div>
-                </div>
-                 -->
-                
-                <!--<div class="panel-outer">
-                <div class="panel-nav">数量分布</div>
-                <div id="time" class="panel">
-                	<div id="timedist"></div>
-                </div>
-                </div>-->
                 
             <div class="panel-outer">       
               <div class="panel-nav">新的分析</div>       
@@ -991,12 +939,7 @@
 	</div>
     <!--main结束-->
 	
-    <div id="footer"><div id="footer-text">@2012&nbsp&nbsp<a href="http://idec.buaa.edu.cn">北航社会舆情分析实验室</a></div></div>
-
-
-
-
-
+    <div id="footer"><div id="footer-text">Copyright 2012.&nbsp&nbsp<a href="http://idec.buaa.edu.cn">Reseach Center for Social Computing and Sentimental Analysis. </a></div></div>
 
 </body>
 </html>

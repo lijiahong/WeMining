@@ -50,7 +50,7 @@ a {
     height:100%;
 }
 .nav{
-    margin-left: 666px;
+    margin-left: 564px;
     margin-top: 0px;
     margin-bottom: 0px;
     height: 100%;
@@ -76,12 +76,15 @@ a {
 
 }
 li#mapview.nav-nav {
-    border-bottom-color: #61CCAA;
+    border-bottom-color: #DDDCDC;
 }
 li#home.nav-nav {
     border-bottom-color: #DDDCDC;
 }
 li#sentimentview.nav-nav {
+    border-bottom-color: #DDDCDC;
+}
+li#trendview.nav-nav {
     border-bottom-color: #DDDCDC;
 }
 li#networkview.nav-nav {
@@ -536,6 +539,10 @@ div.sctble_mat a {
 }
 #s_keyword{
     float:left;
+    margin:5px auto;
+}
+#hour_section{
+	float:left;
     margin:5px auto;
 }
 #number{

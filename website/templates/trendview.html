@@ -5,23 +5,19 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>mapWeibo</title>
     <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-1.7.min.js"></script>
+    <!--<script type='text/javascript' src='/static/mapweibo/js/google.jsapi.js'></script>行不通-->
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-
-    <link rel="stylesheet"  type="text/css" href="/static/mapweibo/css/skins/jqselectable/selectable/style.css">
 
     <script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
     <link type="text/css" href="/static/mapweibo/css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 
-    <script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script>
-    <script type='text/javascript' src='/static/mapweibo/js/jquery.masonry.min.js'></script>
-    <script type="text/javascript" src="/static/mapweibo/js/jquery.jQselectable.js"></script>
-    <script type="text/javascript" src="/static/mapweibo/js/jquery.jdpicker.js"></script>
-    <script type="text/javascript" src="/static/mapweibo/js/jquery.ez-pinned-footer.js" charset="utf-8"></script>
+    <!--<script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script>--><!--此库提供加载页面等待时锁定div的功能-->
 
     <script src="http://code.highcharts.com/stock/highstock.js"></script>
     <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
     <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/trendview.js"></script>
+    
     <link type="text/css" href="/static/mapweibo/css/mapview.css" rel="stylesheet" />
     <style>
       #loading {
@@ -29,6 +25,9 @@
       left:450px;
       top:180px;
       }
+	  li#trendview.nav-nav {
+		border-bottom-color: #61CCAA;
+	  }
     </style>
 
   </head>
@@ -49,6 +48,9 @@
               </a>
               <a href="/mapweibo/mapview/" id="nav-mapview">
                 <li class='nav-nav' id='mapview'>传播</li>
+              </a>
+              <a href="/mapweibo/trendview/?topic=钓鱼岛" id="nav-trendview">
+                <li class='nav-nav' id='trendview'>演化</li>
               </a>
               <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
                 <li class='nav-nav' id='sentimentview'>情绪</li>
@@ -71,7 +73,7 @@
             <img src="/static/mapweibo/images/propagation.png" alt="什么是mapWeibo?" />
           </div>
           <div id="intro">
-            <p><strong>传播图谱</strong>革新性地将新浪微博平台话题传播路径付诸路线图地图上展示，调用google地图，支持缩放、拖拽，地理层级最小可至区/县级，能够精确呈现微博发布者地理位置。通过点、线显示微博的发布地点与传播路径，可视化微博转发数量、方向，提供转发、原创微博的单独查看，方便用户轻松找到转发量激增点，跟踪突发性事件的传播态势。</p>
+            <p><strong>话题演化</strong>通过时光轴的形式展示话题演化的模式，找到话题传播的拐点和峰点，典型的话题演化模式有单峰型、多峰型、宽峰型、波动型。</p>
           </div>
         </h1>
         <div class="panel-outer">
@@ -104,6 +106,6 @@
       </div>
     </div><!--content结束-->
     <!--main结束-->
-    <div id="footer"><div id="footer-text">@2012&nbsp&nbsp<a href="http://idec.buaa.edu.cn">北航社会舆情分析实验室</a></div></div>
+    <div id="footer"><div id="footer-text">Copyright 2012.&nbsp&nbsp<a href="http://idec.buaa.edu.cn">Reseach Center for Social Computing and Sentimental Analysis. </a></div></div>
   </body>
 </html>

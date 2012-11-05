@@ -5,10 +5,8 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>mapWeibo</title>
     <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-1.7.min.js"></script>
 
-
-    <!--<script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.mousewheel.js"></script>-->
     <script type="text/javascript" src="/static/mapweibo/js/modernizr-2.5.3.min.js"></script>
     <script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.cloud-carousel.1.0.5.min.js"></script>
     <script type="text/javascript" src="/static/mapweibo/js/cloud-carousel/jquery.cloud-carousel.1.0.5.js"></script>
@@ -180,7 +178,7 @@
       height:100%;
       }
       .nav{
-      margin-left: 666px;
+      margin-left: 564px;
       margin-top: 0px;
       margin-bottom: 0px;
       height: 100%;
@@ -217,6 +215,9 @@
       li#networkview.nav-nav {
       border-bottom-color: #DDDCDC;
       }
+	  li#trendview.nav-nav {
+	  border-bottom-color: #DDDCDC;
+	  }
       .nav a{
       font-size: 19px;
       font-family: sans-serif;
@@ -394,6 +395,9 @@
             <a href="/mapweibo/mapview/" id="nav-mapview">
               <li class='nav-nav' id='mapview'>传播</li>
             </a>
+            <a href="/mapweibo/trendview/?topic=钓鱼岛" id="nav-trendview">
+                <li class='nav-nav' id='trendview'>演化</li>
+              </a>
             <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
               <li class='nav-nav' id='sentimentview'>情绪</li>
             </a>
@@ -452,7 +456,7 @@
         <p>新浪微博:<a href="http://weibo.com/linhao199201">linhaobuaa</a></p>
         <h3>待续工作</h3>
         <p>深入探索新浪微博话题,如话题中广告等垃圾信息的过滤(Anti-spam)、代表性样本网络的构建(Sampling from large network)、微博新词的处理、微博Neutral情绪的识别</p>
-        <div style="text-align:center;">@2012<a href="http://idec.buaa.edu.cn">BUAA IDEC</a></div>
+        <div style="text-align:center;">Copyright 2012.&nbsp&nbsp<a href="http://idec.buaa.edu.cn">Reseach Center for Social Computing and Sentimental Analysis. </a></div>
       </div>
     </div>
   </div>

@@ -206,18 +206,7 @@ var DOM = {
 		    k_html += "<button id=\"submit\" style=\"margin-left:20px;\">分析</button>";
 		    $("#keywords").append(k_html);
 		}
-		$("#select_timeInterval").jQselectable({
-		    style: "simple",
-		    set: "fadeIn",
-		    out: "fadeOut",
-		    //height: 300,
-		    //width:168,
-		    opacity: .9,
-		    callback: function(){
-			if($(this).val().length>0){ 	 
-			}
-		    }
-		});
+	
 		$('#starttime').datepicker({
 		    changeMonth: true,
 		    changeYear: true,
