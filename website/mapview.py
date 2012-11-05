@@ -94,10 +94,19 @@ class handler():
         return render.mapview()
 
     def POST(self):
-        form = web.input(topic=None, starttime=None, endtime=None)
+        '''
+            topic： the keyword you want to search
+            starttime: the start time you choose
+            endtime: the end time you choose
+            alertcoe: alert number = alertcoe * max number, if the increase number > alert number, then alert.
+            section: the number of hours you want to do statistical analysis in with each point in the map
+        '''
+        form = web.input(topic=None, starttime=None, endtime=None, alertcoe=None, section=None)
         topic = form.topic
         start = form.starttime
         end = form.endtime
+        alertcoe = form.alertcoe
+        section = form.section
         if topic and start and end:
             start = int(date2ts(start))
             end = int(date2ts(end))
@@ -106,14 +115,28 @@ class handler():
             end = int(time.time())   
         else:
             return json.dumps({'error': 'wrong paramater.'})
+        if alertcoe:
+            if int(alertcoe) < 50:
+                alertcoe = 0.50
+            if int(alertcoe) >= 100:
+                alertcoe = 0.99
+            if int(alertcoe) >= 50 and int(alertcoe) < 100:
+                alertcoe = int(alertcoe)/100.00
+        else:
+            alertcoe = 0.9#default is 0.9
+        if section:
+            section = int(section)
+        else:
+            section = 24 #default is 1 day
+            
         ts_arr, results = raw_data(topic, start, end)
-        ts_series, groups = partition_time(ts_arr, results)
+        ts_series, groups = partition_time(ts_arr, results, section)
         draw_circle_data = map_circle_data(groups)
         max_repost_num, draw_line_data = map_line_data(groups)
-        statistic_data, alerts = statistics_data(groups)
+        statistic_data, alerts = statistics_data(groups, alertcoe)
         return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data, 'max_repost_num': max_repost_num, 'alert': alerts})
 
-def raw_data(topic, starttime, endtime, limit=1000, section=25):
+def raw_data(topic, starttime, endtime, limit=1000):
     global locations, location2latlon
     search = WeiboSearch()
     matches = search.spread_query(keywords=cut(topic), begin=starttime, end=endtime)
@@ -183,11 +206,11 @@ def raw_data(topic, starttime, endtime, limit=1000, section=25):
         ts_arr.append(ts)
     return sorted(list(set(ts_arr))), results
 
-def partition_time(ts_arr, data, section='day'):
+def partition_time(ts_arr, data, hournumber):
     ts_series = []
     ts_start = ts_arr[0]
     ts_end = ts_arr[-1]
-    each_step = 24*60*60
+    each_step = 60*60*hournumber
     ts_current = ts_start
     data_cursor = -1
     groups = []
@@ -300,7 +323,7 @@ def map_line_data(groups):
             province_repost_count[key]['rank'] = repost_level(count, max_repost_num)
     return max_repost_num, draw_line_data
 
-def statistics_data(groups):
+def statistics_data(groups, alertcoe):
     statistics_data = []
     history_data = []
     alerts = []
@@ -364,7 +387,7 @@ def statistics_data(groups):
         province_count_dict = sorted(province_count_dict.iteritems(), key=lambda(k, v): math.fabs(v[2]), reverse=True)
         statistics_data.append(province_count_dict)
     alerts.append({})
-    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost)
+    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe)
     
     alerts_results = []
     count = 0
@@ -396,11 +419,11 @@ def statistics_data(groups):
                 alert_dict[latlng] = {'name': name, 'status': status_dict}
         alerts_results.append(alert_dict)
     print alerts_results
+    print alertcoe
     return statistics_data, alerts_results
 
-def alert_degree(max_phi, max_delta_repost, max_delta_fipost):
-    per = 0.9
-    return (round(max_phi*per), round(max_delta_repost*per), round(max_delta_fipost*per))
+def alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe):
+    return (round(max_phi*alertcoe), round(max_delta_repost*alertcoe), round(max_delta_fipost*alertcoe))
 
 def repost_level(count, max_repost_num):
     step = int(max_repost_num/3)

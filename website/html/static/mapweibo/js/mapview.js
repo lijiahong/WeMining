@@ -51,6 +51,8 @@ var mapWeibo = {
     step_sum : (getUrlParam('timeInterval')==null)?25:getUrlParam('timeInterval'),       //规定slider的步数总和
     starttime: (getUrlParam('starttime')==null)?'2012-01-01':getUrlParam('starttime'), 
     endtime: (getUrlParam('endtime')==null)?getNowTime():getUrlParam('endtime'),
+	section: (getUrlParam('section')==null)?24:getUrlParam('section'),
+	alertcoe: (getUrlParam('alertcoe')==null)?90:getUrlParam('alertcoe'),
     now_step : 0,
     total_number : 0,
     real_number : 0,
@@ -200,9 +202,9 @@ var DOM = {
 		    $("#topic_input").val(mapWeibo.getPresentTopic);
 		}
 
-		if(getUrlParam("topic")!=null && getUrlParam("starttime")!=null && getUrlParam("endtime")!=null && getUrlParam("timeInterval")!=null){				
+		if(getUrlParam("topic")!=null){				
 		    $("#keywords").empty();
-		    var k_html = "<p>输入<strong>筛选条件</strong>以便开始<strong>新</strong>的分析:</p><div id=\"s_keyword\"><strong>关键词:</strong><input type=\"text\" name=\"topic\" value=" + mapWeibo.getPresentTopic + " /></div><div id=\"se_time\"><strong>起始时间:</strong><input type=\"text\" name=\"starttime\" id=\"starttime\" value=" + mapWeibo.starttime + " />&nbsp;&nbsp;<strong>终止时间:</strong><input type=\"text\" name=\"endtime\" id=\"endtime\" value=" + mapWeibo.endtime + " /></div>";
+		    var k_html = "<p>输入<strong>筛选条件</strong>以便开始<strong>新</strong>的分析:</p><div id=\"s_keyword\"><strong>关键词:</strong><input type=\"text\" name=\"topic\" value=" + mapWeibo.getPresentTopic + " /></div><div id=\"se_time\"><strong>起始时间:</strong><input type=\"text\" name=\"starttime\" id=\"starttime\" value=" + mapWeibo.starttime + " />&nbsp;&nbsp;<strong>终止时间:</strong><input type=\"text\" name=\"endtime\" id=\"endtime\" value=" + mapWeibo.endtime + " /></div><div id=\"hour_section\"><strong>时间粒度</strong><input type=\"text\" name=\"section\" id=\"section_input\" placeholder=\"请输入时间粒度...\" value=" + mapWeibo.section + "><strong>小时</strong></div>";
 		    k_html += "<button id=\"submit\" style=\"margin-left:20px;\">分析</button>";
 		    $("#keywords").append(k_html);
 		}
@@ -319,7 +321,7 @@ function initialize() {
 	return;
     }
     $.ajax({
-	url: "/mapweibo/mapcount?topic=" + mapWeibo.getPresentTopic + "&starttime=" + mapWeibo.starttime + "&endtime=" + mapWeibo.endtime,
+	url: "/mapweibo/mapcount?topic=" + mapWeibo.getPresentTopic + "&starttime=" + mapWeibo.starttime + "&endtime=" + mapWeibo.endtime + '&section=' + mapWeibo.section + '&alertcoe=' + mapWeibo.alertcoe,
 	dataType: 'json',   
 	type: "GET",   
 	success: function (data) {
@@ -346,7 +348,7 @@ function initialize() {
     $("#mapContainer").block({
 	message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" />数据加载中,请稍候...</h2>'
     });
-    var request = '/mapweibo/mapview?topic=' + mapWeibo.getPresentTopic + '&starttime=' + mapWeibo.starttime + '&endtime=' + mapWeibo.endtime + "&collection=" + mapWeibo.getPresentCollection;
+    var request = '/mapweibo/mapview?topic=' + mapWeibo.getPresentTopic + '&starttime=' + mapWeibo.starttime + '&endtime=' + mapWeibo.endtime + "&collection=" + mapWeibo.getPresentCollection + '&section=' + mapWeibo.section + '&alertcoe=' + mapWeibo.alertcoe;
     $.ajax({
 	url: request,
 	dataType: 'json',   
