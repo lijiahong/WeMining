@@ -192,7 +192,7 @@ var DOM = {
 		map = new google.maps.Map(document.getElementById('map_canvas'), mapWeibo.initialOptions);
 		$('#slider').slider({
 		    min: 0,
-		    max: mapWeibo.step_sum,
+		    //max: mapWeibo.step_sum,
 		    step: 1,
 		});
 		$('#play_pause1').button({icons: {primary: "ui-icon-play"},text: false});
@@ -350,224 +350,238 @@ function initialize() {
     });
     var request = '/mapweibo/mapview?topic=' + mapWeibo.getPresentTopic + '&starttime=' + mapWeibo.starttime + '&endtime=' + mapWeibo.endtime + "&collection=" + mapWeibo.getPresentCollection + '&section=' + mapWeibo.section + '&alertcoe=' + mapWeibo.alertcoe;
     $.ajax({
-	url: request,
-	dataType: 'json',   
-	type: "POST",   
-	success: function (data) {
-	    line_data = data.line;
-	    circle_data = data.circle;
-	    ts_series = data.ts_series;
-	    alert_data = data.alert;
-	      
-		
-	    max_repost_num = data.max_repost_num;
-	    statistics_data = data.statistics_data;
-	    var each_step = parseInt(max_repost_num/3);
-	    line_blue.innerText = '0--' + each_step.toString();
-	    line_yellow.innerText = each_step.toString() + '--' + 2*each_step.toString();
-	    line_red.innerText = 2*each_step.toString()+ '--'+ max_repost_num.toString();
-	    $('#slider').bind('slidechange', function(event, ui) {
-		mapWeibo.now_step = parseInt($('#slider').slider( "option", "value" ));
-		if(mapWeibo.now_step >= 0 && mapWeibo.now_step < mapWeibo.step_sum){
-		    mapWeibo.now_step = mapWeibo.now_step - 1;
-		    // change_date_display();
-		    // alert_province = change_data_display();
-		    change_date_display();
-		    change_data_display();
-		    change_map_display();
+		  url: request,
+		  dataType: 'json',   
+		  type: "POST",   
+		  success: function (data) {
+				line_data = data.line;
+				circle_data = data.circle;
+				ts_series = data.ts_series;
+				mapWeibo.step_sum = ts_series.length;
+				$('#slider').slider({
+					max: mapWeibo.step_sum + 1
+				})
+				alert_data = data.alert;
+				max_repost_num = data.max_repost_num;
+				statistics_data = data.statistics_data;
+				var each_step = parseInt(max_repost_num/3);
+				line_blue.innerText = '0--' + each_step.toString();
+				line_yellow.innerText = each_step.toString() + '--' + 2*each_step.toString();
+				line_red.innerText = 2*each_step.toString()+ '--'+ max_repost_num.toString();
+				
+				initial_now_step();
+				
+				$('#slider').bind('slidechange', function(event, ui) {
+					if(lineClusterer != undefined){
+						lineClusterer.clearlines();
+					}
+					if(markerClusterer != undefined){
+						markerClusterer.clearMarkers();
+					}
+					
+					var now_slider =  $('#slider').slider( "option", "value" );
+					//console.log(now_slider);
+					if(now_slider == 0){
+						mapWeibo.now_step = -1;
+					}
+					else{
+						mapWeibo.now_step = now_slider - 1;
+					}
+					if(mapWeibo.now_step == mapWeibo.step_sum){
+						date_div.innerText='当前时间';
+						trend_url = "http://idec.buaa.edu.cn/mapweibo/trendview?topic=" + mapWeibo.getPresentTopic;
+						network_url = "http://idec.buaa.edu.cn/retweetmap?q=" + mapWeibo.getPresentTopic+'&t=demo';
+						var $dialog = $('<div></div>')
+						.html('<div><span>是否查看:</span><p><a href='+trend_url+' target="_blank">话题数量趋势</a></br></br><a href='+network_url+' target="_blank">话题转发网络</a></p></div>')
+						.css({'font-size': '18px','color': 'blue'})
+						.dialog({
+							close: function(event, ui) {$('#slider').slider( "option", "value", 0);},
+							autoOpen: false,
+							title: '播放结束',
+							modal:true,
+							draggable: false,
+							resizable: false
+						});
+						$dialog.dialog('open');
+						// setTimeout(function(){$dialog.dialog("close")},10000);
+					}
+					
+					change_date_display();
+					change_data_display();
+					change_map_display();
+					
+				})
+					
+				MyOverlay.prototype = new google.maps.OverlayView();
+				MyOverlay.prototype.onAdd = function() { };
+				MyOverlay.prototype.onRemove = function() { };
+				MyOverlay.prototype.draw = function() {
+					projection = overlay.getProjection();
+				};
+				function MyOverlay(map) { 
+					this.setMap(map); 
+				}
+				overlay = new MyOverlay(map);
+				$("#mapContainer").unblock();
+				if (stoped==true) {
+					stoped = false;					
+					mapWeibo.inter_slider = setInterval(play_interval, mapWeibo.interval_time);
+				}
+	     	},
+			error: function(jqXHR, textStatus, errorThrown) {
+				pageFailure("mapview_broken_down");
+			}
+    });
+	
+	$('#play_pause1').click(function() {
+		if (stoped==true) {	  
+			stoped = false;
+			mapWeibo.inter_slider=setInterval(play_interval, mapWeibo.interval_time);
 		}
-		if(mapWeibo.now_step == mapWeibo.step_sum){
-		    if(lineClusterer != undefined){
-			lineClusterer.clearlines();
-		    }
-		    if(markerClusterer != undefined){
-			markerClusterer.clearMarkers();
-		    }
-		    date_div.innerText='当前时间';
-		    trend_url = "http://idec.buaa.edu.cn/mapweibo/trendview?topic=" + mapWeibo.getPresentTopic;
-		    network_url = "http://idec.buaa.edu.cn/retweetmap?q=" + mapWeibo.getPresentTopic+'&t=demo';
-		    var $dialog = $('<div></div>')
-			.html('<div><span>是否查看:</span><p><a href='+trend_url+' target="_blank">话题数量趋势</a></br></br><a href='+network_url+' target="_blank">话题转发网络</a></p></div>')
-			.css({'font-size': '18px','color': 'blue'})
-			.dialog({
-			    close: function(event, ui) {$('#slider').slider( "option", "value", 0);},
-			    autoOpen: false,
-			    title: '播放结束',
-			    modal:true,
-			    draggable: false,
-			    resizable: false
-			});
-		    $dialog.dialog('open');
-		    // setTimeout(function(){$dialog.dialog("close")},10000);
-		    // static_data_display();
-		}
-	    }); 
-	    //static_data_display();
-	    MyOverlay.prototype = new google.maps.OverlayView();
-	    MyOverlay.prototype.onAdd = function() { };
-	    MyOverlay.prototype.onRemove = function() { };
-	    MyOverlay.prototype.draw = function() {
-		projection = overlay.getProjection();
-	    };
-	    function MyOverlay(map) { 
-		this.setMap(map); 
-	    }
-	    overlay = new MyOverlay(map);
-	    $("#mapContainer").unblock();
-	    if (stoped==true) {
-		stoped = false;					
-		mapWeibo.inter_slider = setInterval(play_interval, mapWeibo.interval_time);
-	    }
-	},
-	error: function(jqXHR, textStatus, errorThrown) {
-	    pageFailure("mapview_broken_down");
-        }
     });
-    
-    function change_map_display(){
-	// console.log(mapWeibo.now_step);
-	for(var i=0;i<mapWeibo.infos.length;i++){
-	    // mapWeibo.infos[i].infowindow.close();
-	    mapWeibo.infos[i].setMap(null);
-	}
-	mapWeibo.infos = [];
-	mapWeibo.clearMarkersByCategory();
-        if(markerClusterer != undefined){
-	    markerClusterer.clearMarkers();
-        }
-	if(lineClusterer != undefined){
-	    lineClusterer.clearlines();
-	}
-	alert_latlng = alert_data[mapWeibo.now_step];
-	var province_name = '';
-
-	//if(alert_latlng != {}){
-	  for(var latlng in alert_latlng){
-		  date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
-		  province_name = alert_latlng[latlng].name;
-		  split_latlng = latlng.split(' ');
-		  var status = alert_latlng[latlng].status;
-		  var maxv = 0;
-		  var maxindex = '';
-		  for(key in status){
-			  if(maxv < status[key]){
-				  maxv = status[key];
-				  maxindex = key;
-			  }
-		  }
-		  if(maxindex == 'total'){
-		  maxstatus = ['微博发布总数激增', '0000ff'];
-		  }
-		  if(maxindex == 'repost'){
-		  maxstatus = ['微博转发总数激增', 'ffff00'];
-		  }
-		  if(maxindex == 'fipost'){
-		  maxstatus = ['微博原创总数激增', 'ff0000'];
-		  }
-		  point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
-		  var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: maxstatus[1], text: date+': '+province_name + maxstatus[0]}), position:point, map:map});
-		  mapWeibo.infos.push(marker);
-		 
-	  }
-	//}
-	var marker;		
-	var markers = [];
-	period_circle_data = circle_data[mapWeibo.now_step];
-	for (var latlng in period_circle_data) {
-	    var count = period_circle_data[latlng];
-	    var fipost = count[1];
-	    var repost = count[0];
-	    var split_latlng = latlng.split(' ');
-	    var point = new google.maps.LatLng(split_latlng[0],split_latlng[1]);
-	    var category = null;
-	    if(fipost < repost)
-		category = 'fipost'
-	    else
-		category = 'repost'
-	    marker = new google.maps.Marker({
-		icon : mapWeibo.markerIcons[category][3][0],
-		position : point,
-		map : map
-	    });
-	    marker.category = category;
-	    marker.fipost = fipost;
-	    marker.repost = repost;
-	    markers.push(marker);
-	    mapWeibo.markersByCategory[category].push(marker);
-	    google.maps.event.addListener(marker, 'mouseover', function(){
-		var marker = this;
-		infoWindow.preload(marker);
-	    });
-	    google.maps.event.addListener(marker, 'mouseout', infoWindow.close);
-	    google.maps.event.addListener(map, 'click', infoWindow.close);
-	    google.maps.event.addListener(map, 'drag', infoWindow.close);
-	    google.maps.event.addListener(map, 'zoom_changed', function () {
-		infoWindow.close();
-	    });
-	    google.maps.event.trigger(map, 'resize')
-	}
-	markerClusterer.addMarkers(markers, false);
-	period_line_data = line_data[mapWeibo.now_step];
-	lineClusterer = new LineClusterer(map, period_line_data);
-    }
-    $('#play_pause1').click(function() {
-	if (stoped==true) {	  
-	    stoped = false;
-	    mapWeibo.inter_slider=setInterval(play_interval, mapWeibo.interval_time);
-	}
-    });
-    $('#play_pause2').click(function() {
-	stoped = true;
-    });
+    $('#play_pause2').click(function() {stoped = true;});
     $('#play_pause3').click(function() {
-	stoped = true;
-	date_div.innerText = '';
-	$('#slider').slider( "option", "value", 0);	
+		stoped = true;
+		date_div.innerText = '';
+		$('#slider').slider( "option", "value", 0);	
     });
-
+	
+    function initial_now_step(){
+		mapWeibo.now_step = -1;
+	}
+	
     function change_date_display(){
-	if (ts_series[mapWeibo.now_step])
-	    date_div.innerText= new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
+	  if (ts_series[mapWeibo.now_step]){
+		  date_div.innerText= new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd mm-ss');
+	  }
+	  else{
+		  date_div.innerText = '当前时间';
+	  }
     }
 
     function change_data_display(){
-	$(".section#left").empty();
-	$(".section#middle").empty();
-	$(".section#right").empty();
-	$(".section#left").append("<h2>原创微博省份</h2><ol id='most_fipost'></ol>");
-	$(".section#middle").append("<h2>转发微博省份</h2><ol id='most_repost'></ol>");
-	$(".section#right").append("<h2>最近两期数量比较</h2><ol id='most_increase'></ol>");
-	$("#most_fipost").empty();
-	$("#most_repost").empty();
-	$("#most_increase").empty();
-	var s_data = statistics_data[mapWeibo.now_step];
-	for(var i=0;i<s_data.length;i++){
-	    province = s_data[i][0];
-	    data = s_data[i][1];
-	    cur_repost = data[0];
-	    cur_fipost = data[1];
-	    phi = data[2];
-	    $("#most_increase").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>增长" + phi + "条微博</a></span></li>");
-	    $("#most_fipost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_fipost + "条微博</a></span></li>");
-	    $("#most_repost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_repost + "条微博</a></span></li>");
-	}
+		$(".section#left").empty();
+		$(".section#middle").empty();
+		$(".section#right").empty();
+		$(".section#left").append("<h2>原创微博省份</h2><ol id='most_fipost'></ol>");
+		$(".section#middle").append("<h2>转发微博省份</h2><ol id='most_repost'></ol>");
+		$(".section#right").append("<h2>最近两期数量比较</h2><ol id='most_increase'></ol>");
+		$("#most_fipost").empty();
+		$("#most_repost").empty();
+		$("#most_increase").empty();
+		if(statistics_data[mapWeibo.now_step]){ 
+		  var s_data = statistics_data[mapWeibo.now_step];
+		  for(var i=0;i<s_data.length;i++){
+			  province = s_data[i][0];
+			  data = s_data[i][1];
+			  cur_repost = data[0];
+			  cur_fipost = data[1];
+			  phi = data[2];
+			  $("#most_increase").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>增长" + phi + "条微博</a></span></li>");
+			  $("#most_fipost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_fipost + "条微博</a></span></li>");
+			  $("#most_repost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_repost + "条微博</a></span></li>");
+		  }
+		}
     }
 
-    function play_interval(){
-	if (stoped) {
-	    if (mapWeibo.inter_slider!=null) {
-		clearInterval(mapWeibo.inter_slider);
+    function change_map_display(){
+		for(var i=0;i<mapWeibo.infos.length;i++){
+			mapWeibo.infos[i].setMap(null);
+		}
+		mapWeibo.infos = [];
+		mapWeibo.clearMarkersByCategory();
+			if(markerClusterer != undefined){
+			markerClusterer.clearMarkers();
+			}
+		if(lineClusterer != undefined){
+			lineClusterer.clearlines();
+		}
+		alert_latlng = alert_data[mapWeibo.now_step];
+		var province_name = '';
+	
+	    for(var latlng in alert_latlng){
+			date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
+			province_name = alert_latlng[latlng].name;
+			split_latlng = latlng.split(' ');
+			var status = alert_latlng[latlng].status;
+			var maxv = 0;
+			var maxindex = '';
+			for(key in status){
+				if(maxv < status[key]){
+					  maxv = status[key];
+					  maxindex = key;
+				}
+			}
+			if(maxindex == 'total'){
+				maxstatus = ['微博发布总数激增', '0000ff'];
+			}
+			if(maxindex == 'repost'){
+				maxstatus = ['微博转发总数激增', 'ffff00'];
+			}
+			if(maxindex == 'fipost'){
+				maxstatus = ['微博原创总数激增', 'ff0000'];
+			}
+			point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
+			var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: maxstatus[1], text: date+': '+province_name + maxstatus[0]}), position:point, map:map});
+			mapWeibo.infos.push(marker);
 	    }
-	} 
-	else {
-	    if (mapWeibo.now_step < mapWeibo.step_sum) {	
-	    	$("#slider" ).slider("option", "value", (mapWeibo.now_step+2));
-	    }
-	    if(mapWeibo.now_step == mapWeibo.step_sum - 1){	
-	    	$("#slider" ).slider("option", "value", (mapWeibo.now_step+1));
-	    }
+
+		var marker;		
+		var markers = [];
+		period_circle_data = circle_data[mapWeibo.now_step];
+		for (var latlng in period_circle_data) {
+			var count = period_circle_data[latlng];
+			var fipost = count[1];
+			var repost = count[0];
+			var split_latlng = latlng.split(' ');
+			var point = new google.maps.LatLng(split_latlng[0],split_latlng[1]);
+			var category = null;
+			if(fipost < repost)
+				category = 'fipost'
+			else
+				category = 'repost'
+			marker = new google.maps.Marker({
+				icon : mapWeibo.markerIcons[category][3][0],
+				position : point,
+				map : map
+				});
+			marker.category = category;
+			marker.fipost = fipost;
+			marker.repost = repost;
+			markers.push(marker);
+			mapWeibo.markersByCategory[category].push(marker);
+			google.maps.event.addListener(marker, 'mouseover', function(){
+				var marker = this;
+				infoWindow.preload(marker);
+				});
+			google.maps.event.addListener(marker, 'mouseout', infoWindow.close);
+			google.maps.event.addListener(map, 'click', infoWindow.close);
+			google.maps.event.addListener(map, 'drag', infoWindow.close);
+			google.maps.event.addListener(map, 'zoom_changed', function () { infoWindow.close();});
+			google.maps.event.trigger(map, 'resize')
+		}
+		markerClusterer.addMarkers(markers, false);
+		period_line_data = line_data[mapWeibo.now_step];
+		lineClusterer = new LineClusterer(map, period_line_data);
 	}
+
+    function play_interval(){
+		if (stoped) {
+			if (mapWeibo.inter_slider!=null) {
+			clearInterval(mapWeibo.inter_slider);
+			}
+		} 
+		else {
+			if (mapWeibo.now_step <= mapWeibo.step_sum  && mapWeibo.now_step >= -1) {	
+				$("#slider" ).slider("option", "value", ($("#slider" ).slider("option", "value") + 1));
+			}
+			/*
+			if(mapWeibo.now_step == mapWeibo.step_sum){	
+				$("#slider" ).slider("option", "value", (mapWeibo.now_step+1));
+			}*/
+		}
     }
+	
 }
 
 $(function(){
