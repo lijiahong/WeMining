@@ -409,7 +409,7 @@ var DOM = {
 		}
 	}(),
 	nationViewButton : function () {
-        var htmlElement = '<p id="back-to-nation-view" class="hidden"><span>Back to nation view</span></p>';
+        var htmlElement = '<p id="back-to-nation-view" class="hidden"><span>返回全景模式</span></p>';
         var $element;
         return {
             init : function () {
@@ -755,10 +755,12 @@ function pageFailure(error){
 	//window.location.href = "/weiming/mapweibo/error?page=sentimentview&status=" + error;
 }
 function initialize() {
+	window.location.href = "#mapContainer";
+	
 	if(parseInt(sentiment.limit) <= 1000 || parseInt(sentiment.step_sum) > 100 || parseInt(sentiment.step_sum) <= 0){
 		   pageFailure("sentiment_limit_illegal");
 	}
-	console.log(sentiment.getPresentCollection);
+	//console.log(sentiment.getPresentCollection);
 	$.ajax({
 		  url : '/mapweibo/mapcount?topic=' + sentiment.getPresentTopic + '&collection=' + sentiment.getPresentCollection,
 		  cache: false,
@@ -776,7 +778,7 @@ function initialize() {
 	window.location.href = "#mapContainer";
 	
     $("#mapContainer").block({
-		message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" /> Just a moment...</h2>'
+		message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" />数据加载中，请稍候...</h2>'
     });
 	
 	
@@ -787,16 +789,47 @@ function initialize() {
 		  dataType : 'json',   
 		  type: "POST",   
 		  success : function (data) {
-			    
 			    raw_data = data;
 				dataHandle();
+				
+				sentiment.step_sum = data.length;
+				console.log(sentiment.step_sum); 
+				$('#slider').slider({
+					max: sentiment.step_sum + 1
+				})
+				
+				initial_now_step();
+				
+				$('#slider').bind( 'slidechange', function(event, ui) {
+					clearMarkers();
+					clearHeatmap();
+					var now_slider =  $('#slider').slider( "option", "value" );
+					if(now_slider == 0){
+						sentiment.now_step = -1;
+					}
+					else{
+						sentiment.now_step = now_slider - 1;
+					}
+					if(sentiment.now_step == sentiment.step_sum){
+						 date_div.innerText='当前时间';
+						 static_data_display();
+					}
+					if(sentiment.now_step == -1){
+						 date_div.innerText='当前时间';
+					     static_data_display(); 
+					}
+				    if(sentiment.now_step >= 0 && sentiment.now_step < (sentiment.step_sum+2)){
+						 change_date_display();
+						 change_data_display();
+						 change_map_display(); 
+				    }
+				 }); 
+				
 				$("#mapContainer").unblock();
 				if (stoped==true) {
-					
 					stoped=false;					
 					sentiment.inter_slider=setInterval(play_interval,sentiment.interval_time);
 				}
-				window.location.href = "#mapContainer";
 		  },
 		  error: function(jqXHR, textStatus, errorThrown) {
                 console.log('error');
@@ -806,47 +839,38 @@ function initialize() {
           }
 	  });
 	 
-	 
+	 function initial_now_step(){
+		sentiment.now_step = -1;
+	  }
 					
-     $( '#slider' ).bind( 'slidechange', function(event, ui) {
-             sentiment.now_step= parseInt($('#slider').slider( "option", "value" ));
-			 console.log(sentiment.now_step);
-			 if(sentiment.now_step == 0){
-				 date_div.innerText='当前时间';
-				 clearMarkers();
-				 clearHeatmap();
-				 //static_data_display(); 
-			 }
-			 if(sentiment.now_step >= 1 && sentiment.now_step < (sentiment.step_sum+2)){
-				   
-				   //sentiment.now_step = sentiment.now_step - 1;
-				   
-				   change_date_display();
-				   change_data_display();
-			       change_map_display();
-				   
-			 }
-			 /*
-			 if(sentiment.now_step == (sentiment.step_sum+2)){
-				   
-				   date_div.innerText='当前时间';
-				   $('#slider').slider( "option", "value",0);
-				   //static_data_display();
-			 }
-			 */
-        }); 
-	 function static_data_display(){
+     
+	 
+	 $('#play_pause1').click(function() {
+		  if (stoped==true) {	  
+			  stoped=false;
+	  		  sentiment.inter_slider=setInterval(play_interval,sentiment.interval_time);
+		  }
+	 });
+     $('#play_pause2').click(function() {
+		  stoped=true;
+	 });
+	 $('#play_pause3').click(function() {
+		  stoped=true;
+		  date_div.innerText='';
+		  $('#slider').slider( "option", "value",0);	
+	 });
+	
+	function static_data_display(){
 		 $(".section#left").empty();
 		 $(".section#middle").empty();
 		 $(".section#right").empty();
 		 $(".section#left").append("<h2>原创微博省份数量累计</h2><ol id='most_fipost'></ol>");
 		 $(".section#middle").append("<h2>转发微博省份数量累计</h2><ol id='most_repost'></ol>");
 		 $(".section#right").append("<h2>微博总数累计</h2><ol id='most_post'></ol>");
-		 
 		 var starttime = distinct_time[0];
 		 var endtime = distinct_time[sentiment.step_sum-1];
- 
 	 }
+	 
 	function change_data_display(){
 		$(".section#left").empty();
 		 $(".section#middle").empty();
@@ -869,31 +893,15 @@ function initialize() {
 
 	}
 	
-	
-	$('#play_pause1').click(function() {
-		  if (stoped==true) {	  
-			  stoped=false;
-	  		  sentiment.inter_slider=setInterval(play_interval,sentiment.interval_time);
-		  }
-	    });
-  
-	$('#play_pause2').click(function() {
-		  stoped=true;
-	});
-	$('#play_pause3').click(function() {
-		  stoped=true;
-		  date_div.innerText='';
-		  $('#slider').slider( "option", "value",0);	
-	});
-	
 	function change_date_display(){
-		if(sentiment.now_step != sentiment.step_sum){
-			date_div.innerText="From " + new Date(distinct_time[sentiment.now_step-1]*1000).format('yyyy-MM-dd hh:mm:ss') + " to " + new Date(distinct_time[sentiment.now_step]*1000).format('yyyy-MM-dd hh:mm:ss');
+		if(distinct_time[sentiment.now_step]){
+			//date_div.innerText="从 " + new Date(distinct_time[sentiment.now_step-1]*1000).format('yyyy-MM-dd hh:mm:ss') + " 至 " + new Date(distinct_time[sentiment.now_step]*1000).format('yyyy-MM-dd hh:mm:ss');
+			date_div.innerText="第" + sentiment.now_step + "步" + new Date(distinct_time[sentiment.now_step]*1000).format('yyyy-MM-dd hh:mm:ss');
 		}
 		else{
 			date_div.innerText="last part of time:" + new Date(distinct_time[sentiment.now_step-1]*1000).format('yyyy-MM-dd hh:mm:ss') + "-";
 		}
-}
+	}
 
 	
 	function play_interval(){
@@ -903,11 +911,11 @@ function initialize() {
 			  }
 		  } 
 		  else {
-			  if (sentiment.now_step <= sentiment.step_sum) {	
-				  $("#slider" ).slider( "option", "value",(sentiment.now_step+1));
+			  if (sentiment.now_step < sentiment.step_sum  && sentiment.now_step >= -1) {	
+			  	  $("#slider" ).slider("option", "value", ($("#slider" ).slider("option", "value") + 1));
 			  }
-			  if(sentiment.now_step == sentiment.step_sum + 1){	
-				  $("#slider" ).slider( "option", "value",0);
+			  if (sentiment.now_step == sentiment.step_sum) {	
+			  	  $("#slider" ).slider("option", "value", 0);
 			  }
 			  console.log("sentiment.now_step:" + sentiment.now_step);
 		  }

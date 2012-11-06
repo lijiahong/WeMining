@@ -279,40 +279,42 @@
 				background-color:rgb(255,0,0);
 				font-color:#fff;
 			}
-			p#date_p{
-				position: absolute;
-				right: 222px;
-				top: 11px;
-				width:285px;
-				border: 1px solid #000;
-				z-index: 1;
+			p#date_p {
+			position: absolute;
+			right: 222px;
+			top: 9px;
+			width: 285px;
+			border: 1px solid black;
+			z-index: 1;
 			}
-			p#date_p span{
-				display: block;
-				width:283px;
-				padding: 1px 0;
-				border: 1px solid #707070;
-				border-right-color: #D0D0D0;
-				border-bottom-color: #D0D0D0;
-				text-align: center;
-				font-family: Arial,sans-serif;
-				font-size: 12px;
-				font-weight: 700;
-				line-height: 1;
-				color: #EB1E23;
-				background: #FFF;
-				cursor: pointer;
-				z-index: 5;
+			p#date_p span {
+			display: block;
+			width: 283px;
+			padding: 1px 0;
+			border: 1px solid #707070;
+			border-right-color: #D0D0D0;
+			border-bottom-color: #D0D0D0;
+			text-align: center;
+			font-family: Arial,sans-serif;
+			font-size: 12px;
+			font-weight: 700;
+			line-height: 1;
+			color: #EB1E23;
+			background: white;
+			cursor: pointer;
+			z-index: 5;
 			}
 			p#back-to-nation-view {
 				position: absolute;
 				right: 98px;
-				top: 11px;
+				top: 9px;
 				width: 120px;
 				border: 1px solid #000;
 				z-index: 1;
 			}
-			
+			p#date_p span {
+			  font-size: 15px;
+			  }
 			p#back-to-nation-view span {
 				display: block;
 				width: 118px;
@@ -322,15 +324,14 @@
 				border-bottom-color: #D0D0D0;
 				text-align: center;
 				font-family: Arial,sans-serif;
-				font-size: 12px;
+				font-size: 15px;
 				font-weight: 700;
 				line-height: 1;
 				color: #EB1E23;
-				background: #FFF;
+				background: white;
 				cursor: pointer;
 				z-index: 5;
 			}
-			
 			#slider_container{
 				position:relative;
 				top:80px;
@@ -863,16 +864,16 @@
                                       <p><strong>情绪图谱</strong>将新浪微博平台话题情绪态势付诸路线图地图上展示，革新性地结合google地图和heatmap，支持缩放、拖拽，地理层级最小可至区/县级。通过情感图标可视化三类情绪高兴、生气、悲伤的情感密度，跟踪突发性事件的情感模式。</p>
                                       </div>
                                       <ul id="demo">
-                                      <a href="/weiming/mapweibo/sentimentview"><li class="demo-nav">钓鱼岛事件</li></a>
-                                      <a href="/weiming/mapweibo/sentimentview?topic=薄熙来&limit=23735&timeinterval=25&collection=statuses"><li class="demo-nav">薄熙来事件</li></a>
-                                      <a href="/weiming/mapweibo/sentimentview?topic=金陵十三钗&limit=16682&timeinterval=25&collection=statuses"><li class="demo-nav">金陵十三钗</li></a>
-                                      <a href="/weiming/mapweibo/sentimentview?topic=名古屋&limit=8135&timeinterval=25&collection=statuses"><li class="demo-nav">名古屋事件</li></a>
+                                          <a href="/mapweibo/sentimentview"><li class="demo-nav">钓鱼岛事件</li></a>
+                                          <a href="/mapweibo/sentimentview?topic=薄熙来&limit=23735&timeinterval=25&collection=statuses"><li class="demo-nav">薄熙来事件</li></a>
+                                          <a href="/mapweibo/sentimentview?topic=金陵十三钗&limit=16682&timeinterval=25&collection=statuses"><li class="demo-nav">金陵十三钗</li></a>
+                                          <a href="/mapweibo/sentimentview?topic=名古屋&limit=8135&timeinterval=25&collection=statuses"><li class="demo-nav">名古屋事件</li></a>
                                       </ul>
               </h1>
                 
             <div class="panel-outer">       
               <div class="panel-nav">新的分析</div>       
-              <form id="keywords" class="panel" action="/weiming/mapweibo/sentimentview" autocomplete="off">
+              <form id="keywords" class="panel" action="/mapweibo/sentimentview" autocomplete="off">
                   <p>输入<strong>筛选条件</strong>以便开始<strong>新</strong>的分析:</p>
                   <div id="s_keyword">
                   <strong>关键词:</strong><input type="text" name="topic" placeholder="请输入关键词..." value="钓鱼岛" />
