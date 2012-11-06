@@ -100,13 +100,15 @@ class handler():
             endtime: the end time you choose
             alertcoe: alert number = alertcoe * max number, if the increase number > alert number, then alert.
             section: the number of hours you want to do statistical analysis in with each point in the map
+            incremental: if the circle data is incremental with concern about the node that is absent in previous data
         '''
-        form = web.input(topic=None, starttime=None, endtime=None, alertcoe=None, section=None)
+        form = web.input(topic=None, starttime=None, endtime=None, alertcoe=None, section=None, incremental=None)
         topic = form.topic
         start = form.starttime
         end = form.endtime
         alertcoe = form.alertcoe
         section = form.section
+        incremental = form.incremental
         if topic and start and end:
             start = int(date2ts(start))
             end = int(date2ts(end))
@@ -128,10 +130,14 @@ class handler():
             section = int(section)
         else:
             section = 24 #default is 1 day
-            
+        if incremental:
+            if incremental == '1':
+                incremental = True
+            else:
+                incremental = False
         ts_arr, results = raw_data(topic, start, end)
         ts_series, groups = partition_time(ts_arr, results, section)
-        draw_circle_data = map_circle_data(groups)
+        draw_circle_data = map_circle_data(groups, incremental)
         max_repost_num, draw_line_data = map_line_data(groups)
         statistic_data, alerts = statistics_data(groups, alertcoe)
         return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data, 'max_repost_num': max_repost_num, 'alert': alerts})
@@ -253,7 +259,7 @@ def partition_count(ts_arr, data, section=25):
         index += each_step
     return ts_series, groups
 
-def map_circle_data(groups):
+def map_circle_data(groups, incremental):
     draw_circle_data = []
     for index, group in enumerate(groups):
         latlng_count_dict = {}
@@ -276,6 +282,15 @@ def map_circle_data(groups):
                 latlng_count_dict[release_latlng][1] += 1
             else:
                 latlng_count_dict[release_latlng][0] += 1
+        if incremental == True:
+            if index > 0:
+                previous_data = draw_circle_data[index-1]
+                for release_latlng in previous_data:
+                    try:
+                        latlng_count_dict[release_latlng]
+                    except KeyError:
+                        latlng_count_dict[release_latlng] = previous_data[release_latlng]
+                        continue
         draw_circle_data.append(latlng_count_dict)
     return draw_circle_data
 
@@ -418,8 +433,6 @@ def statistics_data(groups, alertcoe):
             if status_dict['total'] != 0 or status_dict['repost'] != 0 or status_dict['fipost'] != 0:
                 alert_dict[latlng] = {'name': name, 'status': status_dict}
         alerts_results.append(alert_dict)
-    print alerts_results
-    print alertcoe
     return statistics_data, alerts_results
 
 def alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe):

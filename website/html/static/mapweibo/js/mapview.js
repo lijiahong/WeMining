@@ -17,6 +17,40 @@ Date.prototype.format = function(format){
     return format;
 }
 
+Date.prototype.pattern=function(fmt) {         
+    var o = {         
+    "M+" : this.getMonth()+1, //月份         
+    "d+" : this.getDate(), //日         
+    "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时         
+    "H+" : this.getHours(), //小时         
+    "m+" : this.getMinutes(), //分         
+    "s+" : this.getSeconds(), //秒         
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度         
+    "S" : this.getMilliseconds() //毫秒         
+    };         
+    var week = {         
+    "0" : "\u65e5",         
+    "1" : "\u4e00",         
+    "2" : "\u4e8c",         
+    "3" : "\u4e09",         
+    "4" : "\u56db",         
+    "5" : "\u4e94",         
+    "6" : "\u516d"        
+    };         
+    if(/(y+)/.test(fmt)){         
+        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));         
+    }         
+    if(/(E+)/.test(fmt)){         
+        fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "\u661f\u671f" : "\u5468") : "")+week[this.getDay()+""]);         
+    }         
+    for(var k in o){         
+        if(new RegExp("("+ k +")").test(fmt)){         
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));         
+        }         
+    }         
+    return fmt;         
+}       
+
 function getUrlParam(name) { 
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
     var r = window.location.search.substr(1).match(reg); 
@@ -53,6 +87,7 @@ var mapWeibo = {
     endtime: (getUrlParam('endtime')==null)?getNowTime():getUrlParam('endtime'),
 	section: (getUrlParam('section')==null)?24:getUrlParam('section'),
 	alertcoe: (getUrlParam('alertcoe')==null)?90:getUrlParam('alertcoe'),
+	incremental: (getUrlParam('incremental')==null)?'1':getUrlParam('incremental'),
     now_step : 0,
     total_number : 0,
     real_number : 0,
@@ -348,7 +383,7 @@ function initialize() {
     $("#mapContainer").block({
 	message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" />数据加载中,请稍候...</h2>'
     });
-    var request = '/mapweibo/mapview?topic=' + mapWeibo.getPresentTopic + '&starttime=' + mapWeibo.starttime + '&endtime=' + mapWeibo.endtime + "&collection=" + mapWeibo.getPresentCollection + '&section=' + mapWeibo.section + '&alertcoe=' + mapWeibo.alertcoe;
+    var request = '/mapweibo/mapview?topic=' + mapWeibo.getPresentTopic + '&starttime=' + mapWeibo.starttime + '&endtime=' + mapWeibo.endtime + "&collection=" + mapWeibo.getPresentCollection + '&section=' + mapWeibo.section + '&alertcoe=' + mapWeibo.alertcoe + '&incremental=' + mapWeibo.incremental;
     $.ajax({
 		  url: request,
 		  dataType: 'json',   
@@ -452,7 +487,7 @@ function initialize() {
 	
     function change_date_display(){
 	  if (ts_series[mapWeibo.now_step]){
-		  date_div.innerText= new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd mm-ss');
+		  date_div.innerText= '第' + String(mapWeibo.now_step+1) + '步' + new Date(ts_series[mapWeibo.now_step][0]*1000).pattern('yyyy-MM-dd EEE hh:mm:ss') ;//String(ts_series[mapWeibo.now_step][0])
 	  }
 	  else{
 		  date_div.innerText = '当前时间';

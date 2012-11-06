@@ -88,7 +88,7 @@ class WeiboSearch(object):
             results.append(result)
         return texts, results
 
-    def spread_query(self, begin=None, end=None, keywords=[], limit=50000):
+    def spread_query(self, begin=None, end=None, keywords=[], limit=1000000):
         if not len(keywords) > 0:
             return None
 
@@ -116,7 +116,7 @@ class WeiboSearch(object):
             results.append(result)
         return results
 
-    def count(self, begin=None, end=None, keywords=[], limit=100000):
+    def count(self, begin=None, end=None, keywords=[], limit=1000000):
         if not len(keywords) > 0:
             return None
 
