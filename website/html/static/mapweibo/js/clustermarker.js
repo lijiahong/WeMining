@@ -288,15 +288,16 @@ MarkerClusterer.prototype.calculator_ = function(markers, numStyles) {
   
   
   
-  if(acc_fipost > acc_repost){
+  if(acc_fipost > acc_repost*(1 + 0.2) || acc_repost < acc_fipost*(1 - 0.2)){
 	  index = 1;
   }
-  if(acc_fipost == acc_repost){
-	  index = 2;
-  }
-  if(acc_fipost < acc_repost){
+  else if(acc_fipost < acc_repost*(1 - 0.2) || acc_repost > acc_fipost*(1 + 0.2)){
 	  index = 3;
   }
+  else{
+	  index = 2;
+  }
+  
   return {
     text: count,
     index: index

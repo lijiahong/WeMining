@@ -88,6 +88,7 @@ var mapWeibo = {
 	section: (getUrlParam('section')==null)?24:getUrlParam('section'),
 	alertcoe: (getUrlParam('alertcoe')==null)?90:getUrlParam('alertcoe'),
 	incremental: (getUrlParam('incremental')==null)?'1':getUrlParam('incremental'),
+	width: 0.2,//if fipost == repost*(1 +- width)
     now_step : 0,
     total_number : 0,
     real_number : 0,
@@ -376,9 +377,9 @@ function initialize() {
 	}
     }
     markerClusterer = new MarkerClusterer(map, [], {
-	imagePath: '/static/mapweibo/images/map/clusters/',
-	gridSize: 30,
-	maxZoom: 9
+		imagePath: '/static/mapweibo/images/map/clusters/',
+		gridSize: 30,
+		maxZoom: 9
     });
     $("#mapContainer").block({
 	message: '<h2><img src="/static/mapweibo/images/ajax_loader.gif" />数据加载中,请稍候...</h2>'
@@ -571,10 +572,12 @@ function initialize() {
 			var split_latlng = latlng.split(' ');
 			var point = new google.maps.LatLng(split_latlng[0],split_latlng[1]);
 			var category = null;
-			if(fipost < repost)
+			if(fipost < repost*(1 - mapWeibo.width) || repost > fipost*(1 + mapWeibo.width))
+				category = 'repost'
+			else if(fipost > repost*(1 + mapWeibo.width) || repost < fipost*(1 - mapWeibo.width))
 				category = 'fipost'
 			else
-				category = 'repost'
+				category = 'equalpost'
 			marker = new google.maps.Marker({
 				icon : mapWeibo.markerIcons[category][3][0],
 				position : point,
