@@ -501,7 +501,7 @@ function initialize() {
 		$(".section#right").empty();
 		$(".section#left").append("<h2>原创微博省份</h2><ol id='most_fipost'></ol>");
 		$(".section#middle").append("<h2>转发微博省份</h2><ol id='most_repost'></ol>");
-		$(".section#right").append("<h2>最近两期数量比较</h2><ol id='most_increase'></ol>");
+		$(".section#right").append("<h2>发布微博总数排行</h2><ol id='most_increase'></ol>");
 		$("#most_fipost").empty();
 		$("#most_repost").empty();
 		$("#most_increase").empty();
@@ -513,9 +513,9 @@ function initialize() {
 			  cur_repost = data[0];
 			  cur_fipost = data[1];
 			  phi = data[2];
-			  $("#most_increase").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>增长" + phi + "条微博</a></span></li>");
-			  $("#most_fipost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_fipost + "条微博</a></span></li>");
-			  $("#most_repost").append("<li><span><a href='#'>" + province + "</a></span></br><span class='weak'>" + cur_repost + "条微博</a></span></li>");
+			  $("#most_increase").append("<li><span>" + province + "</span><span class='weak'>：" + phi + "</span></li>");
+			  $("#most_fipost").append("<li><span>" + province + "</span><span class='weak'>：" + cur_fipost + "</span></li>");
+			  $("#most_repost").append("<li><span>" + province + "</span><span class='weak'>：" + cur_repost + "</span></li>");
 		  }
 		}
     }

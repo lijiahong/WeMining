@@ -380,6 +380,8 @@ def statistics_data(groups, alertcoe):
             delta_repost = cur_repost - pre_repost
             delta_fipost = cur_fipost - pre_fipost
             phi = delta_repost + delta_fipost
+            total_post = cur_repost + cur_fipost
+            
             if j > 0:
                 if max_phi < phi:
                     max_phi = phi
@@ -393,7 +395,7 @@ def statistics_data(groups, alertcoe):
 ##                province_alert[latlng] = {'name': province_name, 'count': phi}
             province_alert[latlng] = {'name': province_name, 'count': (phi, delta_repost, delta_fipost)}
                 
-            data = [cur_repost, cur_fipost, phi]
+            data = [cur_repost, cur_fipost, total_post]
             province_count_dict[province_name] = data
 ##        if alert:
 ##            first = False
