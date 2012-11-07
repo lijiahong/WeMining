@@ -42,7 +42,7 @@ function LineClusterer(map, lines_data){
 	    var lineweight;
 	    lineweight = Math.ceil(that.lines[i].repost_num / 10);
 	    switch(that.lines[i].rank){
-	    case 1:linecolor = '#99cc99';break;//»Ò
+	    case 1:linecolor = '#CC9966';break;//»Ò'#99cc99'#ffffff
 	    case 2:linecolor = 'ffbf00';break;//»Æ
 	    case 3:linecolor = 'ff0000';break;//ºì
 	    }
