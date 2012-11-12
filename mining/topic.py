@@ -16,7 +16,7 @@ def date2ts(date):
     return time.mktime(time.strptime(date, '%Y-%m-%d'))
 
 class Search(object):
-    def __init__(self, dbpath='/opt/data/index/userstatuses/'):
+    def __init__(self, dbpath='/opt/data/index/teststatuses/'):
         database = xapian.Database(dbpath)
         enquire = xapian.Enquire(database)
         qp = xapian.QueryParser()
@@ -38,7 +38,7 @@ class Search(object):
         self.repnameslistvi = 9
         self.widvi = 10
 
-    def topic_query(self, begin=None, end=None, limit=100000):
+    def topic_query(self, begin=None, end=None, limit=5000000):
         self.qp.add_valuerangeprocessor(xapian.NumberValueRangeProcessor(self.timestampvi, ''))
         if begin and end:
             timequerystr = str(date2ts(begin)) + '..' + str(date2ts(end))
@@ -54,7 +54,7 @@ class Search(object):
         for match in matches:
             result = {}
             result['ts'] = xapian.sortable_unserialise(match.document.get_value(self.timestampvi))
-            result['keywords'] = list(set(json.loads(match.document.get_value(self.keywordsvi))))
+            result['keywords'] = filter(lambda k: len(k) > 1, list(set(json.loads(match.document.get_value(self.keywordsvi)))))
             for k in result['keywords']:
                 if k not in total_keywords_count:
                     total_keywords_count[k] = 0
@@ -70,12 +70,12 @@ def partition(ts_arr, data, window_size=24*60*60):
     each_step = window_size
     ts_current = ts_start
     data_cursor = -1
+    groups_size = []
     groups_keywords_count = []
     while ts_current <= ts_end:
         s_ts = ts_current
         f_ts = ts_current + each_step
         ts_series.append([s_ts, f_ts])
-        groups_size = []
         group = []
         for d in data[data_cursor+1:]:
             ts = d['ts']
@@ -83,7 +83,6 @@ def partition(ts_arr, data, window_size=24*60*60):
             if ts >= f_ts:
                 break
             data_cursor += 1
-        groups_size.append(len(group))
         if len(group):
             group_keywords_count = {}
             for d in group:
@@ -92,6 +91,7 @@ def partition(ts_arr, data, window_size=24*60*60):
                         group_keywords_count[k] = 0
                     group_keywords_count[k] += 1
             groups_keywords_count.append(group_keywords_count)
+            groups_size.append(len(group))
         ts_current += each_step
     return ts_series, groups_keywords_count, groups_size
 
@@ -107,6 +107,7 @@ def burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, t
             try:
                 word_burst_in_group[keyword] = (A + B + C + D) * ((A*D - B*C) ** 2) * 1.0 / ((A + B) * (C + D) * (A + C) * (B + D))
             except ZeroDivisionError:
+                raise
                 word_burst_in_group[keyword] = 0
         word_burst_in_groups.append(word_burst_in_group)
     keywords_burst = {}
@@ -124,14 +125,16 @@ def burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, t
             
 
 def main():
-    time_start = '2012-9-1'
-    time_end = '2012-10-1'
+    time_start = '2012-9-10'
+    time_end = '2012-9-20'
     search = Search()
+    print 'prepare data at %s.' % unix2local(time.time())
     ts_arr, results, total_keywords_count = search.topic_query(begin=time_start, end=time_end)
     total_size = len(results)
-    print 'find %s statuses from %s to %s.' % (total_size, time_start, time_end)
-    ts_series, groups_keywords_count, groups_size = partition(ts_arr, results, window_size=24*60*60)
-    print 'partition ok.'
+    print 'find %s statuses from %s to %s at %s.' % (total_size, time_start, time_end, unix2local(time.time()))
+    ts_series, groups_keywords_count, groups_size = partition(ts_arr, results, window_size=4*60*60)
+    print 'partition ok at %s.' % unix2local(time.time())
     burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, total_size)
+    print 'calculate burst ok at %s.' % unix2local(time.time())
 
 if __name__ == '__main__': main()
