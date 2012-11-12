@@ -5,6 +5,7 @@ import json
 import time
 import urllib
 import math
+import csv
 
 import sys
 sys.path.append('..')
@@ -12,6 +13,8 @@ from tokenizer.fenci import cut
 
 from weibo_search_xapian import WeiboSearch
 from config import getDB
+from movingaverage import movingaverage
+import numpy as np
 
 render = web.template.render('./templates/')
 
@@ -137,10 +140,130 @@ class handler():
                 incremental = False
         ts_arr, results = raw_data(topic, start, end)
         ts_series, groups = partition_time(ts_arr, results, section)
-        draw_circle_data = map_circle_data(groups, incremental)
+        draw_circle_data = map_circle_data(groups, incremental)        
         max_repost_num, draw_line_data = map_line_data(groups)
-        statistic_data, alerts = statistics_data(groups, alertcoe)
-        return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data, 'max_repost_num': max_repost_num, 'alert': alerts})
+        repost_series, fipost_series, post_series, statistic_data= statistics_data(groups, alertcoe)
+        '''the length of results in less than input series
+        '''
+        #print len(list(movingaverage(repost_series, 5, avoid_fp_drift=False)))
+        #print moving_average(repost_series, 5, type='simple')
+        #print moving_average(repost_series, 5, type='exponential')
+        alert_rsi_repost = relative_strength(repost_series, n=14)
+        alert_rsi_fipost = relative_strength(fipost_series, n=14)
+        alert_rsi_post = relative_strength(post_series, n=14)
+        alert_macd_repost = moving_average_convergence(repost_series)
+        alert_macd_fipost = moving_average_convergence(fipost_series)
+        alert_macd_post = moving_average_convergence(post_series)
+        alerts_results = []
+        for index in range(0, len(ts_series)):
+            alert_dict = {}
+            if index in alert_rsi_post[0].keys():
+                alert_dict['post_rsi'] = repr(alert_rsi_post[0][index])
+            if index in alert_rsi_fipost[0].keys():
+                alert_dict['fipost_rsi'] = repr(alert_rsi_fipost[0][index])
+            if index in alert_rsi_repost[0].keys():
+                alert_dict['repost_rsi'] = repr(alert_rsi_repost[0][index])
+            if index in alert_macd_repost[1].keys():
+                alert_dict['repost_macd'] = repr(alert_macd_repost[1][index])
+            if index in alert_macd_fipost[1].keys():
+                alert_dict['fipost_macd'] = repr(alert_macd_fipost[1][index])
+            if index in alert_macd_post[1].keys():
+                alert_dict['post_macd'] = repr(alert_macd_post[1][index])
+            alerts_results.append(alert_dict)
+        
+        return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data,
+                           'max_repost_num': max_repost_num, 'alert': alerts_results})
+
+def time_series_analysis(dataseries, circle):
+    pass
+        
+def moving_average(x, n, type='simple'):
+    """
+    compute an n period moving average.
+
+    type is 'simple' | 'exponential'
+
+    """
+    x = np.asarray(x)
+    if type=='simple':
+        weights = np.ones(n)
+    else:
+        weights = np.exp(np.linspace(-1., 0., n))
+
+    weights /= weights.sum()
+
+
+    a =  np.convolve(x, weights, mode='full')[:len(x)]
+    a[:n] = a[n]
+    return a
+
+def relative_strength(prices, n=14):
+    """
+    compute the n period relative strength indicator
+    http://stockcharts.com/school/doku.php?id=chart_school:glossary_r#relativestrengthindex
+    http://www.investopedia.com/terms/r/rsi.asp
+    """
+
+    deltas = np.diff(prices)
+    seed = deltas[:n+1]
+    up = seed[seed>=0].sum()/n
+    down = -seed[seed<0].sum()/n
+    rs = up/down
+    rsi = np.zeros_like(prices)
+    rsi[:n] = 100. - 100./(1.+rs)
+
+    rising = {}
+    falling = {}
+
+    for i in range(n, len(prices)):
+        delta = deltas[i-1] # cause the diff is 1 shorter
+
+        if delta>0:
+            upval = delta
+            downval = 0.
+        else:
+            upval = 0.
+            downval = -delta
+
+        up = (up*(n-1) + upval)/n
+        down = (down*(n-1) + downval)/n
+
+        rs = up/down
+        rsi[i] = 100. - 100./(1.+rs)
+
+        if rsi[i] > 60:
+            rising[i] = rsi[i]
+        elif rsi[i] < 30:
+            falling[i] = rsi[i]
+        else:
+            continue
+    return (rising, falling)
+        
+    #return rsi
+
+def moving_average_convergence(x, nslow=14, nfast=7, mid=3):
+    """
+    compute the MACD (Moving Average Convergence/Divergence) using a fast and slow exponential moving avg'
+    return value is emaslow, emafast, macd which are len(x) arrays
+    default: nslow=26, nfast=12, mid=9
+    """
+    emaslow = moving_average(x, nslow, type='exponential')
+    emafast = moving_average(x, nfast, type='exponential')
+    diff = emafast - emaslow
+    dea = moving_average(diff, mid, type='exponential')
+    macd = diff - dea
+
+    rising = {}
+    falling = {}
+    
+    for index in range(0, len(x)):
+        if index > 0 and macd[index-1] > 0 and macd[index] < 0:
+            falling[index] = macd[index]
+        elif index > 0 and macd[index-1] < 0 and macd[index] > 0:
+            rising[index] = macd[index]
+        else:
+            continue
+    return (rising, falling)       
 
 def raw_data(topic, starttime, endtime, limit=1000):
     global locations, location2latlon
@@ -294,6 +417,8 @@ def map_circle_data(groups, incremental):
         draw_circle_data.append(latlng_count_dict)
     return draw_circle_data
 
+
+  
 def map_line_data(groups):
     draw_line_data = []
     max_repost_num = 0
@@ -340,6 +465,9 @@ def map_line_data(groups):
 
 def statistics_data(groups, alertcoe):
     statistics_data = []
+    fipost_series = []
+    repost_series = []
+    post_series = []
     history_data = []
     alerts = []
     alert = False
@@ -360,11 +488,19 @@ def statistics_data(groups, alertcoe):
                 latlng_count_dict[release_latlng][1] += 1
             else:
                 latlng_count_dict[release_latlng][0] += 1
-        province_count_dict = {}
-        province_alert = {}
+        province_count_repost_dict = {}
+        province_count_fipost_dict = {}
+        province_count_post_dict = {}
+##        province_alert = {}
+        all_fipost = 0
+        all_repost = 0
+        all_post = 0
         for latlng in latlng_count_dict:
             cur_repost = latlng_count_dict[latlng][0]
             cur_fipost = latlng_count_dict[latlng][1]
+            all_fipost += cur_repost
+            all_repost += cur_fipost
+            all_post += all_fipost + all_repost
             province_name = latlng_count_dict[latlng][2]
             pre_repost = 0
             pre_fipost = 0
@@ -377,68 +513,109 @@ def statistics_data(groups, alertcoe):
                     break
                 else:
                     j -= 1
-            delta_repost = cur_repost - pre_repost
-            delta_fipost = cur_fipost - pre_fipost
-            phi = delta_repost + delta_fipost
+            status_repost = -1
+            status_fipost = -1
+            status_post = -1
+            if pre_repost != 0:
+                delta_repost = repr(int((cur_repost - pre_repost)*10000/pre_repost)/100.0) + '%'
+                if cur_repost - pre_repost > 0:
+                    delta_repost = '+' + delta_repost
+                    status_repost = 1
+            else:
+                delta_repost = repr(cur_repost - pre_repost)
+                if cur_repost - pre_repost > 0:
+                    delta_repost = '+' + delta_repost
+                    status_repost = 1
+            if pre_fipost != 0:
+                delta_fipost = repr(int((cur_fipost - pre_fipost)*10000/pre_fipost)/100.0) + '%'
+                if cur_fipost - pre_fipost > 0:
+                    delta_fipost = '+' + delta_fipost
+                    status_fipost = 1
+            else:
+                delta_fipost = repr(cur_fipost - pre_fipost)
+                if cur_fipost - pre_fipost > 0:
+                    delta_fipost = '+' + delta_fipost
+                    status_fipost = 1
+            if pre_repost + pre_fipost != 0:
+                phi = repr(int((cur_repost - pre_repost + cur_fipost - pre_fipost)*10000/(pre_repost + pre_fipost))/100.0) + '%'
+                if cur_repost - pre_repost + cur_fipost - pre_fipost > 0:
+                    phi = '+' + phi
+                    status_post = 1
+            else:
+                phi = repr(cur_repost - pre_repost + cur_fipost - pre_fipost)
+                if cur_repost - pre_repost + cur_fipost - pre_fipost > 0:
+                    status_post = 1
             total_post = cur_repost + cur_fipost
             
-            if j > 0:
-                if max_phi < phi:
-                    max_phi = phi
-                if max_delta_repost < delta_repost:
-                    max_delta_repost = delta_repost
-                if max_delta_fipost < delta_fipost:
-                    max_delta_fipost = delta_fipost
+##            if j > 0:
+##                if max_phi < phi:
+##                    max_phi = phi
+##                if max_delta_repost < delta_repost:
+##                    max_delta_repost = delta_repost
+##                if max_delta_fipost < delta_fipost:
+##                    max_delta_fipost = delta_fipost
                 
 ##            if phi > 200 and first:
 ##                alert = True
 ##                province_alert[latlng] = {'name': province_name, 'count': phi}
-            province_alert[latlng] = {'name': province_name, 'count': (phi, delta_repost, delta_fipost)}
+##            province_alert[latlng] = {'name': province_name, 'count': (phi, delta_repost, delta_fipost)}
                 
-            data = [cur_repost, cur_fipost, total_post]
-            province_count_dict[province_name] = data
+##            data = [cur_repost, cur_fipost, total_post]
+            province_count_repost_dict[province_name] = [cur_repost, delta_repost, repr(status_repost)]
+            province_count_fipost_dict[province_name] = [cur_fipost, delta_fipost, repr(status_fipost)]
+            province_count_post_dict[province_name] = [total_post, phi, repr(status_post)]
 ##        if alert:
 ##            first = False
-        alerts.append(province_alert)
+##        alerts.append(province_alert)
         history_data.append(latlng_count_dict)
-        province_count_dict = sorted(province_count_dict.iteritems(), key=lambda(k, v): math.fabs(v[2]), reverse=True)
-        statistics_data.append(province_count_dict)
-    alerts.append({})
-    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe)
+        province_count_repost_dict = sorted(province_count_repost_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
+        province_count_fipost_dict = sorted(province_count_fipost_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
+        province_count_post_dict = sorted(province_count_post_dict.iteritems(), key=lambda(k, v): v[0], reverse=True)
+        
+        statistics_data.append([province_count_repost_dict, province_count_fipost_dict, province_count_post_dict])
+        
+        repost_series.append(all_repost)
+        fipost_series.append(all_fipost)
+        post_series.append(all_post)
+    return repost_series, fipost_series, post_series, statistics_data                 
+##    alerts.append({})
+##    alert_phi, alert_delta_repost, alert_delta_fipost = alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe)
+##    
+##    alerts_results = []
+##    count = 0
+##    for ale in alerts:
+##        if count == 0:
+##            alerts_results.append({})
+##            count +=1
+##            continue
+##        count += 1
+##        alert_dict = {}
+##        for key in ale.keys():
+##            latlng = key
+##            name = ale[key]['name']
+##            phi, delta_repost, delta_fipost = ale[key]['count']
+##            status_dict = {}
+##            if phi > alert_phi:
+##                status_dict['total'] = int(phi*100/max_phi)/100.0
+##            else:
+##                status_dict['total'] = 0
+##            if delta_repost > alert_delta_repost:
+##                status_dict['repost'] = int(delta_repost*100/max_delta_repost)/100.0
+##            else:
+##                status_dict['repost'] = 0
+##            if delta_fipost > alert_delta_fipost:
+##                status_dict['fipost'] = int(delta_fipost*100/max_delta_fipost)/100.0
+##            else:
+##                status_dict['fipost'] = 0
+##            if status_dict['total'] != 0 or status_dict['repost'] != 0 or status_dict['fipost'] != 0:
+##                alert_dict[latlng] = {'name': name, 'status': status_dict}
+##        alerts_results.append(alert_dict)
     
-    alerts_results = []
-    count = 0
-    for ale in alerts:
-        if count == 0:
-            alerts_results.append({})
-            count +=1
-            continue
-        count += 1
-        alert_dict = {}
-        for key in ale.keys():
-            latlng = key
-            name = ale[key]['name']
-            phi, delta_repost, delta_fipost = ale[key]['count']
-            status_dict = {}
-            if phi > alert_phi:
-                status_dict['total'] = int(phi*100/max_phi)/100.0
-            else:
-                status_dict['total'] = 0
-            if delta_repost > alert_delta_repost:
-                status_dict['repost'] = int(delta_repost*100/max_delta_repost)/100.0
-            else:
-                status_dict['repost'] = 0
-            if delta_fipost > alert_delta_fipost:
-                status_dict['fipost'] = int(delta_fipost*100/max_delta_fipost)/100.0
-            else:
-                status_dict['fipost'] = 0
-            if status_dict['total'] != 0 or status_dict['repost'] != 0 or status_dict['fipost'] != 0:
-                alert_dict[latlng] = {'name': name, 'status': status_dict}
-        alerts_results.append(alert_dict)
-    return statistics_data, alerts_results
 
 def alert_degree(max_phi, max_delta_repost, max_delta_fipost, alertcoe):
     return (round(max_phi*alertcoe), round(max_delta_repost*alertcoe), round(max_delta_fipost*alertcoe))
+
+
 
 def repost_level(count, max_repost_num):
     step = int(max_repost_num/3)
@@ -458,7 +635,7 @@ def reverse_key(key):
 
 def main():
     topic = u'钓鱼岛'
-    print date2ts('2012-9-1'),date2ts('2012-9-30')
+    print date2ts('2012-1-1'),date2ts('2012-12-30')
     ts_arr, results = raw_data(topic, int(date2ts('2012-9-1')), int(date2ts('2012-9-20')))
     ts_series, groups = partition_count(ts_arr, results)
     draw_circle_data = map_circle_data(groups)

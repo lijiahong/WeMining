@@ -172,9 +172,63 @@ margin-left:10px;
 
 
 #data {
-    width:1020px;
+    width:163px;
     overflow:hidden;
-    text-align:center;
+    text-align:right;
+	position: absolute;
+	margin-top: 33px;
+	font: normal normal 10px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	text-align: center;
+	color: black;
+}
+.t_list {
+	padding: 9px 12px 6px;
+	border-collapse: collapse;
+	border-top: 1px solid #EBEBEB;
+	height:464px;
+}
+.t_list table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.t_list td {
+	border-bottom: 1px solid #EBEBEB;
+	line-height: 21px;
+	line-height: 20pxurl(0);
+	vertical-align: middle;
+}
+.t_list .title {
+	width: 39px;
+	padding-left: 0px;
+	position: relative;
+}
+.t_list span {
+	display: inline-block;
+	margin: 0;
+}
+.t_list .absolute {
+	color: #757575;
+	text-align: right;
+	width: 38px;
+}
+.t_list .incre {
+	color: #757575;
+	text-align: right;
+	width: 70px;
+}
+
+
+.t_list a:visited {
+	color: purple;
+	text-decoration: underline;
+}
+
+.t_list .redline{
+	color:#F00;
+}
+
+.t_list .greenline{
+	color:#090;
 }
 
 .section {
@@ -324,7 +378,13 @@ p#back-to-nation-view span {
     margin-right:auto;
 }
 
-
+#right_panel{
+	position:absolute;
+	width: 169px;
+	height: 705px;
+	margin-top:-715px;
+	margin-left:1180px;
+}
 
 #play_pause1{
     margin-left:auto;
@@ -592,7 +652,7 @@ div.sctble_mat a {
 }
 .panel-nav {
     position: absolute;
-    left: 30px;
+    left: 13px;
     color: #61CCAA;
     background: #FCFAFA;
     display: block;

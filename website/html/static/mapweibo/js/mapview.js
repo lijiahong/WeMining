@@ -352,6 +352,7 @@ function pageFailure(error){
 }
 
 function initialize() {
+	$("#data").tabs({collapsible:true});
     window.location.href = "#mapContainer";
     if(!getUrlParam('topic')){
 	return;
@@ -496,26 +497,47 @@ function initialize() {
     }
 
     function change_data_display(){
-		$(".section#left").empty();
-		$(".section#middle").empty();
-		$(".section#right").empty();
-		$(".section#left").append("<h2>原创微博省份</h2><ol id='most_fipost'></ol>");
-		$(".section#middle").append("<h2>转发微博省份</h2><ol id='most_repost'></ol>");
-		$(".section#right").append("<h2>发布微博总数排行</h2><ol id='most_increase'></ol>");
-		$("#most_fipost").empty();
-		$("#most_repost").empty();
-		$("#most_increase").empty();
+		$("#lbody").empty();
+		$("#lbody").append("<tr><td><span class=\"title\" style=\"opacity: 1; \">" + '省份' + "</span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + '本期' + "</span></td><td><span class=\"incre\" style=\"opacity: 1; \">" + '增长' + "</span></td></tr>");
+		$("#mbody").empty();
+		$("#mbody").append("<tr><td><span class=\"title\" style=\"opacity: 1; \">" + '省份' + "</span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + '本期' + "</span></td><td><span class=\"incre\" style=\"opacity: 1; \">" + '增长' + "</span></td></tr>");
+		$("#rbody").empty();
+		$("#rbody").append("<tr><td><span class=\"title\" style=\"opacity: 1; \">" + '省份' + "</span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + '本期' + "</span></td><td><span class=\"incre\" style=\"opacity: 1; \">" + '增长' + "</span></td></tr>");
 		if(statistics_data[mapWeibo.now_step]){ 
 		  var s_data = statistics_data[mapWeibo.now_step];
-		  for(var i=0;i<s_data.length;i++){
-			  province = s_data[i][0];
-			  data = s_data[i][1];
-			  cur_repost = data[0];
-			  cur_fipost = data[1];
-			  phi = data[2];
-			  $("#most_increase").append("<li><span>" + province + "</span><span class='weak'>：" + phi + "</span></li>");
-			  $("#most_fipost").append("<li><span>" + province + "</span><span class='weak'>：" + cur_fipost + "</span></li>");
-			  $("#most_repost").append("<li><span>" + province + "</span><span class='weak'>：" + cur_repost + "</span></li>");
+		  for(var category=0;category < s_data.length;category++){
+			var province_list = s_data[category];
+			for(var i=0;i<province_list.length;i++){
+				province = province_list[i][0];
+				data = province_list[i][1];
+				cur_value = data[0];
+				incre_value = data[1];
+				zero_status = data[2];
+				if(category == 0){
+					html = "<tr><td><span class=\"title\" style=\"opacity: 1; \"><a href=\"#\" >" + province + "</a></span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + cur_value + "</span></td>";
+					if(zero_status == 1)
+						html += "<td><span class=\"incre redline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					else
+						html += "<td><span class=\"incre greenline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					$("#mbody").append(html);
+				}
+				if(category == 1){
+					html = "<tr><td><span class=\"title\" style=\"opacity: 1; \"><a href=\"#\" >" + province + "</a></span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + cur_value + "</span></td>";
+					if(zero_status == 1)
+						html += "<td><span class=\"incre redline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					else
+						html += "<td><span class=\"incre greenline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					$("#lbody").append(html);
+				}
+				if(category == 2){
+					html = "<tr><td><span class=\"title\" style=\"opacity: 1; \"><a href=\"#\" >" + province + "</a></span></td><td><span class=\"absolute\" style=\"opacity: 1; \">" + cur_value + "</span></td>";
+					if(zero_status == 1)
+						html += "<td><span class=\"incre redline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					else
+						html += "<td><span class=\"incre greenline\" style=\"opacity: 1; \">" + incre_value + "</span></td></tr>";
+					$("#rbody").append(html);
+				}
+			}
 		  }
 		}
     }
@@ -532,12 +554,50 @@ function initialize() {
 		if(lineClusterer != undefined){
 			lineClusterer.clearlines();
 		}
-		alert_latlng = alert_data[mapWeibo.now_step];
-		var province_name = '';
-	
-	    for(var latlng in alert_latlng){
-			date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
-			province_name = alert_latlng[latlng].name;
+		var alert_series = alert_data[mapWeibo.now_step];
+		//var province_name = '';
+		
+		var alert_text = '';
+		var flag = 0;
+		for(var status in alert_series){
+			if(status == 'post_rsi'){
+				flag = 1;
+				alert_text += '微博总数 RSI=' + alert_series[status];
+			}
+			if(status == 'fipost_rsi'){
+				flag = 1;
+				alert_text += '微博原创数 RSI=' + alert_series[status];
+			}
+			if(status == 'repost_rsi'){
+				flag = 1;
+				alert_text += '微博转发数 RSI=' + alert_series[status];
+			}
+			if(status == 'repost_macd'){
+				flag = 1;
+				alert_text += '微博转发数 MACD=' + alert_series[status];
+			}
+			if(status == 'fipost_macd'){
+				flag = 1;
+				alert_text += '微博原创数 MACD=' + alert_series[status];
+			}
+			if(status == 'post_macd'){
+				flag = 1;
+				alert_text += '微博总数 MACD=' + alert_series[status];
+			}
+			alert_text += ' ';
+			break;
+		}
+		if(flag == 1){
+			var date = new Date(ts_series[mapWeibo.now_step][0]*1000).format('yyyy-MM-dd');
+			alert_text = date + alert_text;
+			var latlng = '39.90403 116.407526';
+			var split_latlng = latlng.split(' ');
+			var point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
+			var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: 'ff0000', text: alert_text}), position:point, map:map});
+			mapWeibo.infos.push(marker);
+		}
+		
+			/*province_name = alert_latlng[latlng].name;
 			split_latlng = latlng.split(' ');
 			var status = alert_latlng[latlng].status;
 			var maxv = 0;
@@ -559,9 +619,10 @@ function initialize() {
 			}
 			point = new google.maps.LatLng(split_latlng[0], split_latlng[1]);
 			var marker = new StyledMarker({styleIcon: new StyledIcon(StyledIconTypes.BUBBLE, {color: maxstatus[1], text: date+': '+province_name + maxstatus[0]}), position:point, map:map});
-			mapWeibo.infos.push(marker);
-	    }
-
+			mapWeibo.infos.push(marker);*/
+	    
+		
+		
 		var marker;		
 		var markers = [];
 		period_circle_data = circle_data[mapWeibo.now_step];
