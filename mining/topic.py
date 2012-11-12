@@ -4,6 +4,7 @@
 
 import time
 import json
+import math
 import operator
 import codecs
 
@@ -117,24 +118,60 @@ def burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, t
                 if keyword not in keywords_burst:
                     keywords_burst[keyword] = 0
                 keywords_burst[keyword] += group[keyword]
-    keywords_brust_list = sorted(keywords_burst.iteritems(), key=operator.itemgetter(1), reverse=True)
-    f = codecs.open('results.txt', 'w', encoding='utf-8')
-    for key, value in keywords_brust_list[:100]:
-        f.write('%s %s\n' % (key, value))
-    f.close()
-            
+    return keywords_burst
+
+def hot(ts_series, groups_keywords_count, total_keywords_count, groups_size):
+    word_hot_in_groups = []
+    for period, group_keywords_count, group_size in zip(ts_series, groups_keywords_count, groups_size):
+        word_hot_in_group = {}
+        for keyword in group_keywords_count.keys():
+            N = group_keywords_count[keyword]
+            word_hot_in_group[keyword] = N * 1.0 / (group_size) 
+        word_hot_in_groups.append(word_hot_in_group)
+    keywords_hot = {}
+    for keyword in total_keywords_count.keys():
+        for group in word_hot_in_groups:
+            if keyword in group:
+                if keyword not in keywords_hot:
+                    keywords_hot[keyword] = 0
+                keywords_hot[keyword] += group[keyword]
+    return keywords_hot
 
 def main():
     time_start = '2012-9-10'
     time_end = '2012-9-20'
+    window_size = 4*60*60
+
     search = Search()
     print 'prepare data at %s.' % unix2local(time.time())
+
     ts_arr, results, total_keywords_count = search.topic_query(begin=time_start, end=time_end)
     total_size = len(results)
     print 'find %s statuses from %s to %s at %s.' % (total_size, time_start, time_end, unix2local(time.time()))
-    ts_series, groups_keywords_count, groups_size = partition(ts_arr, results, window_size=4*60*60)
-    print 'partition ok at %s.' % unix2local(time.time())
-    burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, total_size)
-    print 'calculate burst ok at %s.' % unix2local(time.time())
+
+    ts_series, groups_keywords_count, groups_size = partition(ts_arr, results, window_size=window_size)
+    print 'data partition ok at %s.' % unix2local(time.time())
+
+    keywords_burst = burst(ts_series, groups_keywords_count, total_keywords_count, groups_size, total_size)
+    print 'calculate keyword burst ok at %s.' % unix2local(time.time())
+
+    keywords_hot = hot(ts_series, groups_keywords_count, total_keywords_count, groups_size)
+    print 'calculate keywork hot ok at %s.' % unix2local(time.time())
+
+    keywords_value = {}
+    for keyword in total_keywords_count.keys():
+        keywords_value[keyword] = keywords_hot[keyword] + math.log(keywords_burst[keyword] + 1, 2)
+    print 'calculate keyword value ok at %s.' % unix2local(time.time())
+
+    keywords_rank_list = sorted(keywords_value.iteritems(), key=operator.itemgetter(1), reverse=True)
+    print 'keyword rank ok at %s.' % unix2local(time.time())
+
+    file_url = r'/opt/data/topic/results_%s_%s_%s.txt' % (time_start, time_end, window_size/3600)
+    f = codecs.open(file_url, 'w', encoding='utf-8')
+    for key, value in keywords_rank_list[:100]:
+        f.write('%s %s\n' % (key, value))
+    f.close()
+    print 'write top 100 results into %s.' % file_url
+    
 
 if __name__ == '__main__': main()
