@@ -544,6 +544,7 @@ def statistics_data(groups, alertcoe):
             else:
                 phi = repr(cur_repost - pre_repost + cur_fipost - pre_fipost)
                 if cur_repost - pre_repost + cur_fipost - pre_fipost > 0:
+                    phi = '+' + phi
                     status_post = 1
             total_post = cur_repost + cur_fipost
             
