@@ -177,7 +177,7 @@ margin-left:10px;
     text-align:right;
 	position: absolute;
 	margin-top: 33px;
-	font: normal normal 10px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	font: normal normal 8px Arial, 'Helvetica Neue', Helvetica, sans-serif;
 	text-align: center;
 	color: black;
 }
@@ -621,12 +621,11 @@ div.sctble_mat a {
     border: 1px solid steelBlue;
 }
 #total_number,#real_number{
-    width:125px;
-    border: 1px solid #CCC;
+    width:124px;
+    border: 1px outset #B5A642;
+	text-align:center;
 }
-#total_number:hover,#real_number:hover{
-    border: 1px solid steelBlue;
-}
+
 
 /*keywords style end*/
 #se_time{

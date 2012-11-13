@@ -16,6 +16,8 @@ from config import getDB
 from movingaverage import movingaverage
 import numpy as np
 
+from datetime import date
+
 render = web.template.render('./templates/')
 
 urls = ('/mapweibo/mapview/', '/mapweibo/mapview')
@@ -155,6 +157,8 @@ class handler():
         alert_macd_fipost = moving_average_convergence(fipost_series)
         alert_macd_post = moving_average_convergence(post_series)
         alerts_results = []
+##        timeseries_data = []
+        time_series = []
         for index in range(0, len(ts_series)):
             alert_dict = {}
             if index in alert_rsi_post[0].keys():
@@ -164,15 +168,20 @@ class handler():
             if index in alert_rsi_repost[0].keys():
                 alert_dict['repost_rsi'] = repr(alert_rsi_repost[0][index])
             if index in alert_macd_repost[1].keys():
-                alert_dict['repost_macd'] = repr(alert_macd_repost[1][index])
+                alert_dict['repost_macd'] = repr(int(alert_macd_repost[1][index]*100)/100.0)
             if index in alert_macd_fipost[1].keys():
-                alert_dict['fipost_macd'] = repr(alert_macd_fipost[1][index])
+                alert_dict['fipost_macd'] = repr(int(alert_macd_fipost[1][index]*100)/100.0)
             if index in alert_macd_post[1].keys():
-                alert_dict['post_macd'] = repr(alert_macd_post[1][index])
+                alert_dict['post_macd'] = repr(int(alert_macd_post[1][index]*100)/100.0)
+            
             alerts_results.append(alert_dict)
+            now_date = date.fromtimestamp(ts_series[index][0]).strftime('%Y-%m-%d')#.strftime('%Y-%m-%dT%H:%M:%S')
+            time_series.append(now_date)
+##            timeseries_data.append((now_date, repost_series[index], fipost_series[index], post_series[index]))
         
         return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data,
-                           'max_repost_num': max_repost_num, 'alert': alerts_results})
+                           'max_repost_num': max_repost_num, 'alert': alerts_results, 'time_series': {'date':time_series, 'repost':repost_series,
+                                                                                                      'fipost':fipost_series, 'post':post_series}})
 
 def time_series_analysis(dataseries, circle):
     pass
@@ -205,10 +214,11 @@ def relative_strength(prices, n=14):
     """
 
     deltas = np.diff(prices)
+    np.seterr(divide = 'ignore')
     seed = deltas[:n+1]
     up = seed[seed>=0].sum()/n
     down = -seed[seed<0].sum()/n
-    rs = up/down
+    rs = np.divide(up, down)
     rsi = np.zeros_like(prices)
     rsi[:n] = 100. - 100./(1.+rs)
 
@@ -227,8 +237,12 @@ def relative_strength(prices, n=14):
 
         up = (up*(n-1) + upval)/n
         down = (down*(n-1) + downval)/n
-
-        rs = up/down
+        np.seterr(divide = 'ignore')
+        rs = np.divide(up, down)
+        if np.isnan(rs):
+            rs = 0
+        else:
+            rs = rs
         rsi[i] = 100. - 100./(1.+rs)
 
         if rsi[i] > 60:

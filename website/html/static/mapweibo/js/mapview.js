@@ -353,7 +353,7 @@ function pageFailure(error){
 
 function initialize() {
 	$("#data").tabs({collapsible:true});
-    window.location.href = "#mapContainer";
+    window.location.href = "#s_keyword";
     if(!getUrlParam('topic')){
 	return;
     }
@@ -562,27 +562,27 @@ function initialize() {
 		for(var status in alert_series){
 			if(status == 'post_rsi'){
 				flag = 1;
-				alert_text += '微博总数 RSI=' + alert_series[status];
+				alert_text += '总数"超买"(RSI=' + alert_series[status] + ')';
 			}
 			if(status == 'fipost_rsi'){
 				flag = 1;
-				alert_text += '微博原创数 RSI=' + alert_series[status];
+				alert_text += '原创数"超买"(RSI=' + alert_series[status] + ')';
 			}
 			if(status == 'repost_rsi'){
 				flag = 1;
-				alert_text += '微博转发数 RSI=' + alert_series[status];
+				alert_text += '转发数"超买"(RSI=' + alert_series[status] + ')';
 			}
 			if(status == 'repost_macd'){
 				flag = 1;
-				alert_text += '微博转发数 MACD=' + alert_series[status];
+				alert_text += '转发数高峰(MACD=' + alert_series[status] + ')';
 			}
 			if(status == 'fipost_macd'){
 				flag = 1;
-				alert_text += '微博原创数 MACD=' + alert_series[status];
+				alert_text += '原创数高峰(MACD=' + alert_series[status] + ')';
 			}
 			if(status == 'post_macd'){
 				flag = 1;
-				alert_text += '微博总数 MACD=' + alert_series[status];
+				alert_text += '总数高峰(MACD=' + alert_series[status] + ')';
 			}
 			alert_text += ' ';
 			break;
@@ -680,7 +680,7 @@ function initialize() {
 			}*/
 		}
     }
-	
+	window.location.href = "#s_keyword";
 }
 
 $(function(){
