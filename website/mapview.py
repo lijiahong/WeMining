@@ -150,6 +150,7 @@ class handler():
         #print len(list(movingaverage(repost_series, 5, avoid_fp_drift=False)))
         #print moving_average(repost_series, 5, type='simple')
         #print moving_average(repost_series, 5, type='exponential')
+        """
         alert_rsi_repost = relative_strength(repost_series, n=14)
         alert_rsi_fipost = relative_strength(fipost_series, n=14)
         alert_rsi_post = relative_strength(post_series, n=14)
@@ -178,7 +179,12 @@ class handler():
             now_date = date.fromtimestamp(ts_series[index][0]).strftime('%Y-%m-%d')#.strftime('%Y-%m-%dT%H:%M:%S')
             time_series.append(now_date)
 ##            timeseries_data.append((now_date, repost_series[index], fipost_series[index], post_series[index]))
-        
+        """
+        alerts_results = []
+        time_series = []
+        for index in range(0, len(ts_series)):
+	    now_date = date.fromtimestamp(ts_series[index][0]).strftime('%Y-%m-%d')#.strftime('%Y-%m-%dT%H:%M:%S')
+            time_series.append(now_date)
         return json.dumps({'statistics_data': statistic_data, 'ts_series': ts_series, 'line': draw_line_data, 'circle': draw_circle_data,
                            'max_repost_num': max_repost_num, 'alert': alerts_results, 'time_series': {'date':time_series, 'repost':repost_series,
                                                                                                       'fipost':fipost_series, 'post':post_series}})
