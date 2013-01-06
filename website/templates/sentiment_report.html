@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>sentiment report</title>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-1.7.min.js"></script>
+
+    <script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <link type="text/css" href="/static/mapweibo/css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.blockUI.js"></script><!--此库提供加载页面等待时锁定div的功能-->
+    <script type="text/javascript" src="/static/mapweibo/js/jquery.masonry.min.js"></script><!--此库提供时间轴功能-->
+    <script src="http://www.amcharts.com/lib/amstock.js" type="text/javascript"></script>
+    <script src="/static/mapweibo/js/jquery.tagcanvas.min.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/mapweibo/js/sentiment_report.js"></script>
+
+    <link type="text/css" href="/static/mapweibo/css/mapview.css" rel="stylesheet" />
+    <style>
+	  #container {
+			width: 860px;
+			margin: 20px auto;
+		}
+	  #container .item {
+			width: 408px;
+			margin: 20px 10px 10px;
+			float: left;
+			background-color: #fff;
+			border: 1px solid #b4bbcd;
+			min-height: 50px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+	  #container .inner {
+			padding: 10px;
+		}
+	  /*timeline navigatior css*/
+		.timeline_container {
+			width: 16px;
+			text-align: center;
+			margin: 0 auto;
+			cursor: pointer;
+			display: block;
+		}
+		.timeline{
+			margin: 0 auto;
+			background-color: #e08989;
+			display: block;
+			float: left;
+			height: 100%;
+			left: 428px;
+			margin-top: 10px;
+			position: absolute;
+			width: 4px;
+		}
+		.timeline:hover{
+			cursor: pointer;
+			margin: 0 auto;
+		}
+		/*arrow css style*/
+		.rightCorner {
+			background-image: url("/static/mapweibo/images/timeline/right.png");
+			display: block;
+			height: 15px;
+			margin-left: 408px;
+			margin-top: 8px;
+			padding: 0;
+			vertical-align: top;
+			width: 13px;
+			z-index: 2;
+			position: absolute;
+		}
+		.leftCorner {
+			background-image:url("/static/mapweibo/images/timeline/left.png");
+			display: block;
+			height: 15px;
+			width: 13px;
+			margin-left: -13px;
+			margin-top: 8px;
+			position: absolute;
+			z-index: 2;
+		}
+		/*amcharts*/
+		.amChartsButtonSelected
+		{
+		   background-color:#CC0000;
+		   border-style:solid;
+		   border-color:#CC0000;
+		   border-width:1px;
+		   color:#FFFFFF;
+		  -moz-border-radius: 5px;
+		  border-radius: 5px;
+		  margin: 1px;   
+		}
+		
+		.amChartsButton
+		{
+		   background-color:#EEEEEE;
+		   border-style:solid;
+		   border-color:#CCCCCC;
+		   border-width:1px;
+		   color:#000000;
+		  -moz-border-radius: 5px;
+		  border-radius: 5px;
+		  margin: 1px;  
+		}
+		
+		.amChartsCompareList
+		{
+		   border-style:solid;
+		   border-color:#CCCCCC;
+		   border-width:1px;
+		}​
+		#tag_cloud_div
+		{
+			width:1020px;
+			height:400px;
+			border:1px solid gray;
+			margin-left:auto;
+			margin-right:auto
+		}
+		.title{
+			color:#669;
+			border:1px #000 dotted solid;
+		}
+		
+    </style>
+  </head>
+  <body>
+    <!--导航-->
+    <div class="nav-header">
+      <div class="topnav">
+        <div id="nav-container">
+          <div id="logo" class="pic">
+            <a href='/mapweibo/'><img src="/static/mapweibo/images/logo.jpg"  alt="MapWeibo" /></a>
+          </div>
+          
+          <div class='nav-collapse'>
+            <ul class='nav'>
+              <a href="/mapweibo/" id="nav-home">
+                <li class='nav-nav' id='home'>主页</li>
+              </a>
+              <a href="/mapweibo/mapview/" id="nav-mapview">
+                <li class='nav-nav' id='mapview'>传播</li>
+              </a>
+              <a href="/mapweibo/trendview/?topic=钓鱼岛" id="nav-trendview">
+                <li class='nav-nav' id='trendview'>演化</li>
+              </a>
+              <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
+                <li class='nav-nav' id='sentimentview'>情绪</li>
+              </a>
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <!--导航结束-->
+    <!--main开始-->
+    <div id="main">
+    	<div class="content">
+      		<h1 id="h-introduction">
+          		<div id="intro-ques"><img src="/static/mapweibo/images/propagation.png" alt="" /></div>
+ 	   			<div id="intro">
+            		<p><strong>舆情报告</strong>舆情报告起于焦点事件回顾，从关注度、爆发力、极性分析角度对舆情综合热度进行分析，从传播节点特征、关键用户识别及特征分析角度对舆情传播特征分析。</p>
+          		</div>
+    		</h1>
+          	<div class="panel-outer">       
+            	<div class="panel-nav">焦点：数据来自百度</div>
+                	<div id="container" >
+                    	<!-- TimeLine导航 -->
+                    	<div class="timeline_container" >
+                      		<div class="timeline" >
+                        		<div class="plus" ></div>
+                      		</div>
+                    	</div>
+                	    <div class="item" >
+                    		<div class="inner">
+                            <span class="title">2012.9.19 腾讯新闻：韩德强微博说明为何打人 称不让“汉奸”放肆</span>
+                            <hr />
+                            <span>昨日在北京的中，有网友在微博上说：“在游行的队伍集合时，一个老人对几个人打出的“毛主席我们想念您”这个口号提出了反对，他说：将这种维护国家尊严和民族大义的愿望寄托在毛泽东身上是错误的，也是不可能实现的等等。年轻人听后上去就给这个老人两个耳光，说：这是在侮辱毛主席。两人互骂对方是汉奸，警察拉开了事。”</span>
+                            </div>
+                    	</div>
+                    	<div class="item" >
+                        	<div class="inner" >
+                            <span class="title">2012.9.21 21CN新闻：韩德强打人不认错，那就让法律来制裁</span>
+                            <hr />
+                            <span>韩德强教授打人并发表声明，声称对自己的行为负责且没有必要认错。作为“乌有之乡”的作者之一，秉持着“毛左”的思想遗风。在示威游行的过程中，老者开始咒骂毛泽东主席。原本这应该属于言论自由的领域内，没有任何政治纠葛。但却被韩德强斥之为玷污领袖的光荣，被斥之为汉奸。那么，韩德强作为北航的教授并没有权力和资格将人分为三六九等，更不能将人评价为汉奸还是爱国者。</span>
+                            </div>
+                    	</div>
+                        <div class="item" >
+                    		<div class="inner" >
+                            <span class="title">2012.9.21 新浪财经 大词崇拜的危害 打人的韩德强为何理直气壮？</span>
+                            <hr />
+                            <span>近日，北京航天航空大学教授韩德强扮演路上法官，判定某位同行的老人卖国，遂替想象中的正义行道，打了老人两记耳光。</span>
+                            </div>
+                    	</div>
+                    	<div class="item" >
+                    		<div class="inner">
+                            <span class="title">2012.9.26 网易新闻：北航教授韩德强掌掴老人 学生“罢”课是否妥当</span>
+                            <hr />
+                            <span>2012年9月24日，辽宁师范大学政治与行政学院博士生导师木然在其认证的腾讯微博上称，在“保钓”游行中因观点不合而殴打八旬老人的韩德强已连续四堂课没有一个学生。此微博内容一发就引起了众多网友的热议。不少网友力挺北航学子的做法，支持封杀韩德强。但也有一些网友对韩德强表示了同情，觉得教学和个人品德是两码事，认为有些学生是在跟风罢课。</span>
+                            </div>
+                    	</div>
+                        
+                    	<div class="item" >
+                        	<div class="inner" >
+                            <span class="title">2012.9.27 搜狐新闻 洪振快：再评韩德强打人 领袖可以批评</span>
+                            <hr />
+                            <span>韩德强的支持者们认为，批评毛泽东违反宪法。这与事实不符。现行1982年宪法的序言中有一处提到毛泽东，但属于事实陈述，两处提到毛泽东思想，属于观念表达，都没有明确规定不能批评毛泽东。而且，宪法序言不同于正文，正文具有法律效力，而序言是否具有法律效力存在很大争议，全国人大法工委原主任高锴先生算是权威人物，他就认为宪法序言是不具有法律效力的。</span>
+                            </div>
+                    	</div>
+                    	<div class="item" >
+                    		<div class="inner" >
+                            <span class="title">2012.9.28 搜狐新闻 白岩松:韩德强打八旬老人 实是另一种“汉奸”</span>
+                            <hr />
+                            <span>据央视报道，在北京的保钓游行活动中，北京航空航天大学教授韩德强证实因观点不一致，自己曾两次打一名80多岁老人耳光，并称这个老人是“汉奸”。</span>
+                            </div>
+                    	</div>
+                        <div class="item" >
+                    		<div class="inner" >
+                            <span class="title">2012.10.13 网易财经 韩德强 毛是Teacher</span>
+                            <hr />
+                            <span>“毛主席在我心目当中的地位跟穆罕默德（在阿拉伯世界的地位）是一样的。”温文尔雅、说话慢声细语的韩德强这样解释他愤怒的由来。“忍无可忍，不能再忍！”随着音调拔高，他颤抖得更加显著。</span>
+                            </div>
+                    	</div>
+                        <div class="item" >
+                    		<div class="inner" >
+                            <span class="title">2012.10.13 凤凰网 韩德强谈砸烧日系车:普通人就一蚂蚁 被踩死没办法</span>
+                            <hr />
+                            <span>在游行队伍当中，我就是一名爱国的、反日的公民；我回到大学讲堂上，我是大学老师。</span></div>
+                    	</div>
+						<div class="item" >
+                    		<div class="inner" >
+                            <span class="title">2012.10.16 新浪新闻 韩德强谈砸车:大象走路怎能顾得蚂蚁螳螂?</span>
+                            <hr />
+							 <span>人物周刊：那日系车和日系车主就变成了殉道者？韩德强：那没办法，那没办法。大象走路，它能顾得了蚂蚁螳螂？一个国家一个社会的行动，它就是这样的呀，它不可能是一点损失都没有的呀。</span>
+                             </div>
+                    	</div>
+                    
+                	</div>
+            	</div>
+          	
+            
+            <div class="panel-outer">       
+            	<div class="panel-nav">关注度分析</div>
+                <div id="chartdiv" style="width: 100%; height: 370px;margin:40px auto;"></div>​
+                <div id="tag_cloud_div" style="margin:0 auto;">
+                    <canvas width="1020px" height="400px" id="myCanvas">
+                        <p>Anything in here will be replaced on browsers that support the canvas element</p>
+                    </canvas>
+                    <div id="tags_div">
+                        <ul id="tags_ul">
+                        <li><a style="font-size:4.8ex">中国</a></li>
+                        <li><a style="font-size:2.6ex">日本</a></li>
+                        <li><a style="font-size:2.4ex">中秋</a></li>
+                        <li><a style="font-size:2.4ex">世界</a></li>
+                        <li><a style="font-size:2.2ex">北京</a></li>
+                        <li><a style="font-size:2.2ex">国庆</a></li>
+                        <li><a style="font-size:2.1ex">钓鱼岛</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-outer">       
+            	<div class="panel-nav">爆发力分析</div>
+                <div id="chartdiv2" style="width: 100%; height: 362px;"></div>​
+            </div>
+            
+            <div class="panel-outer">       
+            	<div class="panel-nav">用户年龄分布</div>
+                <div id="chartdiv3" style="width: 100%; height: 362px;"></div>​
+            </div>
+            
+            </div><!--content结束-->
+        </div><!--main结束-->
+<!--
+	<div id="footer"><div id="footer-text">Copyright 2012.&nbsp&nbsp<a href="http://idec.buaa.edu.cn">Reseach Center for Social Computing and Sentimental Analysis. </a></div></div>-->
+</body>
+</html>
