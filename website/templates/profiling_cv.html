@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>薛蛮子</title>
+    <meta name="robots" content="profiling" />
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <style type="text/css" media="all">
+      html{
+      background-color:#EEE;
+      padding:0 1em;
+      }
+      body {
+      background-color:#FFF;
+      font-family:"Trebuchet MS", Helvetica, Arial;
+      padding:1em;
+      border:solid #AAA;
+      border-width:1px 3px 3px 1px;
+      margin:1em auto;
+      max-width: 50em;
+      }
+      #address{
+      height:5em;
+      width:47em;
+      margin:1em 0 1em 0;
+      }
+      #address div{
+      width:13em;
+      float:left;
+      padding:0 .5em 0 1.5em;
+      border-left:1px solid #CCC;
+      }
+      #address div#first{
+      border-left:none;
+      }
+      #address h3{
+      border-bottom: none;
+      margin-top: 0;
+      }	
+      .date {
+      float:right;
+      font-size:.8em;
+      margin-top:.4em;
+      text-align:right;
+      }
+      abbr, acronym{
+      border-bottom:1px dotted #333;
+      cursor:help;
+      }	
+      address{
+      font-style:italic;
+      color:#333;
+      font-size:.9em;
+      }
+      h1{
+      font-size:1.5em;
+      font-family: Helvetica, Verdana, Arial, sans-serif;
+      }
+      h2 {
+      clear:both;
+      font-size: 1.4em;
+      font-weight:bold;
+      margin-top:2em;
+      font-variant: small-caps;
+      padding-left:.25em;
+      background-color:#EEE;
+      border-bottom: 1px solid #999;
+      letter-spacing: .06em;
+      }
+      h3 {margin: 1em 0 0 0;}
+	  #profile_image{
+		  position:relative;
+		  float:left;
+		  margin:0px 0px auto auto;
+	  }
+	  #personal_information{
+		  float:left;
+		  margin-left:20px;
+	  }
+	  .label {
+		  color:#666;
+		  float: left;
+		  width: 100px;
+		  text-align: right;
+	  }
+	  .con {
+		  margin-left: 102px;
+		  padding: 0 10px;
+		  word-wrap: break-word;
+	  }
+	  .pf_item {
+		  
+		  margin-left: 50px;
+		  position: relative;
+	  }
+	  .clearfix {
+		  display: block;
+	  }
+	  .clearfix::after {
+		  content: ".";
+		  display: block;
+		  height: 0;
+		  clear: both;
+		  visibility: hidden;
+		  }
+    </style>
+    <style type="text/css" media="print">
+      body {
+      background-color:#FFF;
+      border-width:0 0 0 0;
+      margin:0;
+      width:100%
+      }
+    </style>
+  </head>
+  <body>
+    <h1>薛蛮子</h1>
+    <div id="basic">
+      <div id="profile_image"><img src="/static/images/XMZ.jpg" /></div>
+      <div id="personal_information">
+      <div class="pf_item clearfix">
+	   <div class='label'>微博昵称</div><div class='con'>薛蛮子</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'>性别</div><div class='con'>男</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'>所在地</div><div class='con'> 北京 朝阳区</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'>年龄</div><div class='con'>60</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'>账户注册时间</div><div class='con'> Mon Sep 06 21:24:06 +0800 2010</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'> 是否认证</div><div class='con'>是</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'> 个人简介</div><div class='con'> 天使投资人薛蛮</div></div>
+       <div class="pf_item clearfix">
+       <div class='label'> 个人主页地址</div><div class='con'>http://weibo.com/charlesxue</div></div>
+	
+      </div>
+      
+    </div>
+    
+    <h2>个人标签</h2>
+    <span class="date">2009.9 - Present</span>
+    <h3>Undergraduate Student</h3>
+    <address>Department of Information Management and Information System, Beihang University, Beijing, China</address>
+    <p>
+      Overall GPA: 3.2/4.0
+    </p>
+
+    <h2>行为信息</h2>
+    <div class='label'>平均每天微博在线时间</div><div class='con'>12h</div></div>
+   <div class="pf_item clearfix">
+   <div class='label'>累积发布微博数量</div><div class='con'>63379</div></div>
+   <div class="pf_item clearfix">
+   <div class='label'>原创微博比例</div><div class='con'> 50%</div></div>
+   <div class="pf_item clearfix">
+   <div class='label'>年龄</div><div class='con'>60</div></div>
+    <span class="date">2011.11 - 2012.6</span>
+    <h3>Student Research Training Program</h3>
+    <address>Laboratory of Social Public Opinion Analysis, A717, New Main Building, Beihang University, Beijing, China</address>
+    <p>
+      Responsible for the technical aspects of the project
+    </p>
+    <ul>
+      <li>Developed the whole distributed microblogging crawler and collected over one hundred million tweets</li>
+      <li>Focused on the data analysis on server-side,and wrote codes for the data processing on web application such as weibo spreading map and sentiment map</li>
+      <li>Built a web application for drawing and analyzing retweet network</li>
+    </ul>
+
+    <h2>Work Experience</h2>
+    <span class="date">Summer 2011</span>
+    <h3>System Administrator Assistant Internship</h3>
+    <address>Beijing Computational Science Research Center, No.3 He-Qing Road, Hai-Dian District, Beijing, China</address>
+    <p>
+      Responsible for the construction and maintenance of information systems
+    </p>
+    <ul>
+      <li>Developed meeting room booking system, visitor management system etc.</li>
+    </ul>
+    
+    <h2>Activities and Honors</h2>
+    <ul>
+      <li>A member of the IT department, Student Union, 2009 - 2010</li>
+      <li>Excellence award in the 1st Beihang Portal Web Page Design Contest, 2011.3</li>
+      <li>Excellence award in the 4th China College Students Computer Design Contest, 2011.7</li>
+    </ul>
+    
+    <h2>Skills</h2>
+    <h3>English proficiency</h3>
+    <ul>
+      <li>CET-4(576) CET-6(494)</li>
+      <li>Experienced on reading computer related documents</li>
+    </ul>
+    <h3>Programming skills</h3>
+    <ul>
+      <li>Writing readable and effective code in Python, Java</li>
+      <li>Experience with C, Visual Basic, Delphi</li>
+      <li>Using algorithm analysis and design pattern in practical project</li>
+      <li>Implementing algorithm based on research paper</li>
+      <li>Front-end development(HTML\CSS\JavaScript)</li>
+      <li>Basically database management and utilizing on SQL(MySQL, Oracle) and NoSQL(MongoDB, Redis)</li>
+      <li>Data visualization and GUI programming</li>
+    </ul>
+    <h3>Programming environment</h3>
+    <ul>
+      <li>Operating systems: Windows, Linux(Especially on Gentoo, Ubuntu)</li>
+      <li>IDE: Emacs, Eclipse</li>
+      <li>Web Server: Tomcat, Nginx</li>
+      <li>DBMS: MySQL, MongoDB</li>
+    </ul>
+  </body>
+</html>

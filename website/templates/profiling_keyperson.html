@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+  	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+     	<title>profile keyperson</title>
+        <link type="text/css" href="/static/css/topicAnalysis.css" rel="stylesheet" />
+        <link type="text/css" href="/static/css/topicHistory.css" rel="stylesheet" />
+		<script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js/tagsuggest.js"></script>
+        <script type="text/javascript" src="/static/js/profiling.js"></script>
+        <style>
+			#follow_pic{
+				position:absolute;
+				margin:10px 540px auto auto;
+			}
+			.section{
+				width: 960px;
+				margin-right: auto;
+				margin-left: auto;
+				margin-top: 0px;
+				border-style: solid;
+				border-width: 2px 1px 1px;
+				border-color: #66C #DEDFDE #DEDFDE #DEDFDE;
+			}
+			.section_title{
+				color:#396;
+			}
+		</style>
+  </head>
+<body>
+<div id="div_logo" name="top">
+  <div class="juzhong">
+    <div class="bubbleInfo">
+      <!--<a href="/topicweibo/" class="link"><img src="/static/images/topicWB/logo.png" alt="mapWeibo" id="logo_img" /></a>-->
+      <img id="follow_pic" class="trigger" src="/static/images/topicWB/guanzhu.png"/>
+      <h2 style="color:#06C;">名人</h2>
+      
+      <div class="popup">
+	<p id="information"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="div_input">
+  <div class="juzhong" id="search_background">
+    <button id="search_button">画像</button>
+    <input id="search_box" onKeyDown="EnterPress()"/>
+    <div id="information" ></div>
+    <div id="tag"></div>
+    <div id="Second">
+      <h3 id="Third"><em id="present_time"></em></h3>	
+    </div>
+  </div>
+</div>
+<div id="result_body">
+  <div class="section">
+  	<h3 class="section_title">关注列表</h3>
+  
+  <div id="result">
+    <h4>体育</h4>
+    <p class="tagcloud" id="sport">
+    	<a href="#"  class='tag1' onclick=autofulfill('王大雷')>王大雷</a>
+        <a href="#"  class='tag1' onclick=autofulfill('于汉超')>于汉超</a>
+        <a href="#"  class='tag1' onclick=autofulfill('毛剑卿')>毛剑卿</a>
+        <a href="#"  class='tag3' onclick=autofulfill('赵旭日')>赵旭日</a>
+        <a href="#"  class='tag2' onclick=autofulfill('傅博')>傅博</a>
+        <a href="#"  class='tag1' onclick=autofulfill('陆永')>陆永</a>
+        <a href="#"  class='tag5' onclick=autofulfill('张湘祥')>张湘祥</a>
+        <a href="#"  class='tag1' onclick=autofulfill('张杰')>张杰</a>
+        <a href="#"  class='tag2' onclick=autofulfill('Kei Nishikori')>Kei Nishikori</a>
+        <a href="#"  class='tag1' onclick=autofulfill('成淑')>成淑</a>
+        <a href="#"  class='tag1' onclick=autofulfill('陶菲克')>陶菲克</a>
+        <a href="#"  class='tag7' onclick=autofulfill('鲍春来')>鲍春来</a>
+        <a href="#"  class='tag1' onclick=autofulfill('徐积为')>徐积为</a>
+        <a href="#"  class='tag5' onclick=autofulfill('Jason Ferguson')>Jason Ferguson</a>
+		<a href="#"  class='tag1' onclick=autofulfill('李红')>李红</a>
+        <a href="#"  class='tag9' onclick=autofulfill('霍启刚')>霍启刚</a>
+        <a href="#"  class='tag1' onclick=autofulfill('陈维亚')>陈维亚</a>
+        <a href="#"  class='tag1' onclick=autofulfill('棋哥')>棋哥</a>
+        <a href="#"  class='tag1' onclick=autofulfill('张晶')>张晶</a>
+        <a href="#"  class='tag10' onclick=autofulfill('魏健通')>魏健通</a>
+        <a href="#"  class='tag1' onclick=autofulfill('林秋萍')>林秋萍</a>
+        <a href="#"  class='tag2' onclick=autofulfill('王婧')>王婧</a>
+        <a href="#"  class='tag2' onclick=autofulfill('宋缙')>宋缙</a>
+		<a href="#"  class='tag1' onclick=autofulfill('王同宝')>王同宝</a>
+		<a href="#"  class='tag1' onclick=autofulfill('王瑞元')>王瑞元</a>
+        
+        
+        <a href="#"  class='tag1' onclick=autofulfill('李婷')>李婷</a>
+        <a href="#"  class='tag3' onclick=autofulfill('于芬')>于芬</a>
+        <a href="#"  class='tag3' onclick=autofulfill('何敏')>何敏</a>
+        <a href="#"  class='tag2' onclick=autofulfill('罗玉通')>罗玉通</a>
+        <a href="#"  class='tag10' onclick=autofulfill('胡佳跳水')>胡佳跳水</a>
+        <a href="#"  class='tag1' onclick=autofulfill('袁培琳')>袁培琳</a>
+        <a href="#"  class='tag1' onclick=autofulfill('王汝汀')>王汝汀</a>
+        <a href="#"  class='tag10' onclick=autofulfill('余卓成')>余卓成</a>
+        <a href="#"  class='tag1' onclick=autofulfill('林娜')>林娜</a>
+		<a href="#"  class='tag2' onclick=autofulfill('张皓')>张皓</a>
+		<a href="#"  class='tag3' onclick=autofulfill('莫瀚娜')>莫瀚娜</a>
+        <a href="#"  class='tag1' onclick=autofulfill('彭晨')>彭晨</a>
+
+    </p>
+    <h4>财经</h4>
+    <p class="tagcloud" id="financial">
+     	<a href="#"  class='tag10' onclick=autofulfill('赵晓')>赵晓</a>
+        <a href="#"  class='tag2' onclick=autofulfill('汤敏')>汤敏</a>
+        <a href="#"  class='tag4' onclick=autofulfill('曹凤岐')>曹凤岐</a>
+        <a href="#"  class='tag1' onclick=autofulfill('林伯强')>林伯强</a>
+        <a href="#"  class='tag6' onclick=autofulfill('巴曙松')>巴曙松</a>
+        <a href="#"  class='tag9' onclick=autofulfill('毛振华')>毛振华</a>
+        <a href="#"  class='tag1' onclick=autofulfill('滕泰')>滕泰</a>
+        <a href="#"  class='tag2' onclick=autofulfill('王连洲')>王连洲</a>
+        <a href="#"  class='tag10' onclick=autofulfill('向松祚')>向松祚</a>
+        <a href="#"  class='tag1' onclick=autofulfill('程国强')>程国强</a>
+        <a href="#"  class='tag4' onclick=autofulfill('杰弗里-萨克斯')>杰弗里-萨克斯</a>
+        <a href="#"  class='tag1' onclick=autofulfill('李炜光')>李炜光</a>
+       
+        <a href="#"  class='tag10' onclick=autofulfill('夏博辉')>夏博辉</a>
+        <a href="#"  class='tag1' onclick=autofulfill('周诚君')>周诚君</a>
+        <a href="#"  class='tag2' onclick=autofulfill('徐德昭')>徐德昭</a>
+        <a href="#"  class='tag1' onclick=autofulfill('马岩')>马岩</a>
+        <a href="#"  class='tag4' onclick=autofulfill('陈旭敏')>陈旭敏</a>
+        <a href="#"  class='tag10' onclick=autofulfill('聂斌')>聂斌</a>
+        <a href="#"  class='tag10' onclick=autofulfill('萧暘')>萧暘</a>
+        <a href="#"  class='tag1' onclick=autofulfill('刘育健')>刘育健</a>
+        <a href="#"  class='tag2' onclick=autofulfill('莫宏波')>莫宏波</a>
+        <a href="#"  class='tag3' onclick=autofulfill('李海红')>李海红</a>
+        <a href="#"  class='tag2' onclick=autofulfill('刘婕')>刘婕</a>
+        <a href="#"  class='tag2' onclick=autofulfill('叶阿次')>叶阿次</a>
+ 
+    </p>
+    <h4>社会</h4>
+    <p class="tagcloud" id="social">
+		<a href="#"  class='tag9' onclick=autofulfill('任志强')>任志强</a>
+        <a href="#"  class='tag9' onclick=autofulfill('薛蛮子')>薛蛮子</a>
+        
+        <a href="#"  class='tag10' onclick=autofulfill('漆洪波')>漆洪波</a>
+        <a href="#"  class='tag1' onclick=autofulfill('余英')>余英</a>
+        <a href="#"  class='tag10' onclick=autofulfill('张欣')>张欣</a>
+        <a href="#"  class='tag10' onclick=autofulfill('王石')>王石</a>
+        <a href="#"  class='tag3' onclick=autofulfill('朱文俊')>朱文俊</a>
+        <a href="#"  class='tag4' onclick=autofulfill('杜晶')>杜晶</a>
+        <a href="#"  class='tag5' onclick=autofulfill('张纪文')>张纪文</a>
+        <a href="#"  class='tag1' onclick=autofulfill('鲍筱斌')>鲍筱斌</a>
+        <a href="#"  class='tag4' onclick=autofulfill('许尚龙')>许尚龙</a>
+        <a href="#"  class='tag8' onclick=autofulfill('孙宏斌')>孙宏斌</a>
+        <a href="#"  class='tag2' onclick=autofulfill('关红')>关红</a>
+    
+    	<a href="#"  class='tag3' onclick=autofulfill('杨乐渝')>杨乐渝</a>
+        <a href="#"  class='tag1' onclick=autofulfill('万通地产')>万通地产</a>
+        <a href="#"  class='tag2' onclick=autofulfill('马川青')>马川青</a>
+        <a href="#"  class='tag1' onclick=autofulfill('张洋')>张洋</a>
+        <a href="#"  class='tag1' onclick=autofulfill('陈治舟')>陈治舟</a>
+        <a href="#"  class='tag4' onclick=autofulfill('孙凯丽')>孙凯丽</a>
+        <a href="#"  class='tag3' onclick=autofulfill('时宁奚')>时宁奚</a>
+        <a href="#"  class='tag1' onclick=autofulfill('崔春婷')>崔春婷</a>
+        <a href="#"  class='tag2' onclick=autofulfill('李秋妍')>李秋妍</a>
+        <a href="#"  class='tag1' onclick=autofulfill('范菲')>范菲</a>
+        <a href="#"  class='tag7' onclick=autofulfill('张彤')>张彤</a>
+ 		<a href="#"  class='tag3' onclick=autofulfill('宋洋')>宋洋</a>
+        <a href="#"  class='tag4' onclick=autofulfill('李滨')>李滨</a>
+ 
+    </p>
+    </div>
+  </div>
+  
+  <div class="section">
+      <h3 class="section_title">筛选条件</h3>
+      
+  </div>
+  
+</div>
+</body>
+</html>
