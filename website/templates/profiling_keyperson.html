@@ -25,6 +25,84 @@
 			.section_title{
 				color:#396;
 			}
+			#filter{
+				border-width: 2px 1px 0;
+				border-style: solid;
+				border-color: #C00 #DDD white;
+				padding-bottom: 5px;
+				margin-bottom: 0;
+				zoom: 1;
+			}
+			#filter .filter_title{
+				height: 32px;
+				line-height: 28px;
+				padding: 0 10px;
+				background-position: 0 -134px;
+				background-repeat: repeat-x;
+			}
+			#filter dl#select_weibocount{
+				border-top: none;
+			}
+			#filter dt {
+				float: left;
+				width: 150px;
+				margin-top: 20px;
+				font-weight: bold;
+				text-align: right;
+				line-height: 25px;
+			}
+			#filter dd {
+				width: 872px;
+				float: right;
+				position: relative;
+				overflow: hidden;
+			}
+			#filter #weibocount_search{
+				display: none;
+				clear: both;
+				width: 160px;
+				height: 17px;
+				padding: 1px;
+				border-width: 1px;
+				border-style: solid;
+				border-color: #AAA #DDD #DDD #AAA;
+				margin: 2px 0 5px;
+				line-height: 17px;
+				font-family: verdana;
+			}
+			#select_weibocount .content div {
+				width: 141px;
+				overflow: hidden;
+			}
+			#filter dd div {
+				float: left;
+				height: 20px;
+				margin-right: 15px;
+				padding-top: 5px;
+			}
+			#filter dd a:link, #filter dd a:visited {
+				color: #005AA0;
+			}
+			#filter dd a {
+				height: 15px;
+				line-height: 15px;
+				text-decoration: none;
+				overflow: hidden;
+				white-space: nowrap;
+			}
+			#filter dd a:hover{
+				background:#4598D2;
+				color:#fff;
+			}
+			#advanced {
+				position: relative;
+				overflow: visible;
+				height: 4px;
+				border: 1px solid #E6E6E6;
+				margin-bottom: 30px;
+				background: whiteSmoke;
+				font-size: 0;
+			}
 		</style>
   </head>
 <body>
@@ -164,10 +242,39 @@
     </div>
   </div>
   
-  <div class="section">
-      <h3 class="section_title">筛选条件</h3>
+  <div class="section" id="filter">
+  	<div class="filter_title">
+      <h3>筛选条件</h3>
+    </div>
+    <dl id="select_weibocount">
+    	<dt>已发布微博总数：</dt>
+        <dd>
+        	<input type="text" id="weibocount_search"/>
+			<span id="select-hold"></span>
+			<ul class="tab" style="display: none; " onclick=""></ul>			
+            	<div class="content">
+                    <div><a href="#">20-30万</a></div>
+                    <div><a href="#">1万-20万</a></div>
+                    <div><a href="#">5000-1万</a></div>
+                    <div><a href="#">1000-5000</a></div>
+                    <div><a href="#">500-1000</a></div>
+                    <div><a href="#">100-500</a></div>
+                    <div><a href="#">0-100</a></div>
+                </div>
+		</dd>
+    </dl>
+    <dl>
+    	<dt>博主年龄：</dt>
+        <dd>
+        	<div><a href="#">1-10</a></div>
+            <div><a href="#">10-18</a></div>
+            <div><a href="#">18-30</a></div>
+            <div><a href="#">30-60</a></div>
       
+        </dd>
+     </dl>
   </div>
+  <div id="advanced"></div>
   
 </div>
 </body>

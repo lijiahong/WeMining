@@ -1,10 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <title>薛蛮子</title>
-    <meta name="robots" content="profiling" />
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
+    <script src="/static/mapweibo/js/jquery.tagcanvas.min.js" type="text/javascript"></script>
+    <script src="/static/js/d3.v3.min.js"></script>
+    <script src="/static/js/amcharts.js" ></script>
+    <script src="/static/js/profiling_cv.js" type="text/javascript" charset="utf-8"></script>
+    
     <style type="text/css" media="all">
       html{
       background-color:#EEE;
@@ -80,11 +86,11 @@
 	  .label {
 		  color:#666;
 		  float: left;
-		  width: 100px;
+		  width: 160px;
 		  text-align: right;
 	  }
 	  .con {
-		  margin-left: 102px;
+		  margin-left: 162px;
 		  padding: 0 10px;
 		  word-wrap: break-word;
 	  }
@@ -103,6 +109,150 @@
 		  clear: both;
 		  visibility: hidden;
 		  }
+	  #tag_cloud_div {
+		  height:200px;
+		  border:1px solid gray;
+		  margin-left:auto;
+		  margin-right:auto
+	  }
+	  
+	  .link {
+		stroke: #ccc;
+	  }
+	  
+	  .node text {
+		pointer-events: none;
+		font: 15px sans-serif;
+	  }
+	  
+	  
+	  /**
+	  *OKfestContainer style start
+	  */
+	  #OKfestContainer {
+		  position: relative;
+		  font-family: Gudea, 'Sans Serif';
+		  margin-left: auto;
+		  margin-right: auto;
+	  }
+	  #OKfestContainer rect {
+		fill: #fff;
+	  }
+	  #OKfestContainer .node, #OKfestContainer .loose {
+		fill: green;
+		cursor: pointer;
+	  }
+	  #OKfestContainer .link, #OKfestContainer .text {
+		cursor: pointer;
+	  }
+	  #OKfestContainer line {
+		  stroke-width: 0.8px;
+	  }
+	  #OKfestContainer line:hover {
+		  stroke: #000000;
+		  stroke-width: 3px;
+	  }
+	  #OKfestContainer #logoText {
+		  position: absolute;
+	  }
+	  #OKfestContainer #LogoVizText {
+		  position: absolute;
+		  background-color: #FFF;
+		  border: 2px solid #74B77E;
+		  padding: 10px;
+		  padding-right: 35px;
+		  max-width: 300px;
+		  display: none;
+		  color: #74B77E;
+		  z-index: 1000;
+	  }
+	  #OKfestContainer #LogoVizText p {
+		  margin: 0px;
+		  font-size: 13px;
+	  }
+	  #OKfestContainer #closeTweet {
+		  position: absolute;
+		  display: block;
+		  right: 5px;
+		  top: 5px;
+		  border: 2px solid #74B77E;
+		  padding: 0px 4px 0px 4px;
+		  color: #74B77E;
+		  cursor: pointer;
+		  font-size: 20px;
+		  line-height: 20px;
+	  }
+	  	  
+	  #descBlock {
+		  position: absolute;
+		  font-size: 13px;
+		  line-height: 16px;
+		  font-weight: normal;
+		  position: absolute;
+		  right: 0px;
+		  width: 130px;
+		  height: 80px;
+		  margin-bottom: 13px;
+		  margin-right: -2px;
+		  border: 2px solid #74B77E;
+		  padding: 5px;
+		  color: #74B77E;
+		  bottom: 55px;
+		  right: 0px;
+	  }
+	  
+	  #info {
+		  position: absolute;
+		  bottom: 0px;
+		  right: 0px;
+		  width: 350px;
+		  font-size: 12px;
+		  margin-bottom: -23px;
+	  }
+	  #info h2 {
+		  text-transform: uppercase;
+		  font-size: 20px;
+		  line-height: 22px;
+	  }
+	  #info h3 {
+		  font-weight: normal;
+	  }
+	  #info #infoBlock {
+		  width: 338px;
+		  height: 42px;
+		  border: 2px solid #74B77E;
+		  padding: 5px;
+		  margin-bottom: 7px;
+		  color: #74B77E;
+	  }
+	  #infoTitle, #infoTime, #infoDate {
+		  float: left;
+	  }
+	  #infoTime {
+		  margin-left: 20px;
+		  padding-top: 2px;
+		  line-height: 13px;
+	  }
+	  #infoDate {
+		  margin-left: 10px;
+		  padding-top: 2px;
+		  line-height: 13px;
+		  padding-top: 14px;
+	  }
+	  #infoTime h3 {
+		  background-color: #E2F1E6;
+		  padding: 1px 2px;
+		  font-weight: bold;
+		  font-size: 18px;
+		  line-height: 22px;
+	  }
+	  #info h2, #info h3, #info p {
+		  margin: 0px;
+	  }
+	   /**
+	  *OKfestContainer style start
+	  */
+	  
     </style>
     <style type="text/css" media="print">
       body {
@@ -140,73 +290,114 @@
     </div>
     
     <h2>个人标签</h2>
-    <span class="date">2009.9 - Present</span>
-    <h3>Undergraduate Student</h3>
-    <address>Department of Information Management and Information System, Beihang University, Beijing, China</address>
-    <p>
-      Overall GPA: 3.2/4.0
-    </p>
+   <div id="tag_cloud_div" style="margin:0 auto;">
+        <canvas width="800px" height="200px" id="myCanvas">
+            <p>Anything in here will be replaced on browsers that support the canvas element</p>
+        </canvas>
+        <div id="tags_div">
+            <ul id="tags_ul">
+            <li><a style="font-size:4.8ex">乐观的癌症斗士</a></li>
+            <li><a style="font-size:2.6ex">地震救助</a></li>
+            <li><a style="font-size:2.4ex">微博打拐</a></li>
+            <li><a style="font-size:2.4ex">UTStarCOM</a></li>
+            <li><a style="font-size:2.2ex"> 8848</a></li>
+            <li><a style="font-size:2.2ex"> 创业</a></li>
+            <li><a style="font-size:2.1ex"> 移动互联网</a></li>
+            </ul>
+        </div>
+    </div>
 
     <h2>行为信息</h2>
-    <div class='label'>平均每天微博在线时间</div><div class='con'>12h</div></div>
-   <div class="pf_item clearfix">
-   <div class='label'>累积发布微博数量</div><div class='con'>63379</div></div>
-   <div class="pf_item clearfix">
-   <div class='label'>原创微博比例</div><div class='con'> 50%</div></div>
-   <div class="pf_item clearfix">
-   <div class='label'>年龄</div><div class='con'>60</div></div>
-    <span class="date">2011.11 - 2012.6</span>
-    <h3>Student Research Training Program</h3>
-    <address>Laboratory of Social Public Opinion Analysis, A717, New Main Building, Beihang University, Beijing, China</address>
+    <div id="behavior">
+    	<div class="pf_item clearfix">
+   		<div class='label'>平均每天微博在线时间</div><div class='con'>12h</div></div>
+   		<div class="pf_item clearfix">
+   		<div class='label'>累积发布微博数量</div><div class='con'>63379</div></div>
+   		<div class="pf_item clearfix">
+   		<div class='label'>原创微博比例</div><div class='con'> 50%</div></div>
+        <div class="pf_item clearfix">
+        <div class='label'>每天发布微博数量均值</div><div class='con'> 10</div></div>
+        <div class="pf_item clearfix">
+        <div class='label'>发布微博数量标准差</div><div class='con'> 1.0</div></div>
+        <div class="pf_item clearfix">
+        <div class='label'>原创微博比例</div><div class='con'>0.5</div></div>
+   	</div>
+    <h2>社会网络结构信息</h2>
+    <h3>社区</h3>
+    <div id="community"></div>
+    <address>关注数为1815，粉丝数为9894539</address>
     <p>
-      Responsible for the technical aspects of the project
+      关注者的分布领域：体育，财经，社会
     </p>
+    最活跃粉丝
     <ul>
-      <li>Developed the whole distributed microblogging crawler and collected over one hundred million tweets</li>
-      <li>Focused on the data analysis on server-side,and wrote codes for the data processing on web application such as weibo spreading map and sentiment map</li>
-      <li>Built a web application for drawing and analyzing retweet network</li>
+      <li>毛高山 </li>
+      <li>管鹏 </li>
+      <li>协和章蓉娅</li>
     </ul>
+    <p>
+      转发数均值：20
+    </p>
+    <p>
+      评论数均值：10
+    </p>
 
-    <h2>Work Experience</h2>
-    <span class="date">Summer 2011</span>
-    <h3>System Administrator Assistant Internship</h3>
-    <address>Beijing Computational Science Research Center, No.3 He-Qing Road, Hai-Dian District, Beijing, China</address>
+    <h2>用户兴趣信息</h2>
+    <h3>微博中各类（URL、图片、视频、音频）内容所占的比例</h3>
+      <div id="content_type_chart" style="width: 100%; height: 362px;"></div>​
+    <h3>近期微博中使用频率最高的13个关键词</h3>
+    <!-- Visulisation -->
+    <div id="logoVizContainer">
+      <![if gte IE 9]>
+        <div id="OKfestContainer" style="display:none;">
+          <a href="#"><h1 id="logoText">体育</h1></a>
+          <div id="LogoVizLinks"></div>
+          <div id="LogoVizNodes"></div>
+          <div id="LogoVizLoose"></div>
+          <div id="LogoVizText">
+    		<div id="closeTweet">&times;</div>
+    		<div id="textNode"></div>
+          </div>
+          <div id="descBlock">
+                These <span id="tagCount">13</span> hash tags<br/>are currently the most<br/>post tags of the<br/>Sports<br/>field.
+    	  </div>
+    	  <div id="info">
+    		<div id="infoBlock" style="display:none;">
+    			<div id="infoTitle">
+    				<h2>Visualization</h2>
+    				<h3>of the last 100 tweets</h3>
+    			</div>
+    			<div id="infoTime">
+    				<p>from</p>
+    				<h3 id="logoMinTime">20:13pm</h3>
+    			</div>
+    			<div id="infoDate">
+    				<p>
+    					<span id="logoMinDay">tuesday 17</span>,<br />
+    					<span id="logoMinMonth">September</span>
+    				</p>
+    			</div>
+    		</div>
+		  </div>
+          </div>
+        </div>
+	  <![endif]>
+      <!--[if lt IE 9]>
+      <style type="text/css">
+        body > #container {
+          background-image: url(http://okfestival.org/wp-content/themes/okfestival-wordpress/images/header.png);
+          background-repeat: repeat-x;
+          background-position: center -1px;
+        }
+      </style>
+      <![endif]-->
+    </div>
+    <h3>近期参与的话题</h3>
+    <div id="recent_topic">
+    </div>
     <p>
-      Responsible for the construction and maintenance of information systems
+      <a href="#"> 更多信息</a>
     </p>
-    <ul>
-      <li>Developed meeting room booking system, visitor management system etc.</li>
-    </ul>
-    
-    <h2>Activities and Honors</h2>
-    <ul>
-      <li>A member of the IT department, Student Union, 2009 - 2010</li>
-      <li>Excellence award in the 1st Beihang Portal Web Page Design Contest, 2011.3</li>
-      <li>Excellence award in the 4th China College Students Computer Design Contest, 2011.7</li>
-    </ul>
-    
-    <h2>Skills</h2>
-    <h3>English proficiency</h3>
-    <ul>
-      <li>CET-4(576) CET-6(494)</li>
-      <li>Experienced on reading computer related documents</li>
-    </ul>
-    <h3>Programming skills</h3>
-    <ul>
-      <li>Writing readable and effective code in Python, Java</li>
-      <li>Experience with C, Visual Basic, Delphi</li>
-      <li>Using algorithm analysis and design pattern in practical project</li>
-      <li>Implementing algorithm based on research paper</li>
-      <li>Front-end development(HTML\CSS\JavaScript)</li>
-      <li>Basically database management and utilizing on SQL(MySQL, Oracle) and NoSQL(MongoDB, Redis)</li>
-      <li>Data visualization and GUI programming</li>
-    </ul>
-    <h3>Programming environment</h3>
-    <ul>
-      <li>Operating systems: Windows, Linux(Especially on Gentoo, Ubuntu)</li>
-      <li>IDE: Emacs, Eclipse</li>
-      <li>Web Server: Tomcat, Nginx</li>
-      <li>DBMS: MySQL, MongoDB</li>
-    </ul>
+   
   </body>
 </html>
