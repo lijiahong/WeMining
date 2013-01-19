@@ -5,8 +5,11 @@
      	<title>profile keyperson</title>
         <link type="text/css" href="/static/css/topicAnalysis.css" rel="stylesheet" />
         <link type="text/css" href="/static/css/topicHistory.css" rel="stylesheet" />
+        <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
 		<script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/tagsuggest.js"></script>
+        <!--<script type="text/javascript" src="/static/js/jquery.wookmark.js"></script>-->
+        <script type="text/javascript" src="/static/js/blocksit.js"></script>
         <script type="text/javascript" src="/static/js/profiling.js"></script>
         <style>
 			#follow_pic{
@@ -29,9 +32,8 @@
 				border-width: 2px 1px 0;
 				border-style: solid;
 				border-color: #C00 #DDD white;
-				padding-bottom: 5px;
-				margin-bottom: 0;
-				zoom: 1;
+				position: relative;
+				height: 220px;
 			}
 			#filter .filter_title{
 				height: 32px;
@@ -96,13 +98,219 @@
 			}
 			#advanced {
 				position: relative;
+				margin: 0 auto;
+				width: 960px;
 				overflow: visible;
 				height: 4px;
 				border: 1px solid #E6E6E6;
-				margin-bottom: 30px;
 				background: whiteSmoke;
 				font-size: 0;
 			}
+			#more-options {
+			  position: absolute;
+			  top: 4px;
+			  right: 341px;
+			  height: 24px;
+			  width: 234px;
+			  padding-left: 22px;
+			  line-height: 20px;
+			  text-align: right;
+			  background-position: 0 0;
+			  background-color: #F5F5F5;
+			  cursor: pointer;
+		  }
+		  
+		  #more-options div {
+			  float: left;
+			  height: 24px;
+			  width: 210px;
+			  padding-left: 22px;
+			  /*padding-right: 32px;
+			  background-position: right -25px;*/
+			  line-height: 20px;
+		  }
+			
+		  #more-options /*#more-options div*/ {
+			  background: url("/static/images/more_options_bg.gif") no-repeat;
+		  }
+		  #more-options b{
+			  background-position: 0px -12px;
+		  }
+		  #more-options b {
+			  display: block;
+			  position: absolute;
+			  top: 5px;
+			  right: 16px;
+			  overflow: hidden;
+			  width: 9px;
+			  height: 11px;
+			  background: url("/static/images/more_options_b.gif") no-repeat;
+		  }
+		  #filter_result{
+			  border-style: solid;
+			  border-width: 2px 1px 1px;
+			  border-color: #CE0000 #DEDFDE #DEDFDE #DEDFDE;
+			  background-position: 0 0;
+			  background-repeat: repeat-x;
+			  margin-top: 40px;
+			  margin-bottom: 20px;
+			  height: 60px;
+		  }
+		  #filter_result .fore1 {
+			  overflow: hidden;
+			  height: 50px;
+			  padding: 5px 8px;
+			  border-bottom: 1px solid #E7E3E7;
+			  zoom: 1;
+		  }
+		  #filter_result dl, #filter_result dt, #filter_result dd {
+			  float: left;
+			  line-height: 26px;
+			  zoom: 1;
+		  }
+		  #filter_result .order .curr {
+			  border: 1px solid #990000;
+			  background: #CC0000;
+			  font-weight: bold;
+		  }
+		  #filter_result .order dd {
+			  height: 24px;
+			  border: 1px solid #CECBCE;
+			  background-position: 0 -73px;
+			  background-repeat: repeat-x;
+			  background-color: #fff;
+			  margin-right: 5px;
+			  line-height: 24px;
+			  overflow: hidden;
+			  zoom: 1;
+		  }
+		  #filter_result .order .curr a:link, #filter_result .order .curr a:visited {
+			  color: #fff;
+		  }
+		  #filter_result .order .curr a:link, #filter_result .order .curr a:visited {
+			  color: #fff;
+		  }
+		  #filter_result .order a {
+			  display: block;
+			  padding: 0 10px;
+		  }
+		  #filter_result .pagin {
+			  float: right;
+			  height: 22px;
+			  padding: 2px 0;
+			  border-left: 1px solid #fff;
+		  }
+		  .pagin-m a, .pagin-m span.text {
+			  height: 14px;
+		  }
+		  .pagin .text, .pagin .current {
+			  border: none;
+			  padding: 4px 11px;
+		  }
+		  .pagin-m a, .pagin-m span {
+			  height: 14px;
+			  line-height: 14px;
+			  font-size: 12px;
+		  }
+		  .pagin a, .pagin span {
+			  float: left;
+			  height: 20px;
+			  padding: 3px 10px;
+			  border: 1px solid #ccc;
+			  margin-left: 2px;
+			  font-family: arial;
+			  line-height: 20px;
+			  font-size: 14px;
+			  overflow: hidden;
+			  -moz-border-radius: 5px;
+			  -webkit-border-radius: 5px;
+			  }
+		.pagin .prev, .pagin .next, .pagin .prev-disabled, .pagin .next-disabled {
+			  padding-top: 4px;
+			  border-radius: 3px;
+		  }
+		  .pagin-m .prev, .pagin-m .next, .pagin-m .prev-disabled, .pagin-m .next-disabled {
+			  padding-top: 3px;
+			  height: 14px;
+			  line-height: 14px;
+		  }
+		  .pagin .prev, .pagin .prev-disabled {
+			  padding-left: 12px;
+		  }
+		  .pagin .prev-disabled, .pagin .next-disabled {
+			  color: #ccc;
+			  cursor: default;
+		  }
+		  #filter_result .total {
+			  float: right;
+			  height: 22px;
+			  padding: 2px 15px 2px 0;
+			  border-right: 1px solid #E7E3E7;
+			  line-height: 22px;
+			  color: #c30;
+		  }
+		  a{
+			  text-decoration:none;
+		  }
+		  		  
+		  #thumbnail{
+			  position:relative;
+			  width:960px;
+			  margin:0 auto;
+			  padding-bottom: 10px;
+			  
+		  }
+		  .grid{
+			  width:188px;
+			  min-height:100px;
+			  padding: 15px;
+			  background:#fff;
+			  margin:8px;
+			  font-size:12px;
+			  float:left;
+			  box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+			  -moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+			  -webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+			  
+			  -webkit-transition: top 1s ease, left 1s ease;
+			  -moz-transition: top 1s ease, left 1s ease;
+			  -o-transition: top 1s ease, left 1s ease;
+			  -ms-transition: top 1s ease, left 1s ease;
+		  }
+		  
+		  .grid strong {
+			  border-bottom:1px solid #ccc;
+			  margin:10px 0;
+			  display:block;
+			  padding:0 0 5px;
+			  font-size:17px;
+		  }
+		  .grid .meta{
+			  text-align:right;
+			  color:#777;
+			  font-style:italic;
+		  }
+		  .grid .imgholder img{
+			  max-width:100%;
+			  background:#ccc;
+			  display:block;
+		  }
+		  
+		  /** Loader **/
+  
+		  #loader {
+			height: 16px;
+			text-align: center;
+			padding: 25px 0 25px 0;
+		  }
+			
+		  #loaderCircle {
+			width: 16px;
+			height: 16px;
+            margin: 0 auto;
+			background-image: url('/static/images/ajax-loader.gif');
+		  }
+
 		</style>
   </head>
 <body>
@@ -246,35 +454,193 @@
   	<div class="filter_title">
       <h3>筛选条件</h3>
     </div>
-    <dl id="select_weibocount">
-    	<dt>已发布微博总数：</dt>
-        <dd>
-        	<input type="text" id="weibocount_search"/>
-			<span id="select-hold"></span>
-			<ul class="tab" style="display: none; " onclick=""></ul>			
-            	<div class="content">
-                    <div><a href="#">20-30万</a></div>
-                    <div><a href="#">1万-20万</a></div>
-                    <div><a href="#">5000-1万</a></div>
-                    <div><a href="#">1000-5000</a></div>
-                    <div><a href="#">500-1000</a></div>
-                    <div><a href="#">100-500</a></div>
-                    <div><a href="#">0-100</a></div>
-                </div>
-		</dd>
-    </dl>
-    <dl>
-    	<dt>博主年龄：</dt>
-        <dd>
-        	<div><a href="#">1-10</a></div>
-            <div><a href="#">10-18</a></div>
-            <div><a href="#">18-30</a></div>
-            <div><a href="#">30-60</a></div>
-      
-        </dd>
-     </dl>
+    <div>
+        <dl id="select_weibocount">
+            <dt>已发布微博总数：</dt>
+            <dd>
+                <input type="text" id="weibocount_search"/>
+                <span id="select-hold"></span>
+                <ul class="tab" style="display: none; " onClick=""></ul>			
+                    <div class="content">
+                        <div><a href="#">20-30万</a></div>
+                        <div><a href="#">1万-20万</a></div>
+                        <div><a href="#">5000-1万</a></div>
+                        <div><a href="#">1000-5000</a></div>
+                        <div><a href="#">500-1000</a></div>
+                        <div><a href="#">100-500</a></div>
+                        <div><a href="#">0-100</a></div>
+                    </div>
+            </dd>
+        </dl>
+        <dl>
+            <dt>博主年龄：</dt>
+            <dd>
+                <div><a href="#">1-10</a></div>
+                <div><a href="#">10-18</a></div>
+                <div><a href="#">18-30</a></div>
+                <div><a href="#">30-60</a></div>
+          
+            </dd>
+         </dl>
+     </div>
   </div>
-  <div id="advanced"></div>
+  <div id="advanced">
+  	<div id="more-options" class="close" style="right: 350px;">
+    	<div>更多筛选条件（性别，所属领域）</div>
+        <b></b>
+     </div>
+  </div>
+  
+  <div id="filter_result" class="section">
+  		<div class="fore1">
+			<dl class="order">
+				<dt>排序：</dt>
+				<dd class="curr"><a href="#" onClick="">相关度</a><b></b></dd>
+                <dd ><a href="#" onClick="">微博数</a><b></b></dd>
+				<dd ><a href="#" onClick="">粉丝数</a><b></b></dd>
+                <dd ><a href="#" onClick="">关注数</a><b></b></dd>
+			</dl>
+			<div class="pagin pagin-m" id="top_pagi">
+				<span class="text">1/1</span>
+				<span class="prev-disabled">上一页<b></b></span>
+				<span class="next-disabled">下一页<b></b></span>
+			</div>
+			<div class="total">
+				<span>共<strong>18</strong>条结果</span>
+			</div>
+			<span class="clr"></span>
+		</div>
+
+  </div>
+  
+  <div id="thumbnail">
+	  <div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/1.jpg" />
+		</div>
+		<strong>任志强</strong>
+		<p>知名地产商</p>
+		<div class="meta">http://weibo.com/renzhiqiang</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/2.jpg" />
+		</div>
+		<strong>薛蛮子</strong>
+		<p>天使投资人薛蛮子 商业计划书请发送至——创投圈：ctquan.com/manzi</p>
+		<div class="meta">http://weibo.com/charlesxue</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/3.jpg" />
+		</div>
+		<strong>吴晓求</strong>
+		<p>中国人民大学金融与证券研究所所长吴晓求	</p>
+		<div class="meta">http://weibo.com/u/1885355607</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/4.jpg" />
+		</div>
+		<strong>林志玲</strong>
+		<p>台湾女艺人：請大家多多支持志玲姊姊慈善基金會^_______________^ http://www.chilingjj.org/</p>
+		<div class="meta">http://weibo.com/linzhilingblog</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/5.jpg" />
+		</div>
+		<strong>王石</strong>
+		<p>万科企业股份有限公司董事会</p>
+		<div class="meta">http://weibo.com/wangshi</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/6.jpg" />
+		</div>
+		<strong>潘石屹</strong>
+		<p>SOHO中国董事长潘石屹</p>
+		<div class="meta">http://weibo.com/panshiyi</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/7.jpg" />
+		</div>
+		<strong>张欣</strong>
+		<p>SOHO中国CEO</p>
+		<div class="meta">http://weibo.com/sohozhangxin</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/8.jpg" />
+		</div>
+		<strong>李开复</strong>
+		<p>创新工场董事长兼首席执行官</p>
+		<div class="meta">http://weibo.com/kaifulee</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/9.jpg" />
+		</div>
+		<strong>郭敬明</strong>
+		<p>简介：上海最世文化发展有限公司 董事长 《最小说》《最漫画》 主编 联系方式： （京）赵先生：010-58678881 转1350 （沪）叶小姐：021-33811902转228</p>
+		<div class="meta">http://weibo.com/guojingming</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/10.jpg" />
+		</div>
+		<strong>韩寒</strong>
+		<p>韩寒</p>
+		<div class="meta">http://weibo.com/hanhan</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/11.jpg" />
+		</div>
+		<strong>洪晃ilook</strong>
+		<p>BNC薄荷糯米葱中国设计师店投资人，《ILOOK》杂志出版人</p>
+		<div class="meta">http://weibo.com/honghuang</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/12.jpg" />
+		</div>
+		<strong>茅于轼</strong>
+		<p>人文经济学会理事长、天则经济研究所荣誉理事长</p>
+		<div class="meta">http://weibo.com/maoyushi</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/13.jpg" />
+		</div>
+		<strong>风马牛社区</strong>
+		<p>简介：风马牛社区官方微博。www.fengmaniu.com</p>
+		<div class="meta">http://weibo.com/fenglun</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/14.jpg" />
+		</div>
+		<strong>陈劲松</strong>
+		<p>深圳世联地产顾问股份有限公司董事长，深圳市红树林湿地保护基金会发起人，壹基金合作伙伴</p>
+		<div class="meta">http://weibo.com/chenjinsong</div>
+	</div>
+	<div class="grid">
+		<div class="imgholder">
+			<img src="/static/images/keyperson_image/15.jpg" />
+		</div>
+		<strong>周忻</strong>
+		<p>易居中国董事局联席主席兼总裁（CEO）</p>
+		<div class="meta">http://weibo.com/zhouxinblog</div>
+	</div> <!---->
+    
+    
+
+    </div>
+    <div id="loader">
+        <div id="loaderCircle"></div>
+      </div>
   
 </div>
 </body>

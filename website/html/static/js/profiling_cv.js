@@ -125,7 +125,8 @@ function display_community(){
 		  .attr("x", -8)
 		  .attr("y", -8)
 		  .attr("width", 16)
-		  .attr("height", 16);
+		  .attr("height", 16)
+		  .attr("class", "profile_image");
 	
 	  node.append("text")
 		  .attr("dx", 12)
@@ -473,10 +474,128 @@ function display_hashtags_vis(){
     } */
 }
 
+function display_community_pie(){
+	var radius = 74,
+		padding = 10;
+	
+	var color = d3.scale.ordinal()
+		.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+	
+	var arc = d3.svg.arc()
+		.outerRadius(radius)
+		.innerRadius(radius - 30);
+	
+	var pie = d3.layout.pie()
+		.sort(null)
+		.value(function(d) { return d.population; });
+	
+	d3.csv("/static/js/community_pie.csv", function(error, data) {
+	  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "State"; }));
+	
+	  data.forEach(function(d) {
+		d.ages = color.domain().map(function(name) {
+		  return {name: name, population: +d[name]};
+		});
+	  });
+	
+	  var legend = d3.select("#community_pie").append("svg")
+		  .attr("class", "legend")
+		  .attr("width", radius * 2)
+		  .attr("height", radius * 2)
+		.selectAll("g")
+		  .data(color.domain().slice().reverse())
+		.enter().append("g")
+		  .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+	
+	  legend.append("rect")
+		  .attr("width", 18)
+		  .attr("height", 18)
+		  .style("fill", color);
+	
+	  legend.append("text")
+		  .attr("x", 24)
+		  .attr("y", 9)
+		  .attr("dy", ".35em")
+		  .text(function(d) { return d; });
+	
+	  var svg = d3.select("#community_pie").selectAll(".pie")
+		  .data(data)
+		.enter().append("svg")
+		  .attr("class", "pie")
+		  .attr("width", radius * 2)
+		  .attr("height", radius * 2)
+		.append("g")
+		  .attr("transform", "translate(" + radius + "," + radius + ")");
+	
+	  svg.selectAll(".arc")
+		  .data(function(d) { return pie(d.ages); })
+		.enter().append("path")
+		  .attr("class", "arc")
+		  .attr("d", arc)
+		  .style("fill", function(d) { return color(d.data.name); })
+		  .append("text")
+		  .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+		  .attr("dy", ".35em")
+		  .style("fill", "#FFF")
+		  .style("text-anchor", "middle")
+		  .text(function(d) { return d.data.population; });
+	  /*
+	  svg.selectAll(".arc").append("svg:text")
+		  .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+		  .attr("dy", ".35em")
+		  .style("text-anchor", "middle")
+		  .text(function(d) { return d.data.population; });
+	*/
+	  svg.append("text")
+		  .attr("dy", ".35em")
+		  .style("text-anchor", "middle")
+		  .text(function(d) { return d.State; });
+	
+	});
+}
+
+function display_d3_cloud(){
+  var fill = d3.scale.category20();
+
+  d3.layout.cloud().size([800, 300])
+      .words([{text: "林彪", size: 11.2877123795*10}, {text: "腾冲", size: 11.2865568361*10}, {text: "中国远征军", size: 11.2865568361*10}, {text: "黄仁宇", size: 10.3279077918*10}, {text: "毛革", size: 9.78771145474*10}, {text: "九一三事件 ", size: 9.78771145474*10}, {text: "理想主义", size: 9.78771145474*10}, {text: "高华", size: 9.78771145474*10}, {text: "天下", size: 6.65730331428*10}, {text: "文革", size: 6.6302150609*10}, {text: "改革开放", size: 6.02094444185*10}, {text: "教授", size: 5.93892991855*10}, {text: "豆腐渣", size: 5.88402573053*10}, {text: "刘仰", size: 5.9259598521*10}, {text: "耳光", size: 5.93384872697*10}, {text: "政治" , size: 5.74903112281*10}, {text: "颜玉宏", size: 5.6126369809*10}, {text: "康复中心", size: 5.55077191779*10}, {text: "饥荒", size: 5.54695327391*10}, {text: "知识", size: 5.54695327391*10},{text: "共产党", size: 5.6336898333*10}, {text: "湿地", size: 5.62722896337*10}])
+	  /*[
+        "林彪", "world", "normally", "you", "want", "more", "words",
+        "than", "this"].map(function(d) {
+        return {text: d, size: 10 + Math.random() * 90};
+      }))*/
+      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+
+  function draw(words) {
+    d3.select("#d3_cloud").append("svg")
+        .attr("width", 800)
+        .attr("height", 300)
+      .append("g")
+        .attr("transform", "translate(400,150)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+}
+
 $(document).ready(function(){
 	display_personal_tags();
 	display_recent_topics();
 	display_content_type_chart();
 	display_community();
 	display_hashtags_vis();
+	display_community_pie();
+	display_d3_cloud();
 });

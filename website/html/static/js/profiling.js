@@ -19,7 +19,134 @@ function error(id, times) {
     setTimeout("normal('"+id+"',"+times+")",150);
 }
 
+function display_thumbnail(){
+	var options = {
+			numOfCol: 5,
+			offsetX: 8,
+			offsetY: 8
+	};
+	
+	//blocksit define
+	$(window).load( function() {
+		$('#thumbnail').BlocksIt(options);
+	});
+	
+	//window resize
+	var currentWidth = 1100;
+	$(window).resize(function() {
+		var winWidth = $(window).width();
+		var conWidth;
+		if(winWidth < 660) {
+			conWidth = 440;
+			col = 2
+		} else if(winWidth < 880) {
+			conWidth = 660;
+			col = 3
+		} else if(winWidth < 1100) {
+			conWidth = 880;
+			col = 4;
+		} else {
+			conWidth = 1100;
+			col = 5;
+		}
+		
+		if(conWidth != currentWidth) {
+			currentWidth = conWidth;
+			$('#thumbnail').width(conWidth);
+			$('#thumbnail').BlocksIt({
+				numOfCol: col,
+				offsetX: 8,
+				offsetY: 8
+			});
+		}
+	});
+	
+	// Capture scroll event.
+    $(document).bind('scroll', onScroll);
+      
+    // Load first data from the API.
+    loadData();
+	
+	var handler = null;
+    var page = 1;
+    var isLoading = false;
+    var apiURL = 'http://www.wookmark.com/api/json/popular';
+	
+	/**
+     * When scrolled all the way to the bottom, add more tiles.
+     */
+    function onScroll(event) {
+      // Only check when we're not still waiting for data.
+      if(!isLoading) {
+        // Check if we're within 100 pixels of the bottom edge of the broser window.
+        var closeToBottom = ($(window).scrollTop() + $(window).height() > $(document).height() - 100);
+        if(closeToBottom) {
+          loadData();
+        }
+      }
+    };
+	
+	/**
+     * Refreshes the layout.
+     */
+    function applyLayout() {
+      // Clear our previous layout handler.
+      //if(handler) handler.wookmarkClear();
+      
+      // Create a new layout handler.
+	  
+      handler = $('#thumbnail');
+      handler.BlocksIt(options);
+    };
+	
+	/**
+     * Loads data from the API.
+     */
+    function loadData() {
+      isLoading = true;
+      $('#loaderCircle').show();
+      
+      $.ajax({
+        url: apiURL,
+        dataType: 'jsonp',
+        data: {page: page}, // Page parameter to make sure we load new data
+        success: onLoadData
+      });
+    };
+    
+    /**
+     * Receives data from the API, creates HTML for images and updates the layout
+     */
+    function onLoadData(data) {
+      isLoading = false;
+      $('#loaderCircle').hide();
+      
+      // Increment page index for future calls.
+      page++;
+      
+      // Create HTML for the images.
+      var html = '';
+      var i=0, length=data.length, image;
+      for(; i<length; i++) {
+        image = data[i];
+		
+		html += '<div class="grid"><div class="imgholder">';
+		html += '<img src="' + image.preview + '" /></div>';
+		html += '<strong>' + i + '</strong>';
+		html += '<p>' + image.title + '</p>';
+		html += '<div class="meta">http://weibo.com</div>' + '</div>';
+      }
+      
+      // Add image HTML to the page.
+      $('#thumbnail').append(html);
+      
+      // Apply layout.
+      applyLayout();
+	}
+}
+
 $(document).ready(function(){
+	display_thumbnail();
     $("#search_box").tagSuggest({
 	url: '/api/topic/suggest.json',
 	delay: 250
@@ -89,26 +216,26 @@ $(document).ready(function(){
 	});
     });
     $("#search_button").click(function() {
-	var _topic = $("#search_box")[0].value;
-	if(_topic == " " || _topic == ''){
+	var keywords = $("#search_box")[0].value;
+	if(keywords == " " || keywords == ''){
 	    error('search_box', 3);
 	    return;
 	}
 	else{
-	    window.location.href="/topicweibo/analysis?topic=" + _topic;
+	    window.location.href="/profile/cv";
 	}
     });
     
     $("#follow_pic").click(function() {
 	$('#information').text('将此搜索框内的名人加入关注列表.');
-	var _topic = $("#search_box")[0].value;
-	if(_topic == " " || _topic == ''){
+	var keywords = $("#search_box")[0].value;
+	if(keywords == " " || keywords == ''){
 	    error('search_box', 3);
 	    return;
 	}
 	else{
 	    $.ajax({
-		url: '/topicweibo/followtrends?topic='+encodeURIComponent(_topic),
+		url: '/topicweibo/followtrends?topic='+encodeURIComponent(keywords),
 		dataType: 'json',
 		success: function(d) {
 		    if(d.status == 'is followed')
@@ -124,53 +251,4 @@ $(document).ready(function(){
 	}
     });
 	
-	var diameter = 960,
-		format = d3.format(",d"),
-		color = d3.scale.category20c();
-	
-	var bubble = d3.layout.pack()
-		.sort(null)
-		.size([diameter, diameter])
-		.padding(1.5);
-	
-	var svg = d3.select("body").append("svg")
-		.attr("width", diameter)
-		.attr("height", diameter)
-		.attr("class", "bubble");
-	
-	d3.json("/static/js/flare.json", function(error, root) {
-	  var node = svg.selectAll(".node")
-		  .data(bubble.nodes(classes(root))
-		  .filter(function(d) { return !d.children; }))
-		.enter().append("g")
-		  .attr("class", "node")
-		  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-	
-	  node.append("title")
-		  .text(function(d) { return d.className + ": " + format(d.value); });
-	
-	  node.append("circle")
-		  .attr("r", function(d) { return d.r; })
-		  .style("fill", function(d) { return color(d.packageName); });
-	
-	  node.append("text")
-		  .attr("dy", ".3em")
-		  .style("text-anchor", "middle")
-		  .text(function(d) { return d.className.substring(0, d.r / 3); });
-	});
-	
-	// Returns a flattened hierarchy containing all leaf nodes under the root.
-	function classes(root) {
-	  var classes = [];
-	
-	  function recurse(name, node) {
-		if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
-		else classes.push({packageName: name, className: node.name, value: node.size});
-	  }
-	
-	  recurse(null, root);
-	  return {children: classes};
-	}
-	
-	d3.select(self.frameElement).style("height", diameter + "px");
 });
