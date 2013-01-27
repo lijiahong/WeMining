@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.wookmark.js"></script>
+     <script type="text/javascript" src="/static/js/blocksit.js"></script>
+     <script src="/static/mapweibo/js/jquery.tagcanvas.min.js" type="text/javascript"></script>
+    <script src="/static/js/d3.v3.min.js"></script>
+    <script src="/static/js/d3.v3.js"></script>
+	<script src="/static/js/d3.layout.cloud.js"></script>
+    <script src="/static/js/d3.parsets.js"></script>
+    
+    <script type="text/javascript" src="/static/js/profiling_person.js"></script>
+    <title>网民画像</title>
+    <link type="text/css" href="/static/css/d3.parsets.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+<style>
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		outline: 0;
+		font-size: 100%;
+		vertical-align: baseline;
+		background: transparent;
+	}
+	body{
+		font: 12px Arial,"simsun";
+		line-height: 1;
+		background-color: #F8F7F7;
+	}
+	ol, ul {
+		list-style: none;
+	}
+	h1 {
+		font-size: 26px;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: bold;
+	}
+	h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+		text-decoration: none;
+		color: black;
+	}
+	a:link, a:visited {
+		color: black;
+		text-decoration: none;
+	}
+	a:hover {
+		color: #008ed3;
+	}
+	#page {
+		padding-bottom: 50px;
+	}
+	
+	#header {
+		position: fixed;
+		z-index: 100;
+		width: 100%;
+		padding: 0 15px 0 0;
+	
+		background-color: rgba(255,255,255,.95);
+		-moz-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		height: 40px;
+		text-shadow: 0 1px #ffffff;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f8f8f8));
+		background-image: -webkit-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -moz-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -ms-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -o-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: linear-gradient(top, #ffffff, #f8f8f8);
+		border-bottom: 1px solid #cdcdcd;
+		text-shadow: 0 1px #ffffff;
+		/*
+		background-color: #2c2c2c;
+		background-image: -moz-linear-gradient(top, #333333, #222222);
+		background-image: -ms-linear-gradient(top, #333333, #222222);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#333333), to(#222222));
+		background-image: -webkit-linear-gradient(top, #333333, #222222);
+		background-image: -o-linear-gradient(top, #333333, #222222);
+		background-image: linear-gradient(top, #333333, #222222);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#333333', endColorstr='#222222', GradientType=0);
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;*/
+		
+	}
+	#header .logo {
+		float: left;
+		width: 200px;
+	}
+		
+	#header a:link, #header a:visited {
+		color: #333;
+		text-decoration: none;
+		-moz-transition: all 0.1s ease-out;
+		-o-transition: all 0.1s ease-out;
+		-webkit-transition: all 0.1s ease-out;
+		-ms-transition: all 0.1s ease-out;
+		transition: all 0.1s ease-out;
+	}
+	
+	#header .logo a {
+		float: left;
+		margin: 0 auto;
+	}
+	#header .options {
+	  float: right;
+	  margin: 0 0 0 0;
+	  font-size: 12px;
+	  text-align: center;
+	  border-left: 1px solid #e8e8e8;
+	  text-align: center;
+	}
+	#header .primary li, #header .options .item {
+	  float: left;
+	  margin: 0 0 0 0;
+	  line-height: 40px;
+	  border-left: 1px solid #fff;
+	  border-right: 1px solid #e8e8e8;
+	}
+
+	#header .options .search {
+	  padding: 0 10px 0 10px;
+	  height: 40px;
+	  position: relative;
+	}
+	#header .options .search input {
+	  margin-top: 8px;
+	  -moz-border-radius: 3px;
+	  -webkit-border-radius: 3px;
+	  border-radius: 3px;
+	  color: #333333;
+	  background-color: #fafafa;
+	  border: 1px solid;
+	  border-color: #c2c0c0 #cccaca #d1cfcf;
+	  border-radius: 4px;
+	  box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	  -moz-box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	  -webkit-box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	}
+	textarea, input[type="text"], input[type="password"] {
+	  display: block;
+	  border: 1px solid #ccc;
+	  -moz-transition: all 0.1s ease-out;
+	  -o-transition: all 0.1s ease-out;
+	  -webkit-transition: all 0.1s ease-out;
+	  -ms-transition: all 0.1s ease-out;
+	  transition: all 0.1s ease-out;
+	  padding: 4px 5px 5px 7px;
+	}
+	.headerSpacer {
+	  height: 50px;
+	}
+	
+	#content {
+		position: relative;
+		padding-bottom: 35px;
+		width:1200px;
+		margin:0 auto;
+	}
+	.block{
+		padding: 15px;
+		background:#fff;
+		margin-bottom:10px;
+		line-height:1.7;
+		box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		
+		transition: box-shadow 1s;
+		-moz-transition: -moz-box-shadow 1s;
+		-webkit-transition: -webkit-box-shadow 1s;
+	}
+	.block:hover {
+		box-shadow: 0 1px 13px rgba(34,25,25,1);
+		-moz-box-shadow: 0 1px 13px rgba(34,25,25,1);
+		-webkit-box-shadow: 0 1px 13px rgba(34,25,25,1);
+	}
+	
+	.block h3{
+		font-size:14px;
+		color:#7A8489;
+		margin:0 19px 10px 19px;
+		padding-bottom:5px;
+		padding-left:10px;
+		text-align:left;
+		text-shadow:1px 1px 0 #fff, 2px 2px 1px #ccc;
+		font-family:'Arial Narrow', Arial, Helvetica, sans-serif;
+		
+	}
+	.block pre{
+		background:#F4FAFC;
+		padding:15px;
+		margin:0 25px;
+		border:1px solid #ADC6D1;
+		line-height:1.8;
+	}
+	.descriptions{
+		font-family: "Trebuchet MS", Helvetica, Arial;
+	}
+	.descriptions strong{
+		font-size:14px;
+		text-decoration:none;
+	}
+	.descriptions em{
+		font-size:12px;
+		font-weight:bold;
+		color:#219EE2;
+	}
+	.descriptions span{
+		color:#888;
+		font-size:12px;
+	}
+	.descriptions a:hover, a:active {
+		color: #91DCFF;
+	}
+	.descriptions a {
+		color: #35BFFF;
+		text-decoration: none;
+	}
+	.log p{
+		font-size:12px;
+	}
+	
+	.nobox{
+		text-align:center;
+		padding:25px 15px;
+	}
+	.nobox h2{
+		font-size:50px;
+		margin:15px 0;
+		text-shadow:2px 1px 1px #F7F5F5, 3px 2px 1px #888;
+		letter-spacing:5px;
+		color:#4F4848;
+		font-family:'DistantGalaxyRegular', Arial, Helvetica, sans-serif;
+	}
+	.nobox h2 span{
+		color: #DB6D00;
+		letter-spacing:5px;
+		display:inline-block;
+		padding:0 7px;
+		font-size:57px;
+	}
+	.nobox h3{
+		font-size:22px;
+		font-weight:normal;
+		font-style:italic;
+		color:#878787;
+		text-shadow:1px 1px 0 #fff;
+		letter-spacing:1px;
+	}
+	
+	.imgholder{
+		width:180px;
+		height:180px;
+		overflow:hidden;
+		margin:0 auto;
+		display:block;
+		background:#000;
+	}
+	
+	.imgholder img{
+		transform: scale(1.1, 1.1);
+		-ms-transform: scale(1.1, 1.1);
+		-moz-transform: scale(1.1, 1.1);
+		-webkit-transform: scale(1.1, 1.1);
+		-o-transform: scale(1.1, 1.1);
+		opacity:1;
+		
+		transition:transform 0.5s ease-in-out, opacity 0.5s;
+		-moz-transition:-moz-transform 0.5s ease-in-out, opacity 0.5s;
+		-webkit-transition:-webkit-transform 0.5s ease-in-out, opacity 0.5s;
+	}
+	.imgholder:hover img{
+		transform:scale(1, 1);
+		-ms-transform:scale(1, 1);
+		-moz-transform:scale(1, 1);
+		-webkit-transform:scale(1, 1);
+		-o-transform:scale(1, 1);
+		opacity:0.9;
+	}
+	/*
+	.link {
+		stroke: #F00;
+	  }*/
+	  
+	  .profile_image{
+		  border-style: none solid none none;
+		  border-right-color: #FFFFFF;
+		  border-right-width: 3px !important;
+	  }
+	  
+	  .node text {
+		pointer-events: none;
+		font: 15px;
+	  }
+	  
+	  .arc {
+		stroke: #fff;
+	  }
+	  .box-hot {
+		border-left: 1px solid #d9d9de;
+		border-right: 1px solid #d9d9de;
+		border-bottom: 1px solid #d9d9de;
+		float: left;
+		width: 308px;
+		height: 337px;
+		overflow: visible;
+		margin: 0 15px 10px 0;
+		position: relative;
+		z-index: 2;
+	  }
+	  .box-hot .list-tt {
+		background-image: url("../common/images/sprite-bg.png");
+		background-repeat: repeat-x;
+		background-position: 0 -400px;
+		}
+		.list-tt {
+		background: #f7f7f7;
+		overflow: hidden;
+		color: #808080;
+		height: 25px;
+		line-height: 24px;
+		padding: 0 0 0 10px;
+	  }
+	  .tt-index {
+		float: left;
+		margin-right: 5px;
+		padding-right: 5px;
+		border-right: 1px solid #fff;
+		}
+	Inherited from div.list-tt
+		.list-tt {
+		color: #808080;
+		line-height: 24px;
+	  }
+	  .list-tt .tt-value {
+		width: 60px;
+		}
+	  .tt-value {
+		display: inline;
+		float: right;
+		width: 70px;
+		}
+	  .box-hot .tab-bd {
+		overflow: visible;
+		}
+		.tab-bd {
+		overflow: hidden;
+		}
+		.box-hot .tab-box {
+		  position: relative;
+		  }
+		  #hot-list {
+		position: relative;
+		z-index: 2;
+		}
+		#hot-list li {
+		padding: 8px 0 9px;
+		}
+		.list li {
+		overflow: hidden;
+		position: relative;
+		height: 15px;
+		line-height: 14px;
+		overflow: hidden;
+		padding: 8px 0 9px;
+		border-bottom: 1px dotted #dbdbdb;
+		margin: 0 14px;
+		}
+	 .box_cloud{
+		 float: left;
+		 width:798px;
+		 border: 1px solid #d9d9de;
+		 margin: 0 auto;
+	 }
+	 .box_cloud h2.title {
+		line-height: 30px;
+		font-size: 14px;
+		font-weight: 700;
+		color: #4d4d4d;
+		padding-left: 15px;
+	}
+	.tab-skin-hot {
+		background-position: 0 -199px;
+		height: 32px;
+	}
+	.tab-hd {
+		background-repeat: repeat-x;
+		overflow: hidden;
+		width: 100%;
+	}
+	.tab-skin-hot li.current {
+		border: 1px solid #ad0806;
+		height: 30px;
+		line-height: 30px;
+		background-color:#C00;
+	}
+	.tab-hd li.current {
+		color: #fff;
+		font-weight: 700;
+		margin-top: 0;
+	}
+	.tab-skin-hot li {
+		width: 102px;
+		height: 32px;
+		position: relative;
+		line-height: 30px;
+		text-align: center;
+		font-size: 12px;
+		font-size: 14px;
+		font-weight: 700;
+		font-family: "微软雅黑";
+	}
+	.tab-hd li {
+		float: left;
+		cursor: pointer;
+		color: 454545;
+	}
+	.realtime {
+		display: inline-block;
+		width: 14px;
+		height: 14px;
+		overflow: hidden;
+		text-indent: -999px;
+		
+		position: absolute;
+		top: 9px;
+		left: 30px;
+	}
+	.weekspot {
+		display: inline-block;
+		width: 14px;
+		height: 14px;
+		overflow: hidden;
+		text-indent: -999px;
+		position: absolute;
+		top: 9px;
+		left: 30px;
+	}
+	.num-top {
+		background: #ed4138;
+		border: 1px solid #db2b28;
+		width: 12px;
+		height: 11px;
+		color: #fff;
+		text-align: center;
+		display: inline;
+		float: left;
+		font-size: 10px;
+		line-height: 10px;
+	}
+	.list .num-top, .list .num-normal {
+		margin-right: 20px;
+	}
+	.num-top, .num-normal {
+		font-family: "simsun";
+	}
+	.list-title {
+		float: left;
+		display: inline;
+	}
+	.list li {
+		line-height: 14px;
+	}
+	.list .icon-rise, .list .icon-fall, .list .icon-fair {
+		width: 70px;
+		text-align: right;
+	}
+	.icon-rise, .icon-fall, .icon-fair {
+		float: right;
+		padding-right: 10px;
+	}
+	
+	
+	
+	#main_menu {
+		position: relative;
+		float:left;
+		left: 0;
+		top: 0;
+		height: 38px;
+	}
+	#main_menu a {
+		border: 1px solid #EEE;
+		border-width: 0 1px;
+	}
+	#nav_bar_person_profile, #nav_bar_group_profile, #nav_bar_search_profile{
+		display: block;
+		padding: 0 15px;
+		height: 39px;
+		line-height: 39px;
+		float: left;
+		color: #CB2027;
+		font-size: 14px;
+		text-decoration: none;
+		postition: relative;
+	}
+	#main_menu a span {
+		color: #000;
+	}
+	#main_menu a.active span {
+		color: #C90000;
+	}
+	#profile {
+		position: absolute;
+		left: 50%;
+		margin-top: 5px;
+		margin-left: -40px;
+	}
+	.wrapper {
+		position: relative;
+		margin: 0 auto;
+		border: 0;
+	}
+	#simple_intro strong,#tag_cloud_div strong, #network strong, #behavior strong, #interest strong {
+		border-bottom: 1px solid #ccc;
+		display: block;
+		font-size: 17px;
+		padding: 2px 10px 8px 12px;
+		margin-bottom: 10px;
+		font-size: 18px;
+		font-weight: normal;
+		line-height: 22px;
+		color: #666666;
+	}
+	#tag_cloud_div strong, #behavior strong{
+		text-align:right;
+	}
+	#network strong,#interest strong{
+		text-align:center;
+	}
+	
+	#statistics_network {
+		overflow: auto;
+	}
+	
+	.section {
+		float: left;
+		width: 250px;
+		padding: 0px 10px 10px 30px;
+	}
+	.section h2 {
+		font-size: 1.1em;
+		text-align:center;
+		color: #222222;
+		padding-bottom: 10px;
+		border-bottom: 1px dotted #CCCCCC;
+	}
+	.section ol {
+		list-style-type: decimal;
+		-webkit-margin-start: 7em;
+	}
+	.section li {
+		padding-left: 15px;
+		margin: 10px 0px;
+	}
+	.section li span {
+		cursor: pointer;
+	}
+	.weak {
+		text-decoration: none;
+		color: #777777;
+		font-size: .8em;
+	}
+	
+	/*returnTop*/
+	p#back-to-top{
+		position:fixed;
+		display:none;
+		bottom:100px;
+		right:0px;
+	}
+	p#back-to-top a{
+		text-align:center;
+		text-decoration:none;
+		color:#d1d1d1;
+		display:block;
+		width:64px;
+		/*使用CSS3中的transition属性给跳转链接中的文字添加渐变效果*/
+		-moz-transition:color 1s;
+		-webkit-transition:color 1s;
+		-o-transition:color 1s;
+	}
+	p#back-to-top a:hover{
+		color:#979797;
+	}
+	p#back-to-top a span{
+		background:transparent url(/static/images/backtotop.gif) no-repeat;
+		border-radius:6px;
+		display:block;
+		height:45px;
+		width:35px;
+		margin:0 auto 5px auto;
+		
+		/*使用CSS3中的transition属性给<span>标签背景颜色添加渐变效果*/
+		-moz-transition:background 1s;
+		-webkit-transition:background 1s;
+		-o-transition:background 1s;
+	}
+	#back-to-top a:hover span{
+		background:transparent url(/static/images/backtotop.gif) no-repeat;
+	}
+</style>
+</head>
+<body>
+<a name="top"></a>
+<p id="back-to-top"><a href="#top"><span></span>返回顶部</a></p>
+<div id="page">
+    <div id="header"> 
+       <div class="wrapper" style="width:1170px;">     
+        <div id="profile"> 
+            <a href="/profile/bubble"><img src="/static/images/profile_logo.png" width="100" height="30" alt="网民画像"/></a>
+        </div>
+        <div id="main_menu">
+        	<a id="nav_bar_person_profile" href="/profile/person" class="active" >
+            	<span>单个网民画像</span>
+            </a>
+            <a id="nav_bar_group_profile" href="/profile/group" >
+            	<span>网民群体画像</span>
+            </a>
+            <a id="nav_bar_search_profile" href="/profile/search" >
+            	<span>网民特征搜索与分类展示</span>
+            </a>
+        </div> 
+        <div class="options">
+  		
+        <ul> 
+            <li class="item search"> <input type="text" name="search" value="" placeholder="按博主昵称或领域搜索"/><div id="openClose" onClick="checkClose();" class="open opend"></div></li>
+            <li class="item about"><a href="#">关于我们</a></li> 
+        </ul> 
+        </div>
+       </div><!--wrapper end-->
+    </div><!--#header end--> 
+    <div class="headerSpacer"></div>
+    
+    <div id="content">
+    <div class="block descriptions" data-size="1" id="simple_intro" style="height:443px">
+		
+		<a class="imgholder" href="#">
+			<img src="/static/images/XMZ.jpg" width="180" height="180" alt="薛蛮子" />
+		</a>
+        <strong>薛蛮子</strong>
+		<p style="margin: 10px auto auto 19px;">
+			关注:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1882 <br/>
+            粉丝:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1002万 <br/>
+            微博:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;64540 <br/>
+            性别:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;男 <br/>
+            年龄:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60 <br/>
+            是否认证:&nbsp;&nbsp;&nbsp;是 <br/>
+            个人简介:&nbsp;&nbsp;&nbsp;天使投资人薛蛮子 <br/>
+            注册地址:&nbsp;&nbsp;&nbsp;北京 朝阳区 <br/>
+            注册时间:&nbsp;&nbsp;&nbsp;2010-09-06 <br/>
+           
+			<span><a href="http://weibo.com/charlesxue">http://weibo.com/charlesxue</a></span>
+		</p>
+	</div>
+    <!--
+	<div class="nobox" data-size="2">
+		<h2>Blocks<span>It</span>.js</h2>
+		<h3>Dynamic Grid Layout jQuery Plugin</h3>
+	</div>
+    -->
+    <div class="block social_network" data-size="3" id="network">
+		<strong>一周社会网络结构信息</strong>
+        <div id="community"></div>
+		
+	</div>
+    
+	<div class="block behavior" id="behavior">
+		<strong>一周行为信息</strong>
+        <p>平均每天微博在线时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em style="font-size:16px;color:#3C9;">12</em>&nbsp;<em style="font-size:16px;color:#06C;">小时</em></p>
+        <p>平均每天微博发布数量&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em style="font-size:16px;color:#C00;">200</em>&nbsp;<em style="font-size:16px;color:#06C;">条</em></p>
+        <p>连续两条微博时间间隔均值&nbsp;&nbsp;<em style="font-size:16px;color:#930;">60</em>&nbsp;<em style="font-size:16px;color:#06C;">分钟</em></p>
+        <p>原创微博比例&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em style="font-size:16px;color:#903;">50</em>&nbsp;<em style="font-size:16px;color:#06C;">%</em></p>
+	</div>	
+	<div class="block person_tags" data-size="1" id="tag_cloud_div">
+    	<strong>个人云标签</strong>
+        <canvas width="200px" height="210px" id="myCanvas">
+            <p>抱歉，您的浏览器不支持显示云标签，请选择支持HTML5的浏览器</p>
+        </canvas>
+        <div id="tags_div">
+            <ul id="tags_ul">
+            <li><a style="font-size:4.8ex">乐观的癌症斗士</a></li>
+            <li><a style="font-size:2.6ex">地震救助</a></li>
+            <li><a style="font-size:2.4ex">微博打拐</a></li>
+            <li><a style="font-size:2.4ex">UTStarCOM</a></li>
+            <li><a style="font-size:2.2ex"> 8848</a></li>
+            <li><a style="font-size:2.2ex"> 创业</a></li>
+            <li><a style="font-size:2.1ex"> 移动互联网</a></li>
+            </ul>
+        </div>
+    </div>
+    <!--
+    <div class="block" id="statistics_network" data-size="5">
+    	<div class="section">
+        	<h2 style="color:#3C9">最活跃的关注者</h2>
+            <ol><li>
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))">内分泌顾锋</span><br />
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))" class="weak">活跃度：398</span>
+                    </li><li>
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))">留几手</span><br />
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))" class="weak">活跃度：254</span>
+                    </li><li>
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))">妈咪Jane育儿妙方</span><br />
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))" class="weak">活跃度：128</span>
+                    </li>
+             </ol>
+      </div>
+      <div class="section">
+        	<h2 style="color:rgb(193, 213, 47)">联系最紧密的关注者</h2>
+            <ol>	<li>
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))">好友美食</span><br />
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))" class="weak">交互20次</span>
+                    </li><li>
+                      <span onClick="snapToUser($('761'))" onMouseOver="mouseOver($('761'))" onMouseOut="mouseOut($('761'))">毛高山</span><br />
+                      <span onClick="snapToUser($('761'))" onMouseOver="mouseOver($('761'))" onMouseOut="mouseOut($('761'))" class="weak">交互14次</span>
+                    </li><li>
+                      <span onClick="snapToUser($('226'))" onMouseOver="mouseOver($('226'))" onMouseOut="mouseOut($('226'))">管鹏</span><br />
+                      <span onClick="snapToUser($('226'))" onMouseOver="mouseOver($('226'))" onMouseOut="mouseOut($('226'))" class="weak">交互10次</span>
+                    </li></ol>
+      </div>
+      <div class="section">
+        	<h2 style="color:#219EE2">最活跃的粉丝</h2>
+            <ol><li>
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))">协和章蓉娅</span><br />
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))" class="weak">活跃度：113</span>
+                    </li><li>
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))">张遇升</span><br />
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))" class="weak">活跃度：97</span>
+                    </li><li>
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))">炎黄春秋编辑部</span><br />
+                      <span onClick="snapToUser($('359'))" onMouseOver="mouseOver($('359'))" onMouseOut="mouseOut($('359'))" class="weak">活跃度：56</span>
+                    </li>
+              </ol>
+      </div>
+      <div class="section">
+        	<h2 style="color:rgb(24, 0, 204)">联系最紧密的粉丝</h2>
+            <ol><li>
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))">苏家桥</span><br />
+                      <span onClick="snapToUser($('411'))" onMouseOver="mouseOver($('411'))" onMouseOut="mouseOut($('411'))" class="weak">交互5次</span>
+                    </li><li>
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))">精神科李医生</span><br />
+                      <span onClick="snapToUser($('0'))" onMouseOver="mouseOver($('0'))" onMouseOut="mouseOut($('0'))" class="weak">交互3次</span>
+                    </li>
+                 </ol>
+      </div>
+    </div>
+    -->
+	
+    <div class="block interest" id="interest" data-size="5">
+        <strong>一周兴趣信息</strong>
+        <div class="box_cloud">
+        	<h2 class="title">微博关键词及话题云图</h2>
+			<div id="d3_cloud"></div>
+        </div>
+        <div class="box-hot">
+        	<div class="tab-hd tab-skin-hot">
+                <ul>
+                    <li class="current"><span class="realtime">&nbsp;</span>关注分布</li>
+                    <li><span class="weekspot">&nbsp;</span>话题倾向</li>
+                    <li><span class="weekspot">&nbsp;</span>领域倾向</li>
+                </ul>
+            </div>
+        	<div class="list-tt">
+                <span class="tt-index">排名</span>
+                <span class="tt-title">领域</span>
+                <span class="tt-value">关注数</span>
+            </div>
+            <div class="tab-bd">
+                <div class="tab-box">
+                    <ul id="hot-list" class="list">                            
+                        <li>
+                        <span class="num-top">1</span>
+                        <a target="_blank" title="社会" data="1|1" class="list-title" href="#">社会</a>                     
+                        <span class="icon-rise">843</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">2</span>
+                        <a target="_blank" title="财经" data="1|1" class="list-title" href="#">财经</a>                     
+                        <span class="icon-rise">432</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">3</span>
+                        <a target="_blank" title="教育" data="1|1" class="list-title" href="#">教育</a>                     
+                        <span class="icon-rise">234</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">4</span>
+                        <a target="_blank" title="房地产" data="1|1" class="list-title" href="#">房地产</a>                     
+                        <span class="icon-rise">111</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">5</span>
+                        <a target="_blank" title="传媒" data="1|1" class="list-title" href="#">传媒</a>                     
+                        <span class="icon-rise">43</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">6</span>
+                        <a target="_blank" title="IT" data="1|1" class="list-title" href="#">IT</a>                     
+                        <span class="icon-rise">23</span> 
+                        </li>
+                        <li>
+                        <span class="num-top">7</span>
+                        <a target="_blank" title="机构" data="1|1" class="list-title" href="#">机构</a>                     
+                        <span class="icon-rise">14</span> 
+                        </li>
+                      
+                  </ul>
+                </div>
+              </div><!--tab-bd end-->
+        </div><!--box-hot end-->
+       <div class="box_cloud" style="margin: 0 auto;width:1160px;">
+            <h2 class="title">关注及粉丝分析</h2>
+            <div id="vis_friends_followers" style="width: 967px;margin:0 auto;"></div>
+        </div>
+
+        </div>
+        
+       
+    </div>
+	
+	
+    </div>
+    
+</div><!--#page end--> 
+            
+            	
+
+
+</body>
+</html>

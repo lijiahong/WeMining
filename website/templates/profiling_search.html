@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script type="text/javascript" src="/static/libraries/jquery.min.js"></script>
+    <!--<script type="text/javascript" src="/static/js/jquery.wookmark.js"></script>-->
+    <script type="text/javascript" src="/static/js/blocksit.min.js"></script>
+    <script type="text/javascript" src="/static/js/blocksit.js"></script>
+    <script type="text/javascript" src="/static/js/profiling_search.js"></script>
+    <title>网民画像</title>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
+<style>
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		outline: 0;
+		font-size: 100%;
+		vertical-align: baseline;
+		background: transparent;
+	}
+	body{
+		font: 12px Arial,"simsun";
+		line-height: 1;
+		background-color: #F8F7F7;
+	}
+	ol, ul {
+		list-style: none;
+	}
+	h1 {
+		font-size: 26px;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: bold;
+	}
+	h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+		text-decoration: none;
+		color: black;
+	}
+	a:link, a:visited {
+		color: black;
+		text-decoration: none;
+	}
+	a:hover {
+		color: #008ed3;
+	}
+	#page {
+		padding-bottom: 50px;
+	}
+	
+	#header {
+		position: fixed;
+		z-index: 100;
+		width: 100%;
+		padding: 0 15px 0 0;
+		background-color: rgba(255,255,255,.95);
+		-moz-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		box-shadow: 0 1px 3px rgba(0,0,0,.1);
+		height: 40px;
+		text-shadow: 0 1px #ffffff;
+		background-color: #ffffff;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f8f8f8));
+		background-image: -webkit-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -moz-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -ms-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: -o-linear-gradient(top, #ffffff, #f8f8f8);
+		background-image: linear-gradient(top, #ffffff, #f8f8f8);
+		border-bottom: 1px solid #cdcdcd;
+		text-shadow: 0 1px #ffffff;
+	}
+	#header .logo {
+		float: left;
+	}
+	#header .logo h1 {
+		font-size: 16px;
+		font-weight: 500;
+		margin: 0px;
+		color: #333;
+		letter-spacing: .5px;
+		display: inline-block;
+		padding: 0;
+		float: left;
+	}
+	
+	#header a:link, #header a:visited {
+		color: #333;
+		text-decoration: none;
+		-moz-transition: all 0.1s ease-out;
+		-o-transition: all 0.1s ease-out;
+		-webkit-transition: all 0.1s ease-out;
+		-ms-transition: all 0.1s ease-out;
+		transition: all 0.1s ease-out;
+	}
+	
+	#header .logo a {
+		float: left;
+		margin: 10px 15px 0 15px;
+		background: transparent url('/static/mapweibo/images/site_logo.png') no-repeat 10 10;
+		width: 32px;
+		height: 21px;
+		padding: 0;
+		overflow: hidden;
+		text-indent: -1000px;
+	}
+	#header .options {
+	  float: right;
+	  margin: 0 0 0 0;
+	  font-size: 12px;
+	  text-align: center;
+	  border-left: 1px solid #e8e8e8;
+	  text-align: center;
+	}
+	#header .primary li, #header .options .item {
+	  float: left;
+	  margin: 0 0 0 0;
+	  line-height: 40px;
+	  border-left: 1px solid #fff;
+	  border-right: 1px solid #e8e8e8;
+	}
+
+	#header .options .search {
+	  padding: 0 10px 0 10px;
+	  height: 40px;
+	  position: relative;
+	}
+	#header .options .search input {
+	  margin-top: 8px;
+	  -moz-border-radius: 3px;
+	  -webkit-border-radius: 3px;
+	  border-radius: 3px;
+	  color: #333333;
+	  background-color: #fafafa;
+	  border: 1px solid;
+	  border-color: #c2c0c0 #cccaca #d1cfcf;
+	  border-radius: 4px;
+	  box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	  -moz-box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	  -webkit-box-shadow: 0 1px #fff,inset 0 1px rgba(34,25,25,.05);
+	}
+	textarea, input[type="text"], input[type="password"] {
+	  display: block;
+	  border: 1px solid #ccc;
+	  -moz-transition: all 0.1s ease-out;
+	  -o-transition: all 0.1s ease-out;
+	  -webkit-transition: all 0.1s ease-out;
+	  -ms-transition: all 0.1s ease-out;
+	  transition: all 0.1s ease-out;
+	  padding: 4px 5px 5px 7px;
+	}
+	.headerSpacer {
+	  height: 40px;
+	}
+	
+	#images {
+		position: relative;
+		padding-bottom: 35px;
+	}
+	.hometile {
+		background-color: white;
+		width: 236px;
+		border: 1px solid #dedede;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		border-radius: 2px;
+		display: none;
+	}
+	.hometile #intro {
+		border-bottom: 1px solid #dedede;
+		padding: 10px 0 7px 10px;
+	}
+	.hometile #intro h1 {
+		padding: 2px 10px 8px 12px;
+		margin-bottom: 10px;
+		font-size: 18px;
+		font-weight: normal;
+		line-height: 22px;
+		color: #666666;
+	}
+	.hometile #intro h1 b {
+		font-size: 16px;
+		line-height: 32px;
+		font-weight: bold;
+		color: #000;
+	}
+	.hometile #intro .options {
+		color: #777;
+	}
+	.hometile #intro .options::after {
+		content: ".";
+		display: block;
+		clear: both;
+		visibility: hidden;
+		line-height: 0;
+		height: 0;
+	}
+	.hometile .blueButton {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	.hometile .actionButton {
+		display: inline-block;
+		line-height: 30px;
+		margin: 0 0px 15px 10px;
+		padding: 0 10px 1px 10px;
+		float: left;
+	}
+	.actionButton {
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		box-shadow: 0 1px 2px rgba(0,0,0,.1);
+		-moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+		border: 1px solid #CCC;
+		background-color: #FFF;
+		padding: 5px 8px 6px 8px;
+		background-color: #f4f4f4;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f4f4f4));
+		background-image: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+		background-image: -moz-linear-gradient(top, #ffffff, #f4f4f4);
+		background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
+		background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
+		background-image: linear-gradient(top, #ffffff, #f4f4f4);
+		filter: progid :DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#f4f4f4');
+		-moz-transition: all 0.1s ease-out;
+		-o-transition: all 0.1s ease-out;
+		-webkit-transition: all 0.1s ease-out;
+		-ms-transition: all 0.1s ease-out;
+		transition: all 0.1s ease-out;
+		color: #313131;
+		}
+	.actionButton.blueButton {
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		box-shadow: 0 1px 2px rgba(0,0,0,.15);
+		-moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+		border-top: 1px solid #2f9eec;
+		border-bottom: 1px solid #1988d6;
+		border-left: 1px solid #1988d6;
+		border-right: 1px solid #1988d6;
+		background-color: #2596e6;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#2f9eec), to(#1988d6));
+		background-image: -webkit-linear-gradient(top, #2f9eec, #1988d6);
+		background-image: -moz-linear-gradient(top, #2f9eec, #1988d6);
+		background-image: -ms-linear-gradient(top, #2f9eec, #1988d6);
+		background-image: -o-linear-gradient(top, #2f9eec, #1988d6);
+		background-image: linear-gradient(top, #2f9eec, #1988d6);
+		-moz-transition: all 0.1s ease-out;
+		-o-transition: all 0.1s ease-out;
+		-webkit-transition: all 0.1s ease-out;
+		-ms-transition: all 0.1s ease-out;
+		transition: all 0.1s ease-out;
+		color: #ffffff;
+		text-shadow: 0 1px 0 rgba(0,0,0,.25);
+	}
+	
+	.hometile .nav, .hometile .navigation {
+		padding: 0 0 5px 0;
+		width: 236px;
+	}
+	.hometile .nav h2, .hometile .navigation h2 {
+		font-weight: 700;
+		font-size: 14px;
+		margin-bottom: 8px;
+		color: #333;
+		padding: 21px 5px 2px 18px;
+		border-top-left-radius: 3px;
+		border-top-right-radius: 3px;
+	}
+	.hometile .categories {
+		padding: 10px 0 15px 0;
+	}
+	.hometile .categories h2 {
+		font-size: 13px;
+		padding: 0 20px 10px 20px;
+	}
+	
+	.hometile .categories li {
+		font-size: 11px;
+		line-height: 20px;
+		text-indent: 2px;
+		padding: 0 20px 0 20px;
+	}
+	
+	.hometile .categories li a {
+		color: #666666;
+		display: block;
+	}
+	.hometile .nav li:hover a, .hometile .navigation li a:hover, .hometile .categories li:hover a {
+		color: #008ed3;
+	}
+	.hometile .nav li a, .hometile .navigation li a {
+	  display: block;
+	  padding: 0 5px 0 20px;
+	  font-size: 13px;
+	  line-height: 26px;
+	  color: #666666;
+	}
+	.hometile .nav li.active a, .hometile .navigation li.active a, .hometile .categories li.active a {
+	  color: #ffffff;
+	}
+	.hometile .nav li.active, .hometile .navigation li.active, .hometile .categories li.active {
+	  cursor: default;
+	}
+	.hometile .nav li.active, .hometile .navigation li.active, .hometile .categories li.active {
+	  abackground-color: #008ed3;
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#009ad7), to(#0082cf));
+	  background-image: -webkit-linear-gradient(top, #009ad7, #0082cf);
+	  background-image: -moz-linear-gradient(top, #009ad7, #0082cf);
+	  background-image: -ms-linear-gradient(top, #009ad7, #0082cf);
+	  background-image: -o-linear-gradient(top, #f8f8009ad7f8, #0082cf);
+	  background-image: linear-gradient(top, #009ad7, #0082cf);
+	  -webkit-box-shadow: 0 1px 0 rgba(0,0,0,.1);
+	  -moz-box-shadow: 0 1px 0 rgba(0,0,0,.1);
+	  box-shadow: 0 1px 0 rgba(0,0,0,.1);
+	  cursor: default;
+	}
+	.hometile .nav li:hover, .hometile .navigation li:hover, .hometile .categories li:hover {
+	  background-color: #f8f8f8;
+	}
+	#thumbnail{
+			  position:relative;
+			  width:960px;
+			  margin:0 auto auto 257px;
+			  padding-bottom: 10px;
+			  
+	}
+	.grid{
+		width:188px;
+		min-height:100px;
+		padding: 15px;
+		background:#fff;
+		margin:8px;
+		font-size:12px;
+		float:left;
+		box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+		
+		-webkit-transition: top 1s ease, left 1s ease;
+		-moz-transition: top 1s ease, left 1s ease;
+		-o-transition: top 1s ease, left 1s ease;
+		-ms-transition: top 1s ease, left 1s ease;
+	}
+	
+	.grid strong {
+		border-bottom:1px solid #ccc;
+		margin:10px 0;
+		display:block;
+		padding:0 0 5px;
+		font-size:17px;
+	}
+	.grid .meta{
+		text-align:right;
+		color:#777;
+		font-style:italic;
+	}
+	.grid .imgholder img{
+		max-width:100%;
+		background:#ccc;
+		display:block;
+	}
+	
+	/** Loader **/
+
+	#loader {
+	  height: 16px;
+	  text-align: center;
+	  padding: 25px 0 25px 0;
+	}
+	  
+	#loaderCircle {
+	  width: 16px;
+	  height: 16px;
+	  margin: 0 auto;
+	  background-image: url('/static/images/ajax-loader.gif');
+	}
+	
+	
+	.open {
+		display: block;
+		width: 27px;
+		height: 38px;
+		background: url(/static/images/nav_arrow.png) 0 12px no-repeat;
+		position: absolute;
+		right: 2px;
+		top: 2px;
+		cursor: pointer;
+	  }
+	.opend {
+	  background-position: 0 -48px;
+  }
+	.open:hover {
+	  background-position: 0 -18px;
+	}
+	.opend:hover {
+	  background-position: 0 -78px;
+	}
+	#shadow_nav.closed {
+	  padding-bottom: 0;
+	  height: 0;
+	}
+	#shadow_nav {
+	  background: url(/static/images/subnav_bg.png) 0 0 repeat;
+	  padding-bottom: 15px;
+	  box-shadow: inset 0 -3px 5px rgba(0,0,0,.02),0 1px 0 rgba(255,255,255,.9);
+	  overflow: hidden;
+	  height: 161px;
+	  -webkit-transition: height .2s linear;
+	  -moz-transition: height .2s linear;
+	  -ms-transition: height .2s linear;
+	  transition: height .2s linear;
+	}
+	.wrapper {
+	  position: relative;
+	  margin: 0 auto;
+	  border: 0;
+	}
+	#shadow_nav .tent {
+	  background: #fff;
+	  box-shadow: 0 1px 0 white inset,0 1px 3px rgba(0,0,0,.15);
+	}
+	clearfix::before, .clearfix::after {
+	  content: "";
+	  display: table;
+	}
+
+	.clearfix::after {
+	  clear: both;
+	}
+	.idec-shadow-nav .unit {
+	  width: 33.3%;
+	  float: left;
+	  height: 80px;
+	  text-align: center;
+	}
+	.idec-shadow-nav .border {
+	  height: 80px;
+	  border-right: 1px solid #F2F2F2;
+	  margin-left: -1px;
+	  float: left;
+	}
+	.idec-shadow-nav .line {
+	  width: 100%;
+	  border-top: 1px solid #F2F2F2;
+	  float: left;
+	  font-size: 0;
+	}
+	.attr{
+		height: 99%;
+		width: 99%;
+	}
+	
+	.attr::after, .attr::before, .attr ul::after, .attr ul::before {
+	  display: table;
+	  content: "";
+	  overflow: hidden;
+	  clear: both;
+	}
+	.attrKey {
+	  padding-top: 9px;
+	  float: left;
+	  padding: 7px 0 0 0;
+	  width: 10%;
+	  color: #B0A59F;
+	  text-indent: 0px;
+	}
+	.attrKey, .attrKey a {
+	  display: block;
+	  height: 16px;
+	  line-height: 16px;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+	  white-space: nowrap;
+	}
+	attrValues {
+	  padding-top: 6px;
+	}
+	.attrValues {
+	  position: relative;
+	  float: left;
+	  background-color: #FFF;
+	  width: 90%;
+	  padding: 4px 0 0;
+	  overflow: hidden;
+	}
+	.av-collapse {
+	  overflow: hidden;
+	  max-height: 5em;
+	  _height: expression(function(el){if(/msie 6/i.test(navigator.userAgent))el.style.height =(el.scrollHeight>60) ? '60px':'auto';}(this));
+	  }
+	 .attrValues ul {
+		position: relative;
+		margin-right: 0px;
+		margin-left: 25px;
+	  }
+    .attrValues li {
+		margin: 0 8px 8px 0;
+		float: left;
+		height: 22px;
+		line-height: 22px;
+	}
+	.attrValues li a {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		position: relative;
+		color: #806F66;
+		display: inline-block;
+		padding: 1px 4px 1px 4px;
+		line-height: 20px;
+		height: 20px;
+		white-space: nowrap;
+	}
+	.attrValues li a:hover{
+		background: #4598D2;
+		color: #fff;
+	}
+	.attrs a {
+	  outline: none;
+	  }
+	 button {
+	  font-size: 14px;
+	  letter-spacing: 4px;
+	  cursor: pointer;
+	  color: #fff;
+	  line-height: 30px	9;
+	}
+	
+	/*returnTop*/
+	p#back-to-top{
+		position:fixed;
+		display:none;
+		bottom:100px;
+		right:0px;
+	}
+	p#back-to-top a{
+		text-align:center;
+		text-decoration:none;
+		color:#d1d1d1;
+		display:block;
+		width:64px;
+		/*使用CSS3中的transition属性给跳转链接中的文字添加渐变效果*/
+		-moz-transition:color 1s;
+		-webkit-transition:color 1s;
+		-o-transition:color 1s;
+	}
+	p#back-to-top a:hover{
+		color:#979797;
+	}
+	p#back-to-top a span{
+		background:transparent url(/static/images/backtotop.gif) no-repeat;
+		border-radius:6px;
+		display:block;
+		height:45px;
+		width:35px;
+		margin:0 auto 5px auto;
+		
+		/*使用CSS3中的transition属性给<span>标签背景颜色添加渐变效果*/
+		-moz-transition:background 1s;
+		-webkit-transition:background 1s;
+		-o-transition:background 1s;
+	}
+	#back-to-top a:hover span{
+		background:transparent url(/static/images/backtotop.gif) no-repeat;
+	}
+	
+	#main_menu {
+		position: relative;
+		float:left;
+		left: 0;
+		top: 0;
+		height: 38px;
+	}
+	#main_menu a {
+		border: 1px solid #EEE;
+		border-width: 0 1px;
+	}
+	#nav_bar_person_profile, #nav_bar_group_profile, #nav_bar_search_profile{
+		display: block;
+		padding: 0 15px;
+		height: 39px;
+		line-height: 39px;
+		float: left;
+		color: #CB2027;
+		font-size: 14px;
+		text-decoration: none;
+		postition: relative;
+	}
+	#main_menu a span {
+		color: #000;
+	}
+	#main_menu a.active span {
+		color: #C90000;
+	}
+	#profile {
+		position: absolute;
+		left: 50%;
+		margin-top: 5px;
+		margin-left: -40px;
+	}
+	.wrapper {
+		position: relative;
+		margin: 0 auto;
+		border: 0;
+	}
+</style>
+</head>
+<body>
+<a name="top"></a>
+<p id="back-to-top"><a href="#top"><span></span>返回顶部</a></p>
+
+<div id="page">
+	
+    <div id="header"> 
+        <div class="wrapper" style="width:1170px;">     
+        <div id="profile"> 
+            <a href="/profile/bubble"><img src="/static/images/profile_logo.png" width="100" height="30" alt="网民画像"/></a>
+        </div>
+        <div id="main_menu">
+        	<a id="nav_bar_person_profile" href="/profile/person">
+            	<span>单个网民画像</span>
+            </a>
+            <a id="nav_bar_group_profile" href="/profile/group" >
+            	<span>网民群体画像</span>
+            </a>
+            <a id="nav_bar_search_profile" href="/profile/search" class="active">
+            	<span>网民特征搜索与分类展示</span>
+            </a>
+        </div> 
+        <div class="options"> 
+        <ul> 
+            <li class="item search"> <input type="text" name="search" value="" placeholder="按博主昵称搜索"/><div id="openClose" onClick="checkClose();" class="open opend"></div></li>
+            <li class="item about"><a href="#">关于我们</a></li> 
+        </ul> 
+        </div> 
+        </div><!--wrapper end-->
+    </div><!--#header end--> 
+    <div class="headerSpacer"></div>
+    <div id="shadow_nav">
+    	<div class="wrapper" style="width: 1170px;">
+        	<div class="tent">
+            	<div class="idec-shadow-nav clearfix">
+                <form action="#">
+                	<div class="unit">
+                      <div class="attr">
+                    	<div class="attrKey">领域</div>
+                        <div class="attrValues">
+                        <!--
+                        	<div class="av-search clearfix">
+                            	<input type="text" value placeholder="搜索 领域名称" style="color: rgb(191, 191, 191);">
+                            </div>-->
+                            <ul class="av-collapse">
+                            	<li><a href="#">体育</a></li>
+                                <li><a href="#">财经</a></li>
+                                <li><a href="#">教育</a></li>
+                                <li><a href="#">社会</a></li>
+                                <li><a href="#">金融</a></li>
+                                <li><a href="#">娱乐</a></li>
+                                <li><a href="#">新闻</a></li>
+                                <li><a href="#">报刊</a></li>
+                                <li><a href="#">政务</a></li>
+                                <li><a href="#">房地产</a></li>
+                                <li><a href="#">IT</a></li>
+                                <li><a href="#">校园</a></li>
+                                <li><a href="#">机构</a></li>
+                                <li><a href="#">传媒</a></li>
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                    <div class="unit">
+                    	<div class="attr">
+                    	<div class="attrKey">标签</div>
+                        <div class="attrValues">
+                            <ul class="av-collapse">
+                            	<li><a href="#">前端开发</a></li>
+                                <li><a href="#">HTML5</a></li>
+                                <li><a href="#">国际米兰</a></li>
+                                <li><a href="#">巴塞罗那</a></li>
+                                <li><a href="#">傲游浏览器</a></li>
+                                <li><a href="#">岳阳婚纱照 </a></li>
+                                <li><a href="#">欧碧玺婚纱摄影</a></li>
+                                <li><a href="#">演员</a></li>
+                                <li><a href="#">IT数码</a></li>
+                                <li><a href="#">适婚男青年</a></li>
+                                <li><a href="#"> 水瓶男</a></li>
+                                <li><a href="#"> 80後 </a></li>
+                                <li><a href="#">终年潮湿</a></li>
+                                <li><a href="#">白羊座</a></li>
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                    <div class="unit">
+                       <div class="attr">
+                    	<div class="attrKey">所在地</div>
+                        <div class="attrValues">
+                            <ul class="av-collapse">
+                            	<li><a href="#">北京</a></li>
+                                <li><a href="#">上海</a></li>
+                                <li><a href="#">河北</a></li>
+                                <li><a href="#">黑龙江</a></li>
+                                <li><a href="#">安徽</a></li>
+                                <li><a href="#">山东</a></li>
+                                <li><a href="#">辽宁</a></li>
+                                <li><a href="#">吉林</a></li>
+                                <li><a href="#">江苏</a></li>
+                                <li><a href="#">浙江</a></li>
+                                <li><a href="#">福建</a></li>
+                                <li><a href="#">广东</a></li>
+                                <li><a href="#">云南</a></li>
+                                <li><a href="#">广西</a></li>
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                    <div class="line"></div>
+                    <div class="unit">
+                       <div class="attr">
+                    	<div class="attrKey">年龄</div>
+                        <div class="attrValues">
+                            <ul class="av-collapse">
+                            	<li><a href="#">1-10</a></li>
+                                <li><a href="#">11-18</a></li>
+                                <li><a href="#">19-30</a></li>
+                                <li><a href="#">31-40</a></li>
+                                <li><a href="#">41-50</a></li>
+                                <li><a href="#">51-60</a></li>
+                                <li><a href="#">61-70</a></li>
+                             
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                    <div class="unit">
+                      <div class="attr">
+                    	<div class="attrKey">话题</div>
+                        <div class="attrValues">
+                            <ul class="av-collapse">
+                            	<li><a href="#">#北京中雪预警#</a></li>
+                                <li><a href="#">#抢票软件叫停#</a></li>
+                                <li><a href="#">#腊八#</a></li>
+                                <li><a href="#">#春运抢票#</a></li>
+                                <li><a href="#">#马云辞任阿里CEO#</a></li>
+                                <li><a href="#">#异地高考政策出台#</a></li>
+                                <li><a href="#">#宏迪合体叶钦达#</a></li>
+                             
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                    <div class="unit">
+                    	<div class="attr">
+                    	<div class="attrKey">粉丝数</div>
+                        <div class="attrValues">
+                            <ul class="av-collapse">
+                            	<li><a href="#">1-100</a></li>
+                                <li><a href="#">100-500</a></li>
+                            	<li><a href="#">500-1000</a></li>
+                            	<li><a href="#">1000-2000</a></li>
+                            	<li><a href="#">2000-3000</a></li>
+                                <li><a href="#">3000-4000</a></li>
+                                <li><a href="#">4000-5000</a></li>
+                                <li><a href="#">5000-1万</a></li>
+                                <li><a href="#">1万-100万</a></li>
+                                <li><a href="#">100万-1000万</a></li>
+                                <li><a href="#">1000万-3000万</a></li>
+                             
+                            </ul>
+                        
+                        </div>
+                         
+                      </div>
+                    </div>
+                    <div class="border"></div>
+                </form>
+                <!--
+                <div style="width:100%;height:50px;">
+                	<a href="#" class="actionButton">更多选项</a>
+ 					<a href="#" class="actionButton">隐藏</a> 
+                </div>-->
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div id="images" style="width: 1198px; margin-left: auto; margin-right: auto;"> 
+        <div class="tile hometile" id="hometile" style="position: absolute; top: 15px; left: 0px; display: block;"> 
+            <div id="intro"> 
+                <h1><b>网民画像</b><br/>网民搜索与分类展示</h1> 
+                <!--
+                <div class="options"> 
+                    <a href="#" class="actionButton blueButton">更多功能</a> 
+                    <a href="#" class="actionButton">了解详情</a> 
+                 </div>-->
+            </div> 
+            <div class="nav"> 
+                <h2>精彩内容</h2> 
+                <ol class="options"> 
+                    <li><a href="#recent" data-type="recent" title="New">最新</a></li>
+                    <li class="active"><a href="#popular" data-type="popular" title="Popular">热门</a></li>
+                    <!--<li><a href="#surprise" data-type="surprise" title="Surprises me">Surprise me</a></li>-->
+                    <!--<li><a href="#tv">WookmarkTV</a></li>-->
+                </ol> 
+                </div> 
+                <div class="categories"> 
+                    <h2>类别</h2> 
+                    <ul> 
+                        <li><a href="#" data-type="category" data-id="35"><span>&bull;</span>体育</a></li> 					
+                        <li><a href="#" data-type="category" data-id="36"><span>&bull;</span>教育</a></li> 
+                        <li><a href="#" data-type="category" data-id="33"><span>&bull;</span>财经</a></li> 
+                        <li><a href="#" data-type="category" data-id="49"><span>&bull;</span>社会</a></li> 
+                        <li><a href="#" data-type="category" data-id="40"><span>&bull;</span>娱乐</a></li> 
+                        <li><a href="#" data-type="category" data-id="34"><span>&bull;</span>新闻</a></li>
+                        <li><a href="#" data-type="category" data-id="37"><span>&bull;</span>报刊</a></li> 
+                        <li><a href="#" data-type="category" data-id="41"><span>&bull;</span>政务</a></li> 
+                        <li><a href="#" data-type="category" data-id="16"><span>&bull;</span>房地产</a></li> 
+                        <li><a href="#" data-type="category" data-id="48"><span>&bull;</span>金融</a></li> 
+                        <li><a href="#" data-type="category" data-id="73"><span>&bull;</span>校园</a></li> 
+                        <li><a href="#" data-type="category" data-id="38"><span>&bull;</span>机构</a></li> 
+                        <li><a href="#" data-type="category" data-id="47"><span>&bull;</span>IT</a></li> 		
+                        <li><a href="#" data-type="category" data-id="39"><span>&bull;</span>传媒</a></li> 
+                    </ul> 
+                </div>
+           </div>
+           <div id="thumbnail">
+                 <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/1.jpg" />
+                      </div>
+                      <strong>任志强</strong>
+                      <p>知名地产商</p>
+                      <div class="meta">http://weibo.com/renzhiqiang</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/2.jpg" />
+                      </div>
+                      <strong>薛蛮子</strong>
+                      <p>天使投资人薛蛮子 商业计划书请发送至——创投圈：ctquan.com/manzi</p>
+                      <div class="meta">http://weibo.com/charlesxue</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/3.jpg" />
+                      </div>
+                      <strong>吴晓求</strong>
+                      <p>中国人民大学金融与证券研究所所长吴晓求	</p>
+                      <div class="meta">http://weibo.com/u/1885355607</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/4.jpg" />
+                      </div>
+                      <strong>林志玲</strong>
+                      <p>台湾女艺人：請大家多多支持志玲姊姊慈善基金會^_______________^ http://www.chilingjj.org/</p>
+                      <div class="meta">http://weibo.com/linzhilingblog</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/5.jpg" />
+                      </div>
+                      <strong>王石</strong>
+                      <p>万科企业股份有限公司董事会</p>
+                      <div class="meta">http://weibo.com/wangshi</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/6.jpg" />
+                      </div>
+                      <strong>潘石屹</strong>
+                      <p>SOHO中国董事长潘石屹</p>
+                      <div class="meta">http://weibo.com/panshiyi</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/7.jpg" />
+                      </div>
+                      <strong>张欣</strong>
+                      <p>SOHO中国CEO</p>
+                      <div class="meta">http://weibo.com/sohozhangxin</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/8.jpg" />
+                      </div>
+                      <strong>李开复</strong>
+                      <p>创新工场董事长兼首席执行官</p>
+                      <div class="meta">http://weibo.com/kaifulee</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/9.jpg" />
+                      </div>
+                      <strong>郭敬明</strong>
+                      <p>简介：上海最世文化发展有限公司 董事长 《最小说》《最漫画》 主编 联系方式： （京）赵先生：010-58678881 转1350 （沪）叶小姐：021-33811902转228</p>
+                      <div class="meta">http://weibo.com/guojingming</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/10.jpg" />
+                      </div>
+                      <strong>韩寒</strong>
+                      <p>韩寒</p>
+                      <div class="meta">http://weibo.com/hanhan</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/11.jpg" />
+                      </div>
+                      <strong>洪晃ilook</strong>
+                      <p>BNC薄荷糯米葱中国设计师店投资人，《ILOOK》杂志出版人</p>
+                      <div class="meta">http://weibo.com/honghuang</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/12.jpg" />
+                      </div>
+                      <strong>茅于轼</strong>
+                      <p>人文经济学会理事长、天则经济研究所荣誉理事长</p>
+                      <div class="meta">http://weibo.com/maoyushi</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/13.jpg" />
+                      </div>
+                      <strong>风马牛社区</strong>
+                      <p>简介：风马牛社区官方微博。www.fengmaniu.com</p>
+                      <div class="meta">http://weibo.com/fenglun</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/14.jpg" />
+                      </div>
+                      <strong>陈劲松</strong>
+                      <p>深圳世联地产顾问股份有限公司董事长，深圳市红树林湿地保护基金会发起人，壹基金合作伙伴</p>
+                      <div class="meta">http://weibo.com/chenjinsong</div>
+                  </div>
+                  <div class="grid">
+                      <div class="imgholder">
+                          <img src="/static/images/keyperson_image/15.jpg" />
+                      </div>
+                      <strong>周忻</strong>
+                      <p>易居中国董事局联席主席兼总裁（CEO）</p>
+                      <div class="meta">http://weibo.com/zhouxinblog</div>
+                  </div> 
+             </div><!--div thumbnail-->
+            <div id="loader">
+              <div id="loaderCircle"></div>
+            </div>
+    </div><!--#images end--> 
+</div><!--#page end--> 
+            
+            	
+
+
+</body>
+</html>

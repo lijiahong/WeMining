@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-'''气泡兔页面
+'''单个网民画像页面
 '''
 
 import web
 
-urls = ('/profile/bubble', )
+urls = ('/profile/person', )
 render = web.template.render('./templates/')
 
 class handler():
     def GET(self):
-        return render.profiling_bubble()
+        return render.profiling_person()
     
