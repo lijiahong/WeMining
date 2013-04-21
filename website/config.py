@@ -3,6 +3,8 @@
 import pymongo
 import web
 import time
+import sys
+import os
 
 #数据库地址和端口
 DB_HOST = 'localhost'
@@ -23,6 +25,15 @@ def getDB():
     db = connection.admin
     db.authenticate(DB_USER, DB_PWD)
     return connection.weibo
+
+def getReadonlyDB(db):
+    '''获取只读的数据库对象,db为要获取的数据库的名称
+    '''
+    path = os.path.abspath("/opt/admin/")
+    sys.path.append(path)
+    from getReadonlyDB import getReadonlyDB
+    db = getReadonlyDB(db)
+    return db
 
 def getUser(uid):
     '''获得指定uid的用户信息

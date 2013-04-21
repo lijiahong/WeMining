@@ -3,7 +3,8 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>爬虫</title>
+    <title>爬虫监控</title>
+    <link rel="shortcut icon" href="/static/mapweibo/images/favicon.ico" type="image/x-icon">
     <script src="/static/libraries/RGraph.common.core.js"></script>
     <script src="/static/libraries/RGraph.common.effects.js"></script>
     <script src="/static/libraries/RGraph.common.context.js"></script>
@@ -11,11 +12,171 @@
     <script src="/static/libraries/jquery.min.js"></script>
     <!--[if lt IE 9]><script src="/static/libraries/excanvas.original.js"></script><![endif]-->
     <script src="/static/js/status.js"></script>
+     <style>
+      body {
+      margin: 0;
+      padding: 0;
+      font: normal normal 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+      text-align: left;
+      background: #F8F7F7;
+      color: black;
+      }
+      .nav-header{
+      /* 对于其他浏览器 */
+      position:fixed;
+      top:0px;
+      /* 对于 IE6 */
+      _position: absolute;
+      _top: expression(documentElement.scrollTop + "px");
+      z-index:999999;
+
+      left: 0px;
+      width: 100%;
+      height: 58px;
+      padding-bottom:10px;
+      background-color: white;
+      background: url(/static/mapweibo/images/background.jpg) repeat-x;
+      }
+      
+      #nav-container {
+      margin: 0 auto;
+      width: 1020px;
+      height: 100%;
+      }
+      #logo {
+      width: 200px;
+      float: left;
+      margin: 2px;
+      height: 100%;
+      }
+      #logo img {
+      width: auto;
+      height: auto;
+      border: none;
+      margin-top: 8px;
+      
+      margin-right: 10px;
+      margin-bottom: 5px;
+      }
+      a {
+      color: steelBlue;
+      text-decoration: none;
+      cursor:auto;
+      }
+      .topnav{
+      height:100%;
+      background-color: white;
+      }
+      .nav-collapse{
+      height:100%;
+      }
+      .nav{
+      margin-left: 459px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      height: 100%;
+      }
+      
+      .nav-nav{
+      width: 100px;
+      float: left;
+      height: auto;
+      margin: 2px;
+      padding-top: 25px;
+      padding-bottom: 4px;
+      display: block;
+      text-align: center;
+      border-bottom-style: solid;
+      border-bottom-width: 6px;
+      display: block;
+      padding-left: ;
+      text-align: center;
+      border-bottom-style: solid;
+      
+      border-bottom-width: thick;
+
+      }
+      li#mapview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      li#home.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      li#sentimentview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+      li#networkview.nav-nav {
+      border-bottom-color: #DDDCDC;
+      }
+	  li#trendview.nav-nav {
+	  border-bottom-color: #DDDCDC;
+	  }
+	  li#spider-nav.nav-nav {
+      border-bottom-color: #61CCAA;
+      }
+      .nav a{
+      font-size: 19px;
+      font-family: sans-serif;
+      color: gray;
+      }
+	  #main {
+      position: relative;
+      left: 0px;
+      top: 68px;
+      width: 100%;
+      margin: auto;
+      background-color: #F8F7F7;
+      }
+      .content {
+      position: relative;
+      margin: 0 auto;
+      width: 1020px;
+      }
+	  </style>
   </head>
   <body style='margin:0 auto; text-align:center;'>
+  <!--导航-->
+  <div class="nav-header">
+    <div class="topnav">
+      <div id="nav-container">
+        
+        <div id='logo' class='pic'>
+          <a href='/mapweibo/'><img src="/static/mapweibo/images/logo.jpg"  alt="MapWeibo" /></a>
+        </div>
+        
+        <div class='nav-collapse'>
+          <ul class='nav'>
+            <a href="/mapweibo/" id="nav-home">
+              <li class='nav-nav' id='home'>主页</li>
+            </a>
+            <a href="/mapweibo/mapview/" id="nav-mapview">
+              <li class='nav-nav' id='mapview'>传播</li>
+            </a>
+            <a href="/mapweibo/trendview/?topic=钓鱼岛" id="nav-trendview">
+                <li class='nav-nav' id='trendview'>演化</li>
+              </a>
+            <a href="/mapweibo/sentimentview/" id="nav-sentimentview">
+              <li class='nav-nav' id='sentimentview'>情绪</li>
+            </a>
+            <a href="/spider/" id="nav-spider">
+              <li class='nav-nav' id='spider-nav'>爬虫监控</li>
+            </a>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <!--导航结束-->
+  <!--main开始-->
+  <div id="main">
+  	<!--content-->
+    <div class="content">
     <h1></h1>
     <p id='total_count'>抓取总数:</p>
     <p id='target_count'>目标用户抓取总数:</p>
+    </div><!--content结束-->
+    </div><!--main结束-->
     <script>
       if(RGraph.isOld()){
       document.write('<div style="background-color: #fee; border: 2px dashed red; padding: 5px"><b>Important</b><br /><br /> Internet Explorer does not natively support the HTML5 canvas tag, so if you want to see the charts, you can either:<ul><li>Install <a href="http://code.google.com/chrome/chromeframe/">Google Chrome Frame</a></li><li>Use ExCanvas. This is provided in the RGraph Archive.</li><li>Use another browser entirely. Your choices are Firefox 3.5+, Chrome 2+, Safari 4+ or Opera 10.5+. </li></ul> <b>Note:</b> Internet Explorer 9 fully supports the canvas tag.</div>');

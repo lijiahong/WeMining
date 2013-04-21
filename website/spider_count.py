@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
 
-from config import getDB
+from config import getReadonlyDB
 
 urls = ('/api/spider/count.json', )
 
-db = getDB()
+db = getReadonlyDB('master_timeline')
 
 class handler():
     def GET(self):
-        return '%d;%d' % (db.user_statuses.find().count(), db['user_statuses'].find().count())
+        return '%d;%d' % (db.master_timeline_weibo.find().count(), db['master_timeline_user'].find().count())
