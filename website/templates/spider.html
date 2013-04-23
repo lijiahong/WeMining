@@ -11,7 +11,11 @@
     <script src="/static/libraries/RGraph.line.js"></script>
     <script src="/static/libraries/jquery.min.js"></script>
     <!--[if lt IE 9]><script src="/static/libraries/excanvas.original.js"></script><![endif]-->
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
     <script src="/static/js/status.js"></script>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
      <style>
       body {
       margin: 0;
@@ -24,7 +28,7 @@
       .nav-header{
       /* 对于其他浏览器 */
       position:fixed;
-      top:0px;
+      top:2px;
       /* 对于 IE6 */
       _position: absolute;
       _top: expression(documentElement.scrollTop + "px");
@@ -34,6 +38,7 @@
       width: 100%;
       height: 58px;
       padding-bottom:10px;
+      margin-bottom: 20px;
       background-color: white;
       background: url(/static/mapweibo/images/background.jpg) repeat-x;
       }
@@ -119,19 +124,12 @@
       font-family: sans-serif;
       color: gray;
       }
-	  #main {
+    .content{
       position: relative;
-      left: 0px;
-      top: 68px;
-      width: 100%;
-      margin: auto;
-      background-color: #F8F7F7;
-      }
-      .content {
-      position: relative;
-      margin: 0 auto;
-      width: 1020px;
-      }
+      margin-top: 100px;
+
+    }
+	 
 	  </style>
   </head>
   <body style='margin:0 auto; text-align:center;'>
@@ -168,20 +166,36 @@
     </div>
   </div>
   <!--导航结束-->
-  <!--main开始-->
-  <div id="main">
-  	<!--content-->
-    <div class="content">
-    <h1></h1>
-    <p id='total_count'>抓取总数:</p>
-    <p id='target_count'>目标用户抓取总数:</p>
-    </div><!--content结束-->
-    </div><!--main结束-->
-    <script>
-      if(RGraph.isOld()){
-      document.write('<div style="background-color: #fee; border: 2px dashed red; padding: 5px"><b>Important</b><br /><br /> Internet Explorer does not natively support the HTML5 canvas tag, so if you want to see the charts, you can either:<ul><li>Install <a href="http://code.google.com/chrome/chromeframe/">Google Chrome Frame</a></li><li>Use ExCanvas. This is provided in the RGraph Archive.</li><li>Use another browser entirely. Your choices are Firefox 3.5+, Chrome 2+, Safari 4+ or Opera 10.5+. </li></ul> <b>Note:</b> Internet Explorer 9 fully supports the canvas tag.</div>');
-      }
-    </script>
-    <canvas id="cvs" width="600" height="250" >[No canvas support]</canvas>    
+  <script>
+    if(RGraph.isOld()){
+    document.write('<div style="background-color: #fee; border: 2px dashed red; padding: 5px"><b>Important</b><br /><br /> Internet Explorer does not natively support the HTML5 canvas tag, so if you want to see the charts, you can either:<ul><li>Install <a href="http://code.google.com/chrome/chromeframe/">Google Chrome Frame</a></li><li>Use ExCanvas. This is provided in the RGraph Archive.</li><li>Use another browser entirely. Your choices are Firefox 3.5+, Chrome 2+, Safari 4+ or Opera 10.5+. </li></ul> <b>Note:</b> Internet Explorer 9 fully supports the canvas tag.</div>');
+    }
+  </script>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <p id='total_count'>抓取总数:</p>
+        <p id='target_count'>目标用户抓取总数:</p>
+      </div>
+      <div class="row-fluid">
+        <div class="span6">
+          <h4>微博爬取效率(条数/10s)</h4>
+          <canvas id="weibo_cvs" width="600" height="250" >[No canvas support]</canvas>
+        </div>
+        <div class="span6">
+          <h4>用户爬取效率(人数/10s)</h4>
+          <canvas id="user_cvs" width="600" height="250" >[No canvas support]</canvas>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span6">
+          <div id="weibo_container" style="min-width: 400px; height: 400px; margin: 0 auto;border:1px solid gray;"></div>
+        </div>
+        <div class="span6">
+          <div id="user_container" style="min-width: 400px; height: 400px; margin: 0 auto;border:1px solid gray;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   </body>
 </html>
