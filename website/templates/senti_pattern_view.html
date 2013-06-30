@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<title>微博情感模式挖掘</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script type="text/javascript" src="/static/mapweibo/js/jquery-1.7.min.js"></script>
+<!--
+<link type="text/css" href="/static/mapweibo/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet">
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript" src="/static/js/jquery.layout.min-1.2.0.js"></script>
+<script type="text/javascript" src="/static/mapweibo/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.sparkline.min.js"></script>
+<script type="text/javascript" src="/static/js/pattern/dt_daily.js"></script>
+<script type="text/javascript" src="/static/js/pattern/dt_hourly.js"></script>
+<script type="text/javascript" src="/static/js/pattern/dt_monthly.js"></script>
+<script type="text/javascript" src="/static/js/pattern/dt_weekly.js"></script>
+<style type="text/css">
+	body{font-size:13px;margin:10px}
+	#chart_div_hourly{width:600px;height:400px;border:1px solid gray;margin-left:auto;margin-right:auto}
+	#chart_div_weekly{width:600px;height:400px;border:1px solid gray;margin-left:auto;margin-right:auto}
+	#chart_div_monthly{width:600px;height:400px;border:1px solid gray;margin-left:auto;margin-right:auto}
+	#chart_div_daily{width:600px;height:400px;border:1px solid gray;margin-left:auto;margin-right:auto}
+</style>
+<script type="text/javascript">
+	google.load("visualization", "1", {packages:["corechart"]});
+	google.setOnLoadCallback(drawChart_4);
+	
+	function drawChart_4() {
+		drawChart(dt_arr_hourly,"chart_div_hourly",'Every Two Hours Pattern','Hour of Day');
+		drawChart(dt_arr_weekly,"chart_div_weekly",'Weekly Pattern','Day of Week');
+		drawChart(dt_arr_monthly,"chart_div_monthly",'Yearly Pattern','Month of Year');
+	}
+	
+	function drawChart(dt_arr,div_id,title_f,hAxis_title_f) {
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Date');
+		data.addColumn('number', '积极');
+		data.addColumn('number', '消极');
+		data.addColumn('number', '矛盾');
+		data.addRows(dt_arr.length);
+		for (var i=0;i<dt_arr.length;i++) {
+			data.setValue(i, 0, dt_arr[i].date);
+			data.setValue(i, 1, dt_arr[i].c0);
+			data.setValue(i, 2, dt_arr[i].c1);
+			data.setValue(i, 3, dt_arr[i].c2);
+		}
+
+		var chart = new google.visualization.LineChart(document.getElementById(div_id));
+		chart.draw(data,{width: "100%", height: "100%",colors:['red','black','green','blue'],curveType:'function',hAxis:{title: hAxis_title_f},title:title_f,vAxis:{title: 'Per'},pointSize:6,titleTextStyle:{fontSize:20}});
+	}
+</script>-->
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+<script>
+function pull_emotion_count(area_type, total_days, times, begin_ts, during, series1, series2, series3){
+    if(times >= total_days){
+        return;
+    }
+    
+    var ts = begin_ts + times * during;
+    $$.ajax({
+        url: "http://idec.buaa.edu.cn:9007/moodlens/data/" + area_type + "/" + "?ts=" + ts,
+        type: "GET",
+        dataType:"json",
+        success: function(data){
+            var isShift = false;
+            var happy_emotion_count = data['happy'][1];
+            var angry_emotion_count = data['angry'][1];
+            var sad_emotion_count = data['sad'][1];
+
+            var total_emotion_count = happy_emotion_count + angry_emotion_count + sad_emotion_count;
+            if(total_emotion_count > 0){
+                var happy_emotion_ratio = parseInt(happy_emotion_count * 100 / total_emotion_count) / 100.0;
+                var angry_emotion_ratio = parseInt(angry_emotion_count * 100 / total_emotion_count) / 100.0;
+                var sad_emotion_ratio = parseInt(sad_emotion_count * 100 / total_emotion_count) / 100.0;
+                series1.addPoint([ts * 1000, happy_emotion_ratio], true, isShift);
+                series2.addPoint([ts * 1000, angry_emotion_ratio], true, isShift);
+                series3.addPoint([ts * 1000, sad_emotion_ratio], true, isShift);
+                emotion_ratio[ts * 1000] = [happy_emotion_ratio, angry_emotion_ratio, sad_emotion_ratio, total_emotion_count];
+                happy_absolute.push([ts * 1000, happy_emotion_count]);
+                angry_absolute.push([ts * 1000, angry_emotion_count]);
+                sad_absolute.push([ts * 1000, sad_emotion_count]);
+                happy_ratio.push([ts * 1000, happy_emotion_ratio]);
+                angry_ratio.push([ts * 1000, angry_emotion_ratio]);
+                sad_ratio.push([ts * 1000, sad_emotion_ratio]);
+            }
+            else{
+                emotion_ratio[ts * 1000] = [0, 0, 0, 0];
+            }
+            times++;
+            pull_emotion_count(area_type, total_days, times, begin_ts, during, series1, series2, series3, series4, series5, series6);
+        }
+    });
+}
+$$(function() {
+  display_emotion_trend();
+})
+function display_emotion_trend(){
+   Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+
+    var chart_obj = $$('#emotion_container').highcharts({
+        chart: {
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function() {
+                    var total_days = 90;
+                    var now_date = new Date();
+                    var now_year = now_date.getFullYear();
+                    var now_month = now_date.getMonth();
+                    var now_day = now_date.getDate();
+                    var now_ts = parseInt((new Date(now_year, now_month, now_day)).getTime() / 1000) + 2 * 3600;
+                    var during = 24 * 3600;
+                    var begin_ts = now_ts - total_days * during;
+                    pull_emotion_count('global', total_days, 0, begin_ts, during, this.series[0], this.series[1], this.series[2], this.series[3], this.series[4], this.series[5]);
+                }
+            }
+        },
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'emotion trend'
+        },
+        /*
+        rangeSelector: {
+            selected: 4,
+            inputEnabled: false,
+            buttons: [{
+                type: 'week',
+                count: 1,
+                text: '1w'
+            }, {
+                type: 'month',
+                count: 1,
+                text: '1m'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3m'
+            }]
+        },*/
+         yAxis: [{
+              min: 0,
+              title: {
+                  text: 'fraction'
+              },
+            height: 200,
+            lineWidth: 2
+        }, {
+            title: {
+                text: 'sentiment variation'
+            },
+            top: 300,
+            height: 100,
+            offset: 0,
+            lineWidth: 2
+        }],
+        tooltip: {
+                valueDecimals: 2,
+                xDateFormat: '%Y-%m-%d %H:%M'
+        },
+        legend: {
+           layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -20,
+            y: 0,
+            borderWidth: 1,
+            enabled: true
+        },
+        exporting: {
+            enabled: true
+        },
+        series: [{
+            type: 'spline',
+            name: 'happy',
+            data: [],
+            id: 'happy',
+            color: '#006600',
+        },{
+            type: 'spline',
+            name: 'angry',
+            data: [],
+            id: 'angry',
+            color: '#FF0000',
+        },{
+            type: 'spline',
+            name: 'sad',
+            data: [],
+            id: 'sad',
+            color: '#000099',
+        },{
+            type: 'column',
+            name: 'Volume',
+            data: [],
+            yAxis: 1,
+        }]
+    });
+}
+</script>
+
+
+    <!-- Le styles -->
+    <link href="http://gana.nlsde.buaa.edu.cn/hourly_happy/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  <link type="text/css" rel="stylesheet" href="data:text/css,">
+<link href="/static/css/epat/tooltip.css" rel="stylesheet" type="text/css"></head>
+<body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">情感模式</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">首页</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+	<!--<div class="container">
+    
+    <div id="chart_div_hourly"></div>
+    <div id="chart_div_weekly"></div>
+    <div id="chart_div_monthly"></div>
+      <hr>
+    </div> <!-- /container -->
+    <div id="emotion_container" style="height: 500px; min-width: 500px"></div>
+	</body>
+</html>
